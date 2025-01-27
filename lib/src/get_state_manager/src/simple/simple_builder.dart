@@ -5,28 +5,35 @@ import 'package:flutter/widgets.dart';
 import 'list_notifier.dart';
 
 typedef ValueBuilderUpdateCallback<T> = void Function(T snapshot);
-typedef ValueBuilderBuilder<T> = Widget Function(
-    T snapshot, ValueBuilderUpdateCallback<T> updater);
+typedef ValueBuilderBuilder<T> = Widget Function(T snapshot, ValueBuilderUpdateCallback<T> updater);
 
-/// Manages a local state like ObxValue, but uses a callback instead of
-/// a Rx value.
+/// A widget that manages a local state similar to ObxValue,
+/// but uses a callback instead of a reactive value.
 ///
 /// Example:
 /// ```
-///  ValueBuilder<bool>(
-///    initialValue: false,
-///    builder: (value, update) => Switch(
-///    value: value,
-///    onChanged: (flag) {
-///       update( flag );
-///    },),
-///    onUpdate: (value) => print("Value updated: $value"),
-///  ),
-///  ```
+/// ValueBuilder<bool>(
+///   initialValue: false,
+///   builder: (value, update) => Switch(
+///     value: value,
+///     onChanged: (flag) {
+///       update(flag);
+///     },
+///   ),
+///   onUpdate: (value) => print("Value updated: $value"),
+/// ),
+/// ```
 class ValueBuilder<T> extends StatefulWidget {
+  /// The initial value of the state.
   final T initialValue;
+
+  /// A builder function that takes the current value and an update callback.
   final ValueBuilderBuilder<T> builder;
+
+  /// Optional callback that is called when the widget is disposed.
   final void Function()? onDispose;
+
+  /// Optional callback that is called when the value is updated.
   final void Function(T)? onUpdate;
 
   const ValueBuilder({
@@ -43,15 +50,17 @@ class ValueBuilder<T> extends StatefulWidget {
 
 class ValueBuilderState<T> extends State<ValueBuilder<T>> {
   late T value;
+
   @override
   void initState() {
-    value = widget.initialValue;
     super.initState();
+    value = widget.initialValue; // Initialize the state with the initial value
   }
 
   @override
   Widget build(BuildContext context) => widget.builder(value, updater);
 
+  /// Updates the state with a new value and calls the onUpdate callback.
   void updater(T newValue) {
     if (widget.onUpdate != null) {
       widget.onUpdate!(newValue);
@@ -64,7 +73,8 @@ class ValueBuilderState<T> extends State<ValueBuilder<T>> {
   @override
   void dispose() {
     super.dispose();
-    widget.onDispose?.call();
+    widget.onDispose?.call(); // Call the dispose callback if provided
+    // Dispose of ChangeNotifier or StreamController if applicable
     if (value is ChangeNotifier) {
       (value as ChangeNotifier?)?.dispose();
     } else if (value is StreamController) {
@@ -73,34 +83,24 @@ class ValueBuilderState<T> extends State<ValueBuilder<T>> {
   }
 }
 
+/// A stateless element that can observe reactive changes.
 class ObxElement = StatelessElement with StatelessObserverComponent;
 
-// It's a experimental feature
-class Observer extends ObxStatelessWidget {
-  final WidgetBuilder builder;
-
-  const Observer({super.key, required this.builder});
-
-  @override
-  Widget build(BuildContext context) => builder(context);
-}
-
-/// A StatelessWidget than can listen reactive changes.
+/// A stateless widget that listens for reactive changes.
 abstract class ObxStatelessWidget extends StatelessWidget {
   /// Initializes [key] for subclasses.
   const ObxStatelessWidget({super.key});
+
   @override
   StatelessElement createElement() => ObxElement(this);
 }
 
-/// a Component that can track changes in a reactive variable
+/// A mixin for components that can track changes in a reactive variable.
 mixin StatelessObserverComponent on StatelessElement {
-  List<Disposer>? disposers = <Disposer>[];
+  List<Disposer>? disposers = <Disposer>[]; // List of disposers for listeners
 
+  /// Schedules a rebuild if there are disposers registered.
   void getUpdate() {
-    // if (disposers != null && !dirty) {
-    //   markNeedsBuild();
-    // }
     if (disposers != null) {
       scheduleMicrotask(markNeedsBuild);
     }
@@ -108,17 +108,17 @@ mixin StatelessObserverComponent on StatelessElement {
 
   @override
   Widget build() {
-    return Notifier.instance.append(
-        NotifyData(disposers: disposers!, updater: getUpdate), super.build);
+    return Notifier.instance.append(NotifyData(disposers: disposers!, updater: getUpdate), super.build);
   }
 
   @override
   void unmount() {
     super.unmount();
+    // Dispose of all registered listeners
     for (final disposer in disposers!) {
       disposer();
     }
-    disposers!.clear();
+    disposers!.clear(); // Clear the list of disposers
     disposers = null;
   }
 }

@@ -7,28 +7,24 @@ import 'package:flutter/scheduler.dart';
 import '../../../get_instance/src/lifecycle.dart';
 import '../../get_state_manager.dart';
 
-/// Used like `SingleTickerProviderMixin` but only with Get Controllers.
-/// Simplifies AnimationController creation inside GetxController.
+/// A mixin that simplifies the creation of AnimationControllers inside GetxController
+/// by providing a single TickerProvider.
 ///
 /// Example:
-///```
-///class SplashController extends GetxController with
-///    GetSingleTickerProviderStateMixin {
-///  AnimationController controller;
-///
-///  @override
-///  void onInit() {
-///    final duration = const Duration(seconds: 2);
-///    controller =
-///        AnimationController.unbounded(duration: duration, vsync: this);
-///    controller.repeat();
-///    controller.addListener(() =>
-///        print("Animation Controller value: ${controller.value}"));
-///  }
-///  ...
 /// ```
-mixin GetSingleTickerProviderStateMixin on GetxController
-    implements TickerProvider {
+/// class SplashController extends GetxController with GetSingleTickerProviderStateMixin {
+///   AnimationController controller;
+///
+///   @override
+///   void onInit() {
+///     final duration = const Duration(seconds: 2);
+///     controller = AnimationController.unbounded(duration: duration, vsync: this);
+///     controller.repeat();
+///     controller.addListener(() => print("Animation Controller value: ${controller.value}"));
+///   }
+///   ...
+/// ```
+mixin GetSingleTickerProviderStateMixin on GetxController implements TickerProvider {
   Ticker? _ticker;
 
   @override
@@ -36,10 +32,8 @@ mixin GetSingleTickerProviderStateMixin on GetxController
     assert(() {
       if (_ticker == null) return true;
       throw FlutterError.fromParts(<DiagnosticsNode>[
-        ErrorSummary(
-            '$runtimeType is a GetSingleTickerProviderStateMixin but multiple tickers were created.'),
-        ErrorDescription(
-            'A GetSingleTickerProviderStateMixin can only be used as a TickerProvider once.'),
+        ErrorSummary('$runtimeType is a GetSingleTickerProviderStateMixin but multiple tickers were created.'),
+        ErrorDescription('A GetSingleTickerProviderStateMixin can only be used as a TickerProvider once.'),
         ErrorHint(
           'If a State is used for multiple AnimationController objects, or if it is passed to other '
           'objects and those objects might use it more than one time in total, then instead of '
@@ -47,12 +41,7 @@ mixin GetSingleTickerProviderStateMixin on GetxController
         ),
       ]);
     }());
-    _ticker =
-        Ticker(onTick, debugLabel: kDebugMode ? 'created by $this' : null);
-    // We assume that this is called from initState, build, or some sort of
-    // event handler, and that thus TickerMode.of(context) would return true. We
-    // can't actually check that here because if we're in initState then we're
-    // not allowed to do inheritance checks yet.
+    _ticker = Ticker(onTick, debugLabel: kDebugMode ? 'created by $this' : null);
     return _ticker!;
   }
 
@@ -61,7 +50,7 @@ mixin GetSingleTickerProviderStateMixin on GetxController
   }
 
   @override
-  void onClose() {
+  void dispose() {
     assert(() {
       if (_ticker == null || !_ticker!.isActive) return true;
       throw FlutterError.fromParts(<DiagnosticsNode>[
@@ -79,34 +68,29 @@ mixin GetSingleTickerProviderStateMixin on GetxController
         _ticker!.describeForError('The offending ticker was'),
       ]);
     }());
-    super.onClose();
+    super.dispose();
   }
 }
 
-/// Used like `TickerProviderMixin` but only with Get Controllers.
-/// Simplifies multiple AnimationController creation inside GetxController.
+/// A mixin that simplifies the creation of multiple AnimationControllers inside GetxController
+/// by providing a TickerProvider for multiple tickers.
 ///
 /// Example:
-///```
-///class SplashController extends GetxController with
-///    GetTickerProviderStateMixin {
-///  AnimationController first_controller;
-///  AnimationController second_controller;
+/// ```
+/// class SplashController extends GetxController with GetTickerProviderStateMixin {
+///   AnimationController firstController;
+///   AnimationController secondController;
 ///
-///  @override
-///  void onInit() {
-///    final duration = const Duration(seconds: 2);
-///    first_controller =
-///        AnimationController.unbounded(duration: duration, vsync: this);
-///    second_controller =
-///        AnimationController.unbounded(duration: duration, vsync: this);
-///    first_controller.repeat();
-///    first_controller.addListener(() =>
-///        print("Animation Controller value: ${first_controller.value}"));
-///    second_controller.addListener(() =>
-///        print("Animation Controller value: ${second_controller.value}"));
-///  }
-///  ...
+///   @override
+///   void onInit() {
+///     final duration = const Duration(seconds: 2);
+///     firstController = AnimationController.unbounded(duration: duration, vsync: this);
+///     secondController = AnimationController.unbounded(duration: duration, vsync: this);
+///     firstController.repeat();
+///     firstController.addListener(() => print("Animation Controller value: ${firstController.value}"));
+///     secondController.addListener(() => print("Animation Controller value: ${secondController.value}"));
+///   }
+///   ...
 /// ```
 mixin GetTickerProviderStateMixin on GetxController implements TickerProvider {
   Set<Ticker>? _tickers;
@@ -114,8 +98,7 @@ mixin GetTickerProviderStateMixin on GetxController implements TickerProvider {
   @override
   Ticker createTicker(TickerCallback onTick) {
     _tickers ??= <_WidgetTicker>{};
-    final result = _WidgetTicker(onTick, this,
-        debugLabel: kDebugMode ? 'created by ${describeIdentity(this)}' : null);
+    final result = _WidgetTicker(onTick, this, debugLabel: kDebugMode ? 'created by ${describeIdentity(this)}' : null);
     _tickers!.add(result);
     return result;
   }
@@ -130,13 +113,14 @@ mixin GetTickerProviderStateMixin on GetxController implements TickerProvider {
     final muted = !TickerMode.of(context);
     if (_tickers != null) {
       for (final ticker in _tickers!) {
-        ticker.muted = muted;
+        ticker.muted = muted; // Mute tickers based on context
       }
     }
   }
 
   @override
-  void onClose() {
+  @override
+  void dispose() {
     assert(() {
       if (_tickers != null) {
         for (final ticker in _tickers!) {
@@ -160,10 +144,11 @@ mixin GetTickerProviderStateMixin on GetxController implements TickerProvider {
       }
       return true;
     }());
-    super.onClose();
+    super.dispose();
   }
 }
 
+// A private class that extends Ticker to manage its lifecycle.
 class _WidgetTicker extends Ticker {
   _WidgetTicker(super.onTick, this._creator, {super.debugLabel});
 
@@ -171,33 +156,31 @@ class _WidgetTicker extends Ticker {
 
   @override
   void dispose() {
-    _creator._removeTicker(this);
-    super.dispose();
+    _creator._removeTicker(this); // Remove this ticker from the creator's set
+    super.dispose(); // Call superclass dispose method
   }
 }
 
 @Deprecated('use GetSingleTickerProviderStateMixin')
 
-/// Used like `SingleTickerProviderMixin` but only with Get Controllers.
-/// Simplifies AnimationController creation inside GetxController.
+/// A deprecated mixin that simplifies AnimationController creation inside GetxController.
+/// Use [GetSingleTickerProviderStateMixin] instead.
 ///
 /// Example:
-///```
-///class SplashController extends GetxController with
-///    SingleGetTickerProviderMixin {
-///  AnimationController _ac;
-///
-///  @override
-///  void onInit() {
-///    final dur = const Duration(seconds: 2);
-///    _ac = AnimationController.unbounded(duration: dur, vsync: this);
-///    _ac.repeat();
-///    _ac.addListener(() => print("Animation Controller value: ${_ac.value}"));
-///  }
-///  ...
 /// ```
-mixin SingleGetTickerProviderMixin on GetLifeCycleMixin
-    implements TickerProvider {
+/// class SplashController extends GetxController with SingleGetTickerProviderMixin {
+///   AnimationController _ac;
+///
+///   @override
+///   void onInit() {
+///     final dur = const Duration(seconds: 2);
+///     _ac = AnimationController.unbounded(duration: dur, vsync: this);
+///     _ac.repeat();
+///     _ac.addListener(() => print("Animation Controller value: ${_ac.value}"));
+///   }
+///   ...
+/// ```
+mixin SingleGetTickerProviderMixin on GetLifeCycleMixin implements TickerProvider {
   @override
-  Ticker createTicker(TickerCallback onTick) => Ticker(onTick);
+  Ticker createTicker(TickerCallback onTick) => Ticker(onTick); // Create a single ticker without tracking multiple instances.
 }

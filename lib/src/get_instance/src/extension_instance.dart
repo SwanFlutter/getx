@@ -6,6 +6,9 @@ import '../../get_core/get_core.dart';
 import '../../get_navigation/src/router_report.dart';
 import 'lifecycle.dart';
 
+/// Priority levels for instance creation
+enum Priority { low, normal, high }
+
 class InstanceInfo {
   final bool? isPermanent;
   final bool? isSingleton;
@@ -27,6 +30,10 @@ class InstanceInfo {
   }
 }
 
+/// Holds references to every registered Instance when using
+/// `Get.put()`
+final Map<String, _InstanceBuilderFactory> _singl = {};
+
 extension ResetInstance on GetInterface {
   /// Clears all registered instances (and/or tags).
   /// Even the persistent ones.
@@ -39,7 +46,7 @@ extension ResetInstance on GetInterface {
     //  if (clearFactory) _factory.clear();
     // deleteAll(force: true);
     if (clearRouteBindings) RouterReportManager.instance.clearRouteKeys();
-    Inst._singl.clear();
+    _singl.clear();
 
     return true;
   }
@@ -47,10 +54,6 @@ extension ResetInstance on GetInterface {
 
 extension Inst on GetInterface {
   T call<T>() => find<T>();
-
-  /// Holds references to every registered Instance when using
-  /// `Get.put()`
-  static final Map<String, _InstanceBuilderFactory> _singl = {};
 
   /// Holds a reference to every registered callback when using
   /// `Get.lazyPut()`
@@ -75,11 +78,7 @@ extension Inst on GetInterface {
     String? tag,
     bool permanent = false,
   }) {
-    _insert(
-        isSingleton: true,
-        name: tag,
-        permanent: permanent,
-        builder: (() => dependency));
+    _insert(isSingleton: true, name: tag, permanent: permanent, builder: (() => dependency));
     return find<S>(tag: tag);
   }
 
@@ -201,8 +200,7 @@ extension Inst on GetInterface {
 
       if (isSingleton) {
         if (Get.smartManagement != SmartManagement.onlyBuilder) {
-          RouterReportManager.instance
-              .reportDependencyLinkedToRoute(_getKey(S, name));
+          RouterReportManager.instance.reportDependencyLinkedToRoute(_getKey(S, name));
         }
       }
     }
@@ -324,8 +322,7 @@ extension Inst on GetInterface {
   ///
   ///  Note: if fenix is not provided it will be set to true if
   /// the parent instance was permanent
-  void lazyReplace<P>(InstanceBuilderCallback<P> builder,
-      {String? tag, bool? fenix}) {
+  void lazyReplace<P>(InstanceBuilderCallback<P> builder, {String? tag, bool? fenix}) {
     final info = getInstanceInfo<P>(tag: tag);
     final permanent = (info.isPermanent ?? false);
     delete<P>(tag: tag, force: permanent);
@@ -489,6 +486,126 @@ extension Inst on GetInterface {
       return true;
     }
     return false;
+  }
+}
+
+extension SmartInst on GetInterface {
+  /// SmartPut combines benefits of both put and lazyPut with additional features
+  /// Example:
+  /// ```dart
+  /// smartPut<Controller>(() => Controller());
+  ///
+  /// ```
+  ///
+  /// If [lazy] is true, instance will be created lazily (like lazyPut)
+  /// If [lazy] is false, instance will be created immediately (like put)
+  /// [priority] determines if instance should be loaded early in app lifecycle
+  /// [preload] can be used to do setup work before instance creation
+  ///
+  /// - [tag] is optional, if you used a [tag] to register the Instance.
+  /// - [lazy] is optional, defaults to true.
+  /// - [permanent] is optional, defaults to false.
+  /// - [fenix] is optional, defaults to false.
+  /// - [priority] is optional, defaults to normal.
+  /// - [preload] is optional, defaults to null.
+  ///
+
+  S smartPut<S>(
+    InstanceBuilderCallback<S> builder, {
+    String? tag,
+    bool? lazy = true,
+    bool permanent = false,
+    bool? fenix,
+    Priority priority = Priority.normal,
+    Future<void> Function()? preload,
+  }) {
+    final key = _getKey(S, tag);
+
+    // Check if already registered
+    if (_singl.containsKey(key)) {
+      final instance = _singl[key]!.getDependency() as S;
+      return instance;
+    }
+
+    // Handle preload if provided
+    if (preload != null) {
+      preload().then((_) {
+        _insertSmart(
+          builder: builder,
+          lazy: lazy!,
+          tag: tag,
+          permanent: permanent,
+          fenix: fenix,
+          priority: priority,
+        );
+      });
+    } else {
+      _insertSmart(
+        builder: builder,
+        lazy: lazy!,
+        tag: tag,
+        permanent: permanent,
+        fenix: fenix,
+        priority: priority,
+      );
+    }
+
+    // If not lazy or high priority, create instance immediately
+    if (lazy == false || priority == Priority.high) {
+      return find<S>(tag: tag);
+    }
+
+    // Otherwise return lazily created instance
+    return builder();
+  }
+
+  void _insertSmart<S>({
+    required InstanceBuilderCallback<S> builder,
+    required bool lazy,
+    String? tag,
+    bool permanent = false,
+    bool? fenix,
+    Priority priority = Priority.normal,
+  }) {
+    final key = _getKey(S, tag);
+
+    _singl[key] = _InstanceBuilderFactory<S>(
+      isSingleton: true,
+      builderFunc: builder,
+      permanent: permanent,
+      isInit: !lazy, // Mark as initialized if not lazy
+      fenix: fenix ?? Get.smartManagement == SmartManagement.keepFactory,
+      tag: tag,
+      lateRemove: null,
+    );
+
+    // Initialize immediately if not lazy or high priority
+    if (!lazy || priority == Priority.high) {
+      _initDependencies<S>(name: tag);
+    }
+  }
+}
+
+/// Extension to add async support
+extension SmartPutAsync on GetInterface {
+  /// Async version of smartPut
+  Future<S> smartPutAsync<S>(
+    AsyncInstanceBuilderCallback<S> asyncBuilder, {
+    String? tag,
+    bool? lazy = true,
+    bool permanent = false,
+    bool? fenix,
+    Priority priority = Priority.normal,
+  }) async {
+    final instance = await asyncBuilder();
+    return smartPut(
+      () => instance,
+      tag: tag,
+      lazy: lazy,
+      permanent: permanent,
+      fenix: fenix,
+      priority: priority,
+    );
   }
 }
 

@@ -1,7 +1,8 @@
 // ignore: prefer_mixin
 import 'package:flutter/widgets.dart';
+import 'package:getx/src/get_instance/get_instance.dart';
 
-import '../../../instance_manager.dart';
+import '../../../get_core/get_core.dart';
 import '../rx_flutter/rx_notifier.dart';
 import 'list_notifier.dart';
 
@@ -82,8 +83,7 @@ abstract class StateController<T> extends GetxController with StateMixin<T> {}
 
 /// A controller with super lifecycles (including native lifecycles)
 /// and StateMixins
-abstract class SuperController<T> extends FullLifeCycleController
-    with FullLifeCycleMixin, StateMixin<T> {}
+abstract class SuperController<T> extends FullLifeCycleController with FullLifeCycleMixin, StateMixin<T> {}
 
 /// A controller with super lifecycles (including native lifecycles)
 abstract class FullLifeCycleController extends GetxController

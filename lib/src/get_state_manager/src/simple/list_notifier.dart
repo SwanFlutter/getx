@@ -2,29 +2,24 @@ import 'dart:collection';
 
 import 'package:flutter/foundation.dart';
 
-// This callback remove the listener on addListener function
+// Callback type for removing listeners
 typedef Disposer = void Function();
 
-// replacing StateSetter, return if the Widget is mounted for extra validation.
-// if it brings overhead the extra call,
+// Callback type for state updates, ensuring the widget is mounted
 typedef GetStateUpdate = void Function();
 
-class ListNotifier extends Listenable
-    with ListNotifierSingleMixin, ListNotifierGroupMixin {}
+class ListNotifier extends Listenable with ListNotifierSingleMixin, ListNotifierGroupMixin {}
 
 /// A Notifier with single listeners
 class ListNotifierSingle = ListNotifier with ListNotifierSingleMixin;
 
-/// A notifier with group of listeners identified by id
+/// A notifier with a group of listeners identified by an ID
 class ListNotifierGroup = ListNotifier with ListNotifierGroupMixin;
 
-/// This mixin add to Listenable the addListener, removerListener and
-/// containsListener implementation
+/// Mixin that adds listener management to a Listenable
 mixin ListNotifierSingleMixin on Listenable {
+  // Stores the list of state update listeners
   List<GetStateUpdate>? _updaters = <GetStateUpdate>[];
-
-  // final int _version = 0;
-  // final int _microtaskVersion = 0;
 
   @override
   Disposer addListener(GetStateUpdate listener) {
@@ -33,6 +28,7 @@ mixin ListNotifierSingleMixin on Listenable {
     return () => _updaters!.remove(listener);
   }
 
+  /// Checks if a specific listener is already registered
   bool containsListener(GetStateUpdate listener) {
     return _updaters?.contains(listener) ?? false;
   }
@@ -49,29 +45,12 @@ mixin ListNotifierSingleMixin on Listenable {
     _notifyUpdate();
   }
 
-  @protected
-  void reportRead() {
-    Notifier.instance.read(this);
-  }
-
-  @protected
-  void reportAdd(VoidCallback disposer) {
-    Notifier.instance.add(disposer);
-  }
-
+  /// Notifies all registered listeners of an update
   void _notifyUpdate() {
-    // if (_microtaskVersion == _version) {
-    //   _microtaskVersion++;
-    //   scheduleMicrotask(() {
-    //     _version++;
-    //     _microtaskVersion = _version;
     final list = _updaters?.toList() ?? [];
-
     for (var element in list) {
       element();
     }
-    //   });
-    // }
   }
 
   bool get isDisposed => _updaters == null;
@@ -80,7 +59,7 @@ mixin ListNotifierSingleMixin on Listenable {
     assert(() {
       if (isDisposed) {
         throw FlutterError('''A $runtimeType was used after being disposed.\n
-'Once you have called dispose() on a $runtimeType, it can no longer be used.''');
+Once you have called dispose() on a $runtimeType, it can no longer be used.''');
       }
       return true;
     }());
@@ -95,14 +74,15 @@ mixin ListNotifierSingleMixin on Listenable {
   @mustCallSuper
   void dispose() {
     assert(_debugAssertNotDisposed());
-    _updaters = null;
+    _updaters = null; // Clear the list of updaters on dispose
   }
 }
 
 mixin ListNotifierGroupMixin on Listenable {
-  HashMap<Object?, ListNotifierSingleMixin>? _updatersGroupIds =
-      HashMap<Object?, ListNotifierSingleMixin>();
+  // Maps IDs to their corresponding notifier groups
+  HashMap<Object?, ListNotifierSingleMixin>? _updatersGroupIds = HashMap<Object?, ListNotifierSingleMixin>();
 
+  /// Notifies the listeners of a specific group identified by ID
   void _notifyGroupUpdate(Object id) {
     if (_updatersGroupIds!.containsKey(id)) {
       _updatersGroupIds![id]!._notifyUpdate();
@@ -129,7 +109,7 @@ mixin ListNotifierGroupMixin on Listenable {
     assert(() {
       if (_updatersGroupIds == null) {
         throw FlutterError('''A $runtimeType was used after being disposed.\n
-'Once you have called dispose() on a $runtimeType, it can no longer be used.''');
+Once you have called dispose() on a $runtimeType, it can no longer be used.''');
       }
       return true;
     }());
@@ -146,18 +126,18 @@ mixin ListNotifierGroupMixin on Listenable {
   @mustCallSuper
   void dispose() {
     assert(_debugAssertNotDisposed());
+    // Dispose all group notifiers before clearing the map
     _updatersGroupIds?.forEach((key, value) => value.dispose());
-    _updatersGroupIds = null;
+    _updatersGroupIds = null; // Clear the map of group notifiers on dispose
   }
 
+  /// Adds a listener to a specific group identified by key
   Disposer addListenerId(Object? key, GetStateUpdate listener) {
     _updatersGroupIds![key] ??= ListNotifierSingle();
     return _updatersGroupIds![key]!.addListener(listener);
   }
 
-  /// To dispose an [id] from future updates(), this ids are registered
-  /// by `GetBuilder()` or similar, so is a way to unlink the state change with
-  /// the Widget from the Controller.
+  /// Disposes the notifier associated with the specified ID from future updates.
   void disposeId(Object id) {
     _updatersGroupIds?[id]?.dispose();
     _updatersGroupIds!.remove(id);
@@ -168,54 +148,66 @@ class Notifier {
   Notifier._();
 
   static Notifier? _instance;
+
   static Notifier get instance => _instance ??= Notifier._();
 
   NotifyData? _notifyData;
 
+  /// Adds a listener to the notifier's data disposers.
   void add(VoidCallback listener) {
     _notifyData?.disposers.add(listener);
   }
 
+  /// Registers a listener for updates in the specified notifier.
   void read(ListNotifierSingleMixin updaters) {
     final listener = _notifyData?.updater;
+
     if (listener != null && !updaters.containsListener(listener)) {
       updaters.addListener(listener);
       add(() => updaters.removeListener(listener));
     }
   }
 
+  /// Appends data to the notifier and executes a builder function.
   T append<T>(NotifyData data, T Function() builder) {
     _notifyData = data;
     final result = builder();
+
+    // Check for exceptions based on disposer's state.
     if (data.disposers.isEmpty && data.throwException) {
       throw const ObxError();
     }
-    _notifyData = null;
+
+    _notifyData = null; // Clear notify data after use.
     return result;
   }
 }
 
 class NotifyData {
-  const NotifyData(
-      {required this.updater,
-      required this.disposers,
-      this.throwException = true});
-  final GetStateUpdate updater;
-  final List<VoidCallback> disposers;
-  final bool throwException;
+  const NotifyData({
+    required this.updater,
+    required this.disposers,
+    this.throwException = true,
+  });
+
+  final GetStateUpdate updater; // The update callback function.
+  final List<VoidCallback> disposers; // The list of disposables.
+  final bool throwException; // Flag to indicate whether to throw exceptions.
 }
 
-class ObxError {
+class ObxError implements Exception {
+  // Changed to implement Exception for better error handling.
   const ObxError();
+
   @override
   String toString() {
     return """
-      [Get] the improper use of a GetX has been detected. 
-      You should only use GetX or Obx for the specific widget that will be updated.
-      If you are seeing this error, you probably did not insert any observable variables into GetX/Obx 
-      or insert them outside the scope that GetX considers suitable for an update 
-      (example: GetX => HeavyWidget => variableObservable).
-      If you need to update a parent widget and a child widget, wrap each one in an Obx/GetX.
-      """;
+       [Get] The improper use of GetX has been detected. 
+       You should only use GetX or Obx for the specific widget that will be updated.
+       If you are seeing this error, you probably did not insert any observable variables into GetX/Obx 
+       or inserted them outside the scope that GetX considers suitable for an update 
+       (example: GetX => HeavyWidget => variableObservable).
+       If you need to update a parent widget and a child widget, wrap each one in an Obx/GetX.
+       """;
   }
 }

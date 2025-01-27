@@ -1,11 +1,16 @@
 import 'package:flutter/widgets.dart';
 
+/// An abstract widget that provides a caching mechanism for its child widgets.
+///
+/// Subclasses must implement the [createWidgetCache] method to provide
+/// an instance of [WidgetCache].
 abstract class GetWidgetCache extends Widget {
   const GetWidgetCache({super.key});
 
   @override
   GetWidgetCacheElement createElement() => GetWidgetCacheElement(this);
 
+  /// Creates an instance of [WidgetCache] that will manage the state of this widget.
   @protected
   @factory
   WidgetCache createWidgetCache();
@@ -13,22 +18,24 @@ abstract class GetWidgetCache extends Widget {
 
 class GetWidgetCacheElement extends ComponentElement {
   GetWidgetCacheElement(GetWidgetCache widget)
-      : cache = widget.createWidgetCache(),
+      : widgetCache = widget.createWidgetCache(),
         super(widget) {
-    cache._element = this;
-    cache._widget = widget;
+    widgetCache._element = this;
+    widgetCache._widget = widget;
   }
 
   @override
   void mount(Element? parent, dynamic newSlot) {
-    cache.onInit();
+    widgetCache.onInit();
     super.mount(parent, newSlot);
   }
 
   @override
-  Widget build() => cache.build(this);
+  Widget build() {
+    return widgetCache.build(this);
+  }
 
-  final WidgetCache<GetWidgetCache> cache;
+  final WidgetCache<GetWidgetCache> widgetCache;
 
   @override
   void activate() {
@@ -39,8 +46,8 @@ class GetWidgetCacheElement extends ComponentElement {
   @override
   void unmount() {
     super.unmount();
-    cache.onClose();
-    cache._element = null;
+    widgetCache.onClose();
+    widgetCache._element = null;
   }
 }
 
@@ -55,11 +62,15 @@ abstract class WidgetCache<T extends GetWidgetCache> {
 
   @protected
   @mustCallSuper
-  void onInit() {}
+  void onInit() {
+    // Initialization logic goes here.
+  }
 
   @protected
   @mustCallSuper
-  void onClose() {}
+  void onClose() {
+    // Cleanup logic goes here.
+  }
 
   @protected
   Widget build(BuildContext context);
