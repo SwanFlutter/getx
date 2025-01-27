@@ -1416,6 +1416,241 @@ class MyApp extends StatelessWidget {
 This widget is a powerful tool for improving the performance and flexibility of list-based UIs in Flutter applications.
 
 
+# Utils
+
+
+This code defines a class named `GetUtils` that includes a collection of utility methods for performing various operations on data in Dart. These methods include various checks on strings, numbers, dates, files, and more. Below is an introduction and examples of some of these methods:
+
+### 1. Method `_isEmpty`
+This method checks whether a dynamic value is empty or not. It works for various data types such as `String`, `Iterable`, and `Map`.
+
+**Example:**
+```dart
+print(_isEmpty('')); // true
+print(_isEmpty([])); // true
+print(_isEmpty({})); // true
+print(_isEmpty(null)); // false
+print(_isEmpty(12)); // false
+```
+
+### 2. Method `_hasLength`
+This method checks whether a dynamic value has the `length` property. It works for data types such as `Iterable`, `String`, and `Map`.
+
+**Example:**
+```dart
+print(_hasLength('')); // true
+print(_hasLength([])); // true
+print(_hasLength({})); // true
+print(_hasLength(null)); // false
+print(_hasLength(12)); // false
+```
+
+### 3. Method `_obtainDynamicLength`
+This method returns the length of a dynamic value. If the value is `null`, it returns `null`.
+
+**Example:**
+```dart
+print(_obtainDynamicLength('')); // 0
+print(_obtainDynamicLength([])); // 0
+print(_obtainDynamicLength({})); // 0
+print(_obtainDynamicLength(null)); // null
+print(_obtainDynamicLength(12)); // 2
+print(_obtainDynamicLength(12.5)); // 3
+print(_obtainDynamicLength('Hello')); // 5
+```
+
+### 4. Method `isNull`
+This method checks if a value is `null`.
+
+**Example:**
+```dart
+print(GetUtils.isNull(null)); // true
+print(GetUtils.isNull(12)); // false
+```
+
+### 5. Method `isNullOrBlank`
+This method checks if a value is `null` or blank (empty or contains only whitespace).
+
+**Example:**
+```dart
+print(GetUtils.isNullOrBlank(null)); // true
+print(GetUtils.isNullOrBlank('')); // true
+print(GetUtils.isNullOrBlank('  ')); // true
+print(GetUtils.isNullOrBlank([])); // true
+print(GetUtils.isNullOrBlank({})); // true
+print(GetUtils.isNullOrBlank('Hello')); // false
+print(GetUtils.isNullOrBlank(12)); // false
+```
+
+### 6. Method `isNum`
+This method checks if a string is a valid number (integer or double).
+
+**Example:**
+```dart
+print(GetUtils.isNum('12')); // true
+print(GetUtils.isNum('12.5')); // true
+print(GetUtils.isNum('Hello')); // false
+print(GetUtils.isNum(null)); // false
+```
+
+### 7. Method `isEmail`
+This method checks if a string is a valid email address.
+
+**Example:**
+```dart
+print(GetUtils.isEmail('test@example.com')); // true
+print(GetUtils.isEmail('test.name@example.com')); // true
+print(GetUtils.isEmail('test@example')); // false
+print(GetUtils.isEmail('@example.com')); // false
+```
+
+### 8. Method `isURL`
+This method checks if a string is a valid URL.
+
+**Example:**
+```dart
+print(GetUtils.isURL('https://www.example.com')); // true
+print(GetUtils.isURL('http://example.com')); // true
+print(GetUtils.isURL('www.example.com')); // true
+print(GetUtils.isURL('example.com')); // true
+print(GetUtils.isURL('example')); // false
+```
+
+### 9. Method `isPhoneNumber`
+This method checks if a string is a valid phone number.
+
+**Example:**
+```dart
+print(GetUtils.isPhoneNumber('+1-555-555-5555')); // true
+print(GetUtils.isPhoneNumber('555-555-5555')); // true
+print(GetUtils.isPhoneNumber('5555555555')); // true
+print(GetUtils.isPhoneNumber('123')); // false
+print(GetUtils.isPhoneNumber('abc')); // false
+```
+
+### 10. Method `isPalindrome`
+This method checks if a string is a palindrome.
+
+**Example:**
+```dart
+print(GetUtils.isPalindrome('racecar')); // true
+print(GetUtils.isPalindrome('hello')); // false
+```
+
+### 11. Method `capitalize`
+This method capitalizes each word in a string.
+
+**Example:**
+```dart
+print(GetUtils.capitalize('your name')); // "Your Name"
+```
+
+### 12. Method `removeAllWhitespace`
+This method removes all whitespace from a string.
+
+**Example:**
+```dart
+print(GetUtils.removeAllWhitespace('your name')); // "yourname"
+```
+
+### 13. Method `numericOnly`
+This method extracts only numeric characters from a string.
+
+**Example:**
+```dart
+print(GetUtils.numericOnly('OTP 12312 27/04/2020')); // "1231227042020"
+print(GetUtils.numericOnly('OTP 12312 27/04/2020', firstWordOnly: true)); // "12312"
+```
+
+### 14. Method `isLengthBetween`
+This method checks if the length of a value is between a specified minimum and maximum.
+
+**Example:**
+```dart
+print(GetUtils.isLengthBetween('Hello', 3, 5)); // true
+```
+
+### 15. Method `isCaseInsensitiveContains`
+This method checks if a string contains another string, ignoring case.
+
+**Example:**
+```dart
+print(GetUtils.isCaseInsensitiveContains('Hello', 'hello')); // true
+```
+
+These are just a few examples of the utility methods provided by the `GetUtils` class. The class includes many more methods for validating and manipulating data, making it a powerful tool for Dart developers.
+
+
+
+
+
+
+This code defines an extension on the `double` type in Dart, adding two computed properties: `hp` (height percentage) and `wp` (width percentage). These properties allow you to easily calculate a percentage of the screen's height or width, which is particularly useful in responsive UI design. The extension relies on the `Get` class from the `getx` package, which provides access to the screen's dimensions (`Get.height` and `Get.width`).
+
+### Explanation of the Code:
+
+1. **Extension `PercentSized`**:
+   - This extension adds two new properties (`hp` and `wp`) to the `double` type.
+   - These properties calculate a percentage of the screen's height or width based on the value of the `double`.
+
+2. **`hp` Property**:
+   - Stands for "height percentage."
+   - Calculates a percentage of the screen's height (`Get.height`).
+   - The input value must be between `0` and `100` (inclusive), as enforced by the `assert` statement.
+   - The result is rounded to the nearest `double` using `roundToDouble()`.
+
+3. **`wp` Property**:
+   - Stands for "width percentage."
+   - Calculates a percentage of the screen's width (`Get.width`).
+   - Similar to `hp`, the input value must be between `0` and `100`.
+   - The result is also rounded to the nearest `double`.
+
+4. **Assertion**:
+   - The `assert` statement ensures that the input value is within the valid range (`0` to `100`). If the value is outside this range, an assertion error will be thrown during development.
+
+---
+
+### Usage Examples:
+
+#### 1. Setting Height as a Percentage of Screen Height:
+```dart
+double height = 50.0.hp; // 50% of the screen height
+print(height); // If screen height is 800, this will print 400.0
+```
+
+#### 2. Setting Width as a Percentage of Screen Width:
+```dart
+double width = 30.0.wp; // 30% of the screen width
+print(width); // If screen width is 400, this will print 120.0
+```
+
+#### 3. Using in Flutter Widgets:
+```dart
+Container(
+  height: 20.0.hp, // 20% of screen height
+  width: 80.0.wp,  // 80% of screen width
+  color: Colors.blue,
+);
+```
+
+#### 4. Invalid Usage (Will Throw an Assertion Error):
+```dart
+double invalidHeight = 120.0.hp; // Throws an assertion error because 120 is > 100
+```
+
+---
+
+### Key Points:
+- **Responsive Design**: This extension is particularly useful for creating responsive layouts that adapt to different screen sizes.
+- **Rounding**: The results are rounded to the nearest `double` to avoid fractional pixel values, which can cause rendering issues.
+- **Dependency**: This extension relies on the `Get` class from the `getx` package, so make sure `Get.height` and `Get.width` are properly initialized.
+
+---
+
+
+
+
+
 
 
 
