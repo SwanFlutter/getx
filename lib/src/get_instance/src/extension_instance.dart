@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 import '../../get_core/get_core.dart';
 import '../../get_navigation/src/router_report.dart';
+import 'disposable.dart';
 import 'lifecycle.dart';
 
 /// Priority levels for instance creation
@@ -189,26 +190,40 @@ extension Inst on GetInterface {
   /// work properly.
   S? _initDependencies<S>({String? name}) {
     final key = _getKey(S, name);
-    final isInit = _singl[key]!.isInit;
-    S? i;
-    if (!isInit) {
-      final isSingleton = _singl[key]?.isSingleton ?? false;
-      if (isSingleton) {
-        _singl[key]!.isInit = true;
-      }
-      i = _startController<S>(tag: name);
 
-      if (isSingleton) {
-        if (Get.smartManagement != SmartManagement.onlyBuilder) {
-          RouterReportManager.instance.reportDependencyLinkedToRoute(_getKey(S, name));
+    // Add null safety check
+    final instance = _singl[key];
+    if (instance == null) {
+      Get.log('No instance found for key: $key', isError: true);
+      return null;
+    }
+
+    final isInit = instance.isInit;
+    S? i;
+
+    try {
+      if (!isInit) {
+        final isSingleton = instance.isSingleton ?? false;
+        if (isSingleton) {
+          instance.isInit = true;
+        }
+        i = _startController<S>(tag: name);
+
+        if (isSingleton) {
+          if (Get.smartManagement != SmartManagement.onlyBuilder) {
+            RouterReportManager.instance.reportDependencyLinkedToRoute(_getKey(S, name));
+          }
         }
       }
+    } catch (e) {
+      Get.log('Error initializing dependency: $e', isError: true);
     }
+
     return i;
   }
 
-  InstanceInfo getInstanceInfo<S>({String? tag}) {
-    final build = _getDependency<S>(tag: tag);
+  InstanceInfo getInstanceInfo<S>({String? tag, String? key}) {
+    final build = _getDependency<S>(tag: tag, key: key);
 
     return InstanceInfo(
       isPermanent: build?.permanent,
@@ -354,13 +369,18 @@ extension Inst on GetInterface {
   bool delete<S>({String? tag, String? key, bool force = false}) {
     final newKey = key ?? _getKey(S, tag);
 
+    // Add cleanup for resources
+    final instance = _singl[newKey];
+    if (instance?.dependency is Disposable) {
+      (instance!.dependency as Disposable).dispose();
+    }
+
     if (!_singl.containsKey(newKey)) {
       Get.log('Instance "$newKey" already removed.', isError: true);
       return false;
     }
 
     final dep = _singl[newKey];
-
     if (dep == null) return false;
 
     final _InstanceBuilderFactory builder;
@@ -490,26 +510,36 @@ extension Inst on GetInterface {
 }
 
 extension SmartInst on GetInterface {
-  /// SmartPut combines benefits of both put and lazyPut with additional features
-  /// Example:
-  /// ```dart
-  /// smartPut<Controller>(() => Controller());
+  /// SmartPut is an advanced dependency injection method that combines features of put() and lazyPut()
   ///
+  /// Examples:
+  /// ```dart
+  /// // Basic usage
+  /// smartPut(() => UserController());
+  ///
+  /// // With tag
+  /// smartPut(() => UserController(), tag: 'user');
+  ///
+  /// // High priority initialization
+  /// smartPut(() => AppController(), priority: Priority.high);
+  ///
+  /// // With preload setup
+  /// smartPut(
+  ///   () => DatabaseController(),
+  ///   preload: () async {
+  ///     await initializeDatabase();
+  ///   }
+  /// );
   /// ```
   ///
-  /// If [lazy] is true, instance will be created lazily (like lazyPut)
-  /// If [lazy] is false, instance will be created immediately (like put)
-  /// [priority] determines if instance should be loaded early in app lifecycle
-  /// [preload] can be used to do setup work before instance creation
-  ///
-  /// - [tag] is optional, if you used a [tag] to register the Instance.
-  /// - [lazy] is optional, defaults to true.
-  /// - [permanent] is optional, defaults to false.
-  /// - [fenix] is optional, defaults to false.
-  /// - [priority] is optional, defaults to normal.
-  /// - [preload] is optional, defaults to null.
-  ///
-
+  /// Parameters:
+  /// - [builder] Required callback that creates the instance
+  /// - [tag] Optional identifier for the instance
+  /// - [lazy] If true, instance is created on first use. If false, created immediately
+  /// - [permanent] If true, instance won't be deleted during Get.reset()
+  /// - [fenix] If true, instance will be recreated after deletion
+  /// - [priority] Determines initialization order (high priority instances initialize first)
+  /// - [preload] Optional async setup work before instance creation
   S smartPut<S>(
     InstanceBuilderCallback<S> builder, {
     String? tag,
@@ -521,24 +551,21 @@ extension SmartInst on GetInterface {
   }) {
     final key = _getKey(S, tag);
 
-    // Check if already registered
+    // Return existing instance if already registered
     if (_singl.containsKey(key)) {
-      final instance = _singl[key]!.getDependency() as S;
-      return instance;
+      return _singl[key]!.getDependency() as S;
     }
 
-    // Handle preload if provided
+    // Handle async preload if provided
     if (preload != null) {
-      preload().then((_) {
-        _insertSmart(
-          builder: builder,
-          lazy: lazy!,
-          tag: tag,
-          permanent: permanent,
-          fenix: fenix,
-          priority: priority,
-        );
-      });
+      preload().then((_) => _insertSmart(
+            builder: builder,
+            lazy: lazy!,
+            tag: tag,
+            permanent: permanent,
+            fenix: fenix,
+            priority: priority,
+          ));
     } else {
       _insertSmart(
         builder: builder,
@@ -550,15 +577,15 @@ extension SmartInst on GetInterface {
       );
     }
 
-    // If not lazy or high priority, create instance immediately
-    if (lazy == false || priority == Priority.high) {
+    // Create instance immediately for non-lazy or high priority
+    if ((lazy ?? true) == false || priority == Priority.high) {
       return find<S>(tag: tag);
     }
 
-    // Otherwise return lazily created instance
     return builder();
   }
 
+  /// Internal method to handle instance registration
   void _insertSmart<S>({
     required InstanceBuilderCallback<S> builder,
     required bool lazy,
@@ -569,17 +596,18 @@ extension SmartInst on GetInterface {
   }) {
     final key = _getKey(S, tag);
 
+    // Create instance builder with proper configuration
     _singl[key] = _InstanceBuilderFactory<S>(
       isSingleton: true,
       builderFunc: builder,
       permanent: permanent,
-      isInit: !lazy, // Mark as initialized if not lazy
+      isInit: !lazy,
       fenix: fenix ?? Get.smartManagement == SmartManagement.keepFactory,
       tag: tag,
       lateRemove: null,
     );
 
-    // Initialize immediately if not lazy or high priority
+    // Initialize immediately for non-lazy or high priority instances
     if (!lazy || priority == Priority.high) {
       _initDependencies<S>(name: tag);
     }
@@ -648,6 +676,8 @@ class _InstanceBuilderFactory<S> {
 
   String? tag;
 
+  bool _isDisposed = false;
+
   _InstanceBuilderFactory({
     required this.isSingleton,
     required this.builderFunc,
@@ -666,16 +696,74 @@ class _InstanceBuilderFactory<S> {
     }
   }
 
-  /// Gets the actual instance by it's [builderFunc] or the persisted instance.
+  /// Enhanced getDependency with validation and error handling
   S getDependency() {
+    if (_isDisposed) {
+      throw StateError('Instance has been disposed');
+    }
+
     if (isSingleton!) {
       if (dependency == null) {
         _showInitLog();
-        dependency = builderFunc();
+        try {
+          dependency = builderFunc();
+        } catch (e) {
+          Get.log('Error creating instance: $e', isError: true);
+          rethrow;
+        }
       }
       return dependency!;
     } else {
       return builderFunc();
     }
+  }
+
+  /// Cleanup method for proper resource management
+  void dispose() {
+    if (!_isDisposed) {
+      dependency = null;
+      _isDisposed = true;
+      isInit = false;
+    }
+  }
+}
+
+/// Extension for group management operations
+extension GroupManagement on GetInterface {
+  /// Delete all instances with specific tag prefix
+  void deleteGroup(String tagPrefix) {
+    final keysToDelete = _singl.keys.where((key) => key.startsWith(tagPrefix)).toList();
+
+    for (final key in keysToDelete) {
+      delete(key: key);
+    }
+  }
+
+  /// Reload all instances with specific tag prefix
+  void reloadGroup(String tagPrefix) {
+    final keysToReload = _singl.keys.where((key) => key.startsWith(tagPrefix)).toList();
+
+    for (final key in keysToReload) {
+      reload(key: key);
+    }
+  }
+}
+
+/// Extension for instance status monitoring
+extension InstanceStatus on GetInterface {
+  /// Get status of all registered instances
+  Map<String, InstanceInfo> getAllInstancesStatus() {
+    final status = <String, InstanceInfo>{};
+
+    for (final entry in _singl.entries) {
+      status[entry.key] = getInstanceInfo(key: entry.key);
+    }
+
+    return status;
+  }
+
+  /// Check if any instances are in error state
+  bool hasErrors() {
+    return _singl.values.any((instance) => instance.dependency is GetLifeCycleMixin);
   }
 }

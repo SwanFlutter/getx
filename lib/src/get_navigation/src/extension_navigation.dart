@@ -1,9 +1,9 @@
 import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
-import 'package:get/get_navigation/src/routes/test_kit.dart';
+import 'package:getx/src/get_navigation/src/routes/test_kit.dart';
 
-import '../../get.dart';
+import '../../../getx.dart';
 import 'dialog/dialog_route.dart';
 import 'root/get_root.dart';
 
@@ -31,16 +31,14 @@ extension ExtensionBottomSheet on GetInterface {
     Duration? exitBottomSheetDuration,
     Curve? curve,
   }) {
-    return Navigator.of(overlayContext!, rootNavigator: useRootNavigator)
-        .push(GetModalBottomSheetRoute<T>(
+    return Navigator.of(overlayContext!, rootNavigator: useRootNavigator).push(GetModalBottomSheetRoute<T>(
       builder: (_) => bottomsheet,
       isPersistent: persistent,
       // theme: Theme.of(key.currentContext, shadowThemeOnly: true),
       theme: Theme.of(key.currentContext!),
       isScrollControlled: isScrollControlled,
 
-      barrierLabel: MaterialLocalizations.of(key.currentContext!)
-          .modalBarrierDismissLabel,
+      barrierLabel: MaterialLocalizations.of(key.currentContext!).modalBarrierDismissLabel,
 
       backgroundColor: backgroundColor ?? Colors.transparent,
       elevation: elevation,
@@ -51,10 +49,8 @@ extension ExtensionBottomSheet on GetInterface {
       modalBarrierColor: barrierColor,
       settings: settings,
       enableDrag: enableDrag,
-      enterBottomSheetDuration:
-          enterBottomSheetDuration ?? const Duration(milliseconds: 250),
-      exitBottomSheetDuration:
-          exitBottomSheetDuration ?? const Duration(milliseconds: 200),
+      enterBottomSheetDuration: enterBottomSheetDuration ?? const Duration(milliseconds: 250),
+      exitBottomSheetDuration: exitBottomSheetDuration ?? const Duration(milliseconds: 200),
       curve: curve,
     ));
   }
@@ -107,8 +103,7 @@ extension ExtensionDialog on GetInterface {
         );
       },
       navigatorKey: navigatorKey,
-      routeSettings:
-          routeSettings ?? RouteSettings(arguments: arguments, name: name),
+      routeSettings: routeSettings ?? RouteSettings(arguments: arguments, name: name),
       id: id,
     );
   }
@@ -126,10 +121,7 @@ extension ExtensionDialog on GetInterface {
       String? id}) {
     assert(!barrierDismissible || barrierLabel != null);
     final key = navigatorKey ?? Get.nestedKey(id)?.navigatorKey;
-    final nav = key?.currentState ??
-        Navigator.of(overlayContext!,
-            rootNavigator:
-                true); //overlay context will always return the root navigator
+    final nav = key?.currentState ?? Navigator.of(overlayContext!, rootNavigator: true); //overlay context will always return the root navigator
     return nav.push<T>(
       GetDialogRoute<T>(
         pageBuilder: pageBuilder,
@@ -189,12 +181,7 @@ extension ExtensionDialog on GetInterface {
           style: TextButton.styleFrom(
             tapTargetSize: MaterialTapTargetSize.shrinkWrap,
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-            shape: RoundedRectangleBorder(
-                side: BorderSide(
-                    color: buttonColor ?? theme.colorScheme.secondary,
-                    width: 2,
-                    style: BorderStyle.solid),
-                borderRadius: BorderRadius.circular(radius)),
+            shape: RoundedRectangleBorder(side: BorderSide(color: buttonColor ?? theme.colorScheme.secondary, width: 2, style: BorderStyle.solid), borderRadius: BorderRadius.circular(radius)),
           ),
           onPressed: () {
             if (onCancel == null) {
@@ -206,8 +193,7 @@ extension ExtensionDialog on GetInterface {
           },
           child: Text(
             textCancel ?? "Cancel",
-            style: TextStyle(
-                color: cancelTextColor ?? theme.colorScheme.secondary),
+            style: TextStyle(color: cancelTextColor ?? theme.colorScheme.secondary),
           ),
         ));
       }
@@ -220,13 +206,11 @@ extension ExtensionDialog on GetInterface {
             style: TextButton.styleFrom(
               tapTargetSize: MaterialTapTargetSize.shrinkWrap,
               backgroundColor: buttonColor ?? theme.colorScheme.secondary,
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(radius)),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(radius)),
             ),
             child: Text(
               textConfirm ?? "Ok",
-              style: TextStyle(
-                  color: confirmTextColor ?? theme.colorScheme.surface),
+              style: TextStyle(color: confirmTextColor ?? theme.colorScheme.surface),
             ),
             onPressed: () {
               onConfirm?.call();
@@ -239,16 +223,13 @@ extension ExtensionDialog on GetInterface {
       contentPadding: contentPadding ?? const EdgeInsets.all(8),
 
       backgroundColor: backgroundColor ?? theme.dialogBackgroundColor,
-      shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(radius))),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(radius))),
       title: Text(title, textAlign: TextAlign.center, style: titleStyle),
       content: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisSize: MainAxisSize.min,
         children: [
-          content ??
-              Text(middleText,
-                  textAlign: TextAlign.center, style: middleTextStyle),
+          content ?? Text(middleText, textAlign: TextAlign.center, style: middleTextStyle),
           const SizedBox(height: 16),
           ButtonTheme(
             minWidth: 78.0,
@@ -269,8 +250,7 @@ extension ExtensionDialog on GetInterface {
     return dialog<T>(
       onWillPop != null
           ? PopScope<T>(
-              onPopInvokedWithResult: (didPop, result) =>
-                  onWillPop(didPop, result),
+              onPopInvokedWithResult: (didPop, result) => onWillPop(didPop, result),
               // onPopInvoked: onWillPop,
               child: baseAlertDialog,
             )
@@ -525,8 +505,7 @@ extension GetNavigationExt on GetInterface {
       bool showCupertinoParallax = true,
       double Function(BuildContext context)? gestureWidth,
       bool rebuildStack = true,
-      PreventDuplicateHandlingMode preventDuplicateHandlingMode =
-          PreventDuplicateHandlingMode.reorderRoutes}) {
+      PreventDuplicateHandlingMode preventDuplicateHandlingMode = PreventDuplicateHandlingMode.reorderRoutes}) {
     return searchDelegate(id).to(
       page,
       opaque: opaque,
@@ -786,12 +765,10 @@ extension GetNavigationExt on GetInterface {
   }
 
   /// Returns true if a Snackbar, Dialog or BottomSheet is currently OPEN
-  bool get isOverlaysOpen =>
-      (isSnackbarOpen || isDialogOpen! || isBottomSheetOpen!);
+  bool get isOverlaysOpen => (isSnackbarOpen || isDialogOpen! || isBottomSheetOpen!);
 
   /// Returns true if there is no Snackbar, Dialog or BottomSheet open
-  bool get isOverlaysClosed =>
-      (!isSnackbarOpen && !isDialogOpen! && !isBottomSheetOpen!);
+  bool get isOverlaysClosed => (!isSnackbarOpen && !isDialogOpen! && !isBottomSheetOpen!);
 
   /// **Navigation.popUntil()** shortcut.<br><br>
   ///
@@ -918,9 +895,7 @@ extension GetNavigationExt on GetInterface {
     String? id,
     T? result,
   }) {
-    void handleClose(bool closeCondition, Function closeAllFunction,
-        Function closeSingleFunction,
-        [bool? isOpenCondition]) {
+    void handleClose(bool closeCondition, Function closeAllFunction, Function closeSingleFunction, [bool? isOpenCondition]) {
       if (closeCondition) {
         if (closeAll) {
           closeAllFunction();
@@ -932,8 +907,7 @@ extension GetNavigationExt on GetInterface {
 
     handleClose(closeSnackbar, closeAllSnackbars, closeCurrentSnackbar);
     handleClose(closeDialog, closeAllDialogs, closeOverlay, isDialogOpen);
-    handleClose(closeBottomSheet, closeAllBottomSheets, closeOverlay,
-        isBottomSheetOpen);
+    handleClose(closeBottomSheet, closeAllBottomSheets, closeOverlay, isBottomSheetOpen);
   }
 
   /// **Navigation.pushReplacement()** shortcut .<br><br>
@@ -1192,8 +1166,7 @@ extension GetNavigationExt on GetInterface {
   String get previousRoute => routing.previous;
 
   /// check if snackbar is open
-  bool get isSnackbarOpen =>
-      SnackbarController.isSnackbarBeingShown; //routing.isSnackbar;
+  bool get isSnackbarOpen => SnackbarController.isSnackbarBeingShown; //routing.isSnackbar;
 
   void closeAllSnackbars() {
     SnackbarController.cancelAllSnackbars();
@@ -1281,8 +1254,7 @@ extension GetNavigationExt on GetInterface {
   bool get isDarkMode => (theme.brightness == Brightness.dark);
 
   /// Check if dark mode theme is enable on platform on android Q+
-  bool get isPlatformDarkMode =>
-      (ui.PlatformDispatcher.instance.platformBrightness == Brightness.dark);
+  bool get isPlatformDarkMode => (ui.PlatformDispatcher.instance.platformBrightness == Brightness.dark);
 
   /// give access to Theme.of(context).iconTheme.color
   Color? get iconColor => theme.iconTheme.color;
@@ -1358,8 +1330,7 @@ extension GetNavigationExt on GetInterface {
   }
 
   /// Casts the stored router delegate to a desired type
-  TDelegate? delegate<TDelegate extends RouterDelegate<TPage>, TPage>() =>
-      _getxController.routerDelegate as TDelegate?;
+  TDelegate? delegate<TDelegate extends RouterDelegate<TPage>, TPage>() => _getxController.routerDelegate as TDelegate?;
 }
 
 extension OverlayExt on GetInterface {
@@ -1369,8 +1340,7 @@ extension OverlayExt on GetInterface {
     Widget? loadingWidget,
     double opacity = .5,
   }) async {
-    final navigatorState =
-        Navigator.of(Get.overlayContext!, rootNavigator: false);
+    final navigatorState = Navigator.of(Get.overlayContext!, rootNavigator: false);
     final overlayState = navigatorState.overlay!;
 
     final overlayEntryOpacity = OverlayEntry(builder: (context) {

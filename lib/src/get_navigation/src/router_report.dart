@@ -1,6 +1,6 @@
 import 'dart:collection';
 
-import '../../get.dart';
+import '../../../getx.dart';
 
 class RouterReportManager<T> {
   /// Holds a reference to `Get.reference` when the Instance was
@@ -17,8 +17,7 @@ class RouterReportManager<T> {
 
   RouterReportManager._();
 
-  static RouterReportManager get instance =>
-      _instance ??= RouterReportManager._();
+  static RouterReportManager get instance => _instance ??= RouterReportManager._();
 
   static void dispose() {
     _instance = null;
@@ -117,7 +116,7 @@ class RouterReportManager<T> {
         _routesKey[routeName]?.remove(element);
       }
     }
-    
+
     _routesKey.remove(routeName);
 
     keysToRemove.clear();

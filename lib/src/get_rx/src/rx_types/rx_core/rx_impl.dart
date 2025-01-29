@@ -1,41 +1,50 @@
+// ignore_for_file: unintended_html_in_doc_comment, avoid_shadowing_type_parameters
+
 part of '../rx_types.dart';
 
 /// global object that registers against `GetX` and `Obx`, and allows the
 /// reactivity
 /// of those `Widgets` and Rx values.
 
+/// Mixin that provides reactivity for `GetX` and `Obx` widgets.
+/// It allows these widgets to react to changes in Rx values.
 mixin RxObjectMixin<T> on GetListenable<T> {
+  final List<void Function()> _disposers = [];
+
+  /// Registers a disposer function to be called when the object is disposed.
+  void reportAdd(void Function() cancel) {
+    _disposers.add(cancel);
+  }
   //late T _value;
 
-  /// Makes a direct update of [value] adding it to the Stream
-  /// useful when you make use of Rx for custom Types to refresh your UI.
+  /// Updates the [value] and adds it to the stream.
+  /// Useful for custom types to refresh the UI.
   ///
-  /// Sample:
-  /// ```
-  ///  class Person {
-  ///     String name, last;
-  ///     int age;
-  ///     Person({this.name, this.last, this.age});
-  ///     @override
-  ///     String toString() => '$name $last, $age years old';
-  ///  }
+  /// Example:
+  /// ```dart
+  /// class Person {
+  ///   String name, last;
+  ///   int age;
+  ///   Person({this.name, this.last, this.age});
+  ///   @override
+  ///   String toString() => '$name $last, $age years old';
+  /// }
   ///
   /// final person = Person(name: 'John', last: 'Doe', age: 18).obs;
   /// person.value.name = 'Roi';
   /// person.refresh();
-  /// print( person );
+  /// print(person);
   /// ```
   // void refresh() {
   //   subject.add(value);
   // }
 
-  /// updates the value to `null` and adds it to the Stream.
-  /// Even with null-safety coming, is still an important feature to support, as
-  /// `call()` doesn't accept `null` values. For instance,
-  /// `InputDecoration.errorText` has to be null to not show the "error state".
+  /// Updates the value to `null` and adds it to the stream.
+  /// This is important for cases where `null` values are needed, such as
+  /// `InputDecoration.errorText` which must be null to not show an error state.
   ///
-  /// Sample:
-  /// ```
+  /// Example:
+  /// ```dart
   /// final inputError = ''.obs..nil();
   /// print('${inputError.runtimeType}: $inputError'); // outputs > RxString: null
   /// ```
@@ -43,22 +52,21 @@ mixin RxObjectMixin<T> on GetListenable<T> {
   //   subject.add(_value = null);
   // }
 
-  /// Makes this Rx looks like a function so you can update a new
-  /// value using `rx(someOtherValue)`. Practical to assign the Rx directly
-  /// to some Widget that has a signature ::onChange( value )
+  /// Allows the Rx object to be called like a function to update its value.
+  /// This is practical for assigning the Rx directly to a widget's onChange callback.
   ///
   /// Example:
-  /// ```
+  /// ```dart
   /// final myText = 'GetX rocks!'.obs;
   ///
   /// // in your Constructor, just to check it works :P
-  /// ever( myText, print ) ;
+  /// ever(myText, print);
   ///
   /// // in your build(BuildContext) {
   /// TextField(
   ///   onChanged: myText,
   /// ),
-  ///```
+  /// ```
   @override
   T call([T? v]) {
     if (v != null) {
@@ -70,17 +78,16 @@ mixin RxObjectMixin<T> on GetListenable<T> {
   bool firstRebuild = true;
   bool sentToStream = false;
 
-  /// Same as `toString()` but using a getter.
+  /// Returns the string representation of the current value.
   String get string => value.toString();
 
   @override
   String toString() => value.toString();
 
-  /// Returns the json representation of `value`.
+  /// Returns the JSON representation of the current value.
   dynamic toJson() => value;
 
-  /// This equality override works for _RxImpl instances and the internal
-  /// values.
+  /// Equality operator override to compare Rx values and internal values.
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
   bool operator ==(Object o) {
@@ -95,7 +102,7 @@ mixin RxObjectMixin<T> on GetListenable<T> {
   int get hashCode => value.hashCode;
 
   /// Updates the [value] and adds it to the stream, updating the observer
-  /// Widget, only if it's different from the previous value.
+  /// widget only if it's different from the previous value.
   @override
   set value(T val) {
     if (isDisposed) return;
@@ -106,12 +113,9 @@ mixin RxObjectMixin<T> on GetListenable<T> {
     super.value = val;
   }
 
-  /// Returns a [StreamSubscription] similar to [listen], but with the
-  /// added benefit that it primes the stream with the current [value], rather
-  /// than waiting for the next [value]. This should not be called in [onInit]
-  /// or anywhere else during the build process.
-  StreamSubscription<T> listenAndPump(void Function(T event) onData,
-      {Function? onError, void Function()? onDone, bool? cancelOnError}) {
+  /// Returns a [StreamSubscription] that primes the stream with the current [value].
+  /// This should not be called during the build process.
+  StreamSubscription<T> listenAndPump(void Function(T event) onData, {Function? onError, void Function()? onDone, bool? cancelOnError}) {
     final subscription = listen(
       onData,
       onError: onError,
@@ -125,78 +129,80 @@ mixin RxObjectMixin<T> on GetListenable<T> {
   }
 
   /// Binds an existing `Stream<T>` to this Rx<T> to keep the values in sync.
-  /// You can bind multiple sources to update the value.
-  /// Closing the subscription will happen automatically when the observer
-  /// Widget (`GetX` or `Obx`) gets unmounted from the Widget tree.
-  void bindStream(Stream<T> stream) {
-    // final listSubscriptions =
-    //     _subscriptions[subject] ??= <StreamSubscription>[];
+  /// Automatically closes the subscription when the observer widget is unmounted.
+  void bindStream<T>(Stream<T> stream, T Function(T)? onValue) {
+    final sub = stream.listen(
+      (va) {
+        if (onValue != null) onValue(va);
+      },
+      onError: (error) {
+        debugPrint('Stream Error: $error');
+      },
+      onDone: () {
+        debugPrint('Stream is done.');
+      },
+    );
+    reportAdd(() => sub.cancel());
+  }
 
-    final sub = stream.listen((va) => value = va);
-    reportAdd(sub.cancel);
+  @override
+  void dispose() {
+    for (final disposer in _disposers) {
+      disposer();
+    }
+    _disposers.clear();
+    super.dispose();
   }
 }
 
-/// Base Rx class that manages all the stream logic for any Type.
+/// Base Rx class that manages all the stream logic for any type.
 abstract class _RxImpl<T> extends GetListenable<T> with RxObjectMixin<T> {
   _RxImpl(super.initial);
 
+  /// Adds an error to the stream.
   void addError(Object error, [StackTrace? stackTrace]) {
     subject.addError(error, stackTrace);
   }
 
+  /// Maps the stream to a new type using the provided [mapper] function.
   Stream<R> map<R>(R Function(T? data) mapper) => stream.map(mapper);
 
-  /// Uses a callback to update [value] internally, similar to [refresh],
-  /// but provides the current value as the argument.
-  /// Makes sense for custom Rx types (like Models).
+  /// Updates the [value] using a callback, similar to [refresh].
+  /// Provides the current value as the argument.
   ///
-  /// Sample:
-  /// ```
-  ///  class Person {
-  ///     String name, last;
-  ///     int age;
-  ///     Person({this.name, this.last, this.age});
-  ///     @override
-  ///     String toString() => '$name $last, $age years old';
-  ///  }
+  /// Example:
+  /// ```dart
+  /// class Person {
+  ///   String name, last;
+  ///   int age;
+  ///   Person({this.name, this.last, this.age});
+  ///   @override
+  ///   String toString() => '$name $last, $age years old';
+  /// }
   ///
   /// final person = Person(name: 'John', last: 'Doe', age: 18).obs;
   /// person.update((person) {
   ///   person.name = 'Roi';
   /// });
-  /// print( person );
+  /// print(person);
   /// ```
   void update(T Function(T? val) fn) {
     value = fn(value);
     // subject.add(value);
   }
 
-  /// Following certain practices on Rx data, we might want to react to certain
-  /// listeners when a value has been provided, even if the value is the same.
-  /// At the moment, we ignore part of the process if we `.call(value)` with
-  /// the same value since it holds the value and there's no real
-  /// need triggering the entire process for the same value inside, but
-  /// there are other situations where we might be interested in
-  /// triggering this.
+  /// Triggers the listeners even if the value is the same.
+  /// Useful for certain Rx data practices where reactivity is needed
+  /// regardless of value changes.
   ///
-  /// For example, supposed we have a `int seconds = 2` and we want to animate
-  /// from invisible to visible a widget in two seconds:
-  /// RxEvent<int>.call(seconds);
-  /// then after a click happens, you want to call a RxEvent<int>.call(seconds).
-  /// By doing `call(seconds)`, if the value being held is the same,
-  /// the listeners won't trigger, hence we need this new `trigger` function.
-  /// This will refresh the listener of an AnimatedWidget and will keep
-  /// the value if the Rx is kept in memory.
-  /// Sample:
-  /// ```
-  /// Rx<Int> secondsRx = RxInt();
+  /// Example:
+  /// ```dart
+  /// Rx<int> secondsRx = RxInt();
   /// secondsRx.listen((value) => print("$value seconds set"));
   ///
   /// secondsRx.call(2);      // This won't trigger any listener, since the value is the same
   /// secondsRx.trigger(2);   // This will trigger the listener independently from the value.
   /// ```
-  ///
   void trigger(T v) {
     var firstRebuild = this.firstRebuild;
     value = v;

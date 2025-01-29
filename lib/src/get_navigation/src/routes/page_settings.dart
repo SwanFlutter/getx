@@ -1,6 +1,5 @@
 import 'package:flutter/widgets.dart';
-
-import '../../../route_manager.dart';
+import 'package:getx/src/get_navigation/src/routes/get_router_delegate.dart';
 
 extension PageArgExt on BuildContext {
   RouteSettings? get settings {
@@ -86,9 +85,7 @@ class PageSettings extends RouteSettings {
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
 
-    return other is PageSettings &&
-        other.uri == uri &&
-        other.arguments == arguments;
+    return other is PageSettings && other.uri == uri && other.arguments == arguments;
   }
 
   @override

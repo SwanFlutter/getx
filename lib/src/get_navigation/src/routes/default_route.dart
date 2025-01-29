@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 
-import '../../../get.dart';
+import '../../../../getx.dart';
 import '../router_report.dart';
 
 @optionalTypeArgs
@@ -32,8 +32,7 @@ mixin PageRouteReportMixin<T> on Route<T> {
   }
 }
 
-class GetPageRoute<T> extends PageRoute<T>
-    with GetPageRouteTransitionMixin<T>, PageRouteReportMixin {
+class GetPageRoute<T> extends PageRoute<T> with GetPageRouteTransitionMixin<T>, PageRouteReportMixin {
   /// Creates a page route for use in an iOS designed app.
   ///
   /// The [builder], [maintainState], and [fullscreenDialog] arguments must not
@@ -118,8 +117,7 @@ class GetPageRoute<T> extends PageRoute<T>
 
     final localBinds = [if (binds != null) ...binds!];
 
-    final bindingsToBind = _middlewareRunner
-        .runOnBindingsStart(bindings.isNotEmpty ? bindings : localBinds);
+    final bindingsToBind = _middlewareRunner.runOnBindingsStart(bindings.isNotEmpty ? bindings : localBinds);
 
     final pageToBuild = _middlewareRunner.runOnPageBuildStart(page)!;
 
@@ -158,4 +156,10 @@ class GetPageRoute<T> extends PageRoute<T>
 
   @override
   final double Function(BuildContext context)? gestureWidth;
+
+  @override
+  Widget buildPage(BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation) {
+    // TODO: implement buildPage
+    throw UnimplementedError();
+  }
 }

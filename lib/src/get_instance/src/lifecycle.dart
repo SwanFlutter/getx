@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
-
-import '../../get.dart';
+import 'package:getx/src/get_core/src/flutter_engine.dart';
+import 'package:getx/src/get_core/src/typedefs.dart';
 
 /// The [GetLifeCycle]
 ///
@@ -65,6 +65,8 @@ mixin GetLifeCycleMixin {
     _isClosed = true;
     onClose();
   }
+
+  bool get hasError => false;
 
 //   void _checkIfAlreadyConfigured() {
 //     if (_initialized) {

@@ -33,6 +33,9 @@ class FadeOutAnimation extends OpacityAnimation {
   });
 }
 
+/// Base animation class for opacity transitions
+/// [begin] - Starting opacity value (0.0 to 1.0)
+/// [end] - Ending opacity value (0.0 to 1.0)
 class OpacityAnimation extends GetAnimatedBuilder<double> {
   OpacityAnimation({
     super.key,
@@ -45,12 +48,10 @@ class OpacityAnimation extends GetAnimatedBuilder<double> {
     required super.idleValue,
   }) : super(
           tween: Tween<double>(begin: begin, end: end),
-          builder: (context, value, child) {
-            return Opacity(
-              opacity: value,
-              child: child!,
-            );
-          },
+          builder: (context, value, child) => Opacity(
+            opacity: value,
+            child: child!,
+          ),
         );
 }
 
@@ -268,8 +269,7 @@ class SlideInLeftAnimation extends SlideAnimation {
     required super.end,
     super.idleValue = 0,
   }) : super(
-          offsetBuild: (context, value) =>
-              Offset(value * MediaQuery.of(context).size.width, 0),
+          offsetBuild: (context, value) => Offset(value * MediaQuery.of(context).size.width, 0),
         );
 }
 
@@ -284,8 +284,7 @@ class SlideInRightAnimation extends SlideAnimation {
     required super.end,
     super.idleValue = 0,
   }) : super(
-          offsetBuild: (context, value) =>
-              Offset((1 - value) * MediaQuery.of(context).size.width, 0),
+          offsetBuild: (context, value) => Offset((1 - value) * MediaQuery.of(context).size.width, 0),
         );
 }
 
@@ -300,8 +299,7 @@ class SlideInUpAnimation extends SlideAnimation {
     required super.end,
     super.idleValue = 0,
   }) : super(
-          offsetBuild: (context, value) =>
-              Offset(0, value * MediaQuery.of(context).size.height),
+          offsetBuild: (context, value) => Offset(0, value * MediaQuery.of(context).size.height),
         );
 }
 
@@ -316,11 +314,12 @@ class SlideInDownAnimation extends SlideAnimation {
     required super.end,
     super.idleValue = 0,
   }) : super(
-          offsetBuild: (context, value) =>
-              Offset(0, (1 - value) * MediaQuery.of(context).size.height),
+          offsetBuild: (context, value) => Offset(0, (1 - value) * MediaQuery.of(context).size.height),
         );
 }
 
+/// Animation class for sliding elements with customizable direction
+/// [offsetBuild] - Function to calculate offset based on animation value
 class SlideAnimation extends GetAnimatedBuilder<double> {
   SlideAnimation({
     super.key,

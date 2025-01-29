@@ -1,7 +1,6 @@
 import 'package:flutter/widgets.dart';
 
 import '../../../../get_core/get_core.dart';
-import '../../../../instance_manager.dart';
 import '../../../get_navigation.dart';
 import '../../dialog/dialog_route.dart';
 import '../../router_report.dart';
@@ -98,8 +97,7 @@ class GetObserver extends NavigatorObserver {
       value.route = route;
       value.isBack = false;
       value.removed = '';
-      value.isBottomSheet =
-          newRoute.isBottomSheet ? true : value.isBottomSheet ?? false;
+      value.isBottomSheet = newRoute.isBottomSheet ? true : value.isBottomSheet ?? false;
       value.isDialog = newRoute.isDialog ? true : value.isDialog ?? false;
     });
 
@@ -123,8 +121,7 @@ class GetObserver extends NavigatorObserver {
       value.isBack = false;
       value.removed = routeName ?? '';
       value.previous = previousRouteName ?? '';
-      value.isBottomSheet =
-          currentRoute.isBottomSheet ? false : value.isBottomSheet;
+      value.isBottomSheet = currentRoute.isBottomSheet ? false : value.isBottomSheet;
       value.isDialog = currentRoute.isDialog ? false : value.isDialog;
     });
 
@@ -159,8 +156,7 @@ class GetObserver extends NavigatorObserver {
       value.isBack = false;
       value.removed = '';
       value.previous = '$oldName';
-      value.isBottomSheet =
-          currentRoute.isBottomSheet ? false : value.isBottomSheet;
+      value.isBottomSheet = currentRoute.isBottomSheet ? false : value.isBottomSheet;
       value.isDialog = currentRoute.isDialog ? false : value.isDialog;
     });
     if (oldRoute is GetPageRoute) {

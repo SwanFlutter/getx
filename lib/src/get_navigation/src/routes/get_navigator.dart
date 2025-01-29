@@ -1,6 +1,8 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:flutter/widgets.dart';
 
-import '../../../get.dart';
+import '../../../../getx.dart';
 
 class GetNavigator extends Navigator {
   GetNavigator.onGenerateRoute({
@@ -15,16 +17,14 @@ class GetNavigator extends Navigator {
   }) : super(
           //keys should be optional
           onPopPage: onPopPage ??
-              (route, result) {
-                final didPop = route.didPop(result);
-                if (!didPop) {
-                  return false;
+              (Route<dynamic> route, dynamic result) {
+                if (route.didPop(result)) {
+                  return true;
                 }
-                return true;
+                return false;
               },
           onGenerateRoute: (settings) {
-            final selectedPageList =
-                pages.where((element) => element.name == settings.name);
+            final selectedPageList = pages.where((element) => element.name == settings.name);
             if (selectedPageList.isNotEmpty) {
               final selectedPage = selectedPageList.first;
               return GetPageRoute(
@@ -38,8 +38,7 @@ class GetNavigator extends Navigator {
             // GetObserver(),
             ...?observers,
           ],
-          transitionDelegate:
-              transitionDelegate ?? const DefaultTransitionDelegate<dynamic>(),
+          transitionDelegate: transitionDelegate ?? const DefaultTransitionDelegate<dynamic>(),
         );
 
   GetNavigator({
@@ -54,19 +53,17 @@ class GetNavigator extends Navigator {
   }) : super(
           //keys should be optional
           onPopPage: onPopPage ??
-              (route, result) {
-                final didPop = route.didPop(result);
-                if (!didPop) {
-                  return false;
+              (Route<dynamic> route, dynamic result) {
+                if (route.didPop(result)) {
+                  return true;
                 }
-                return true;
+                return false;
               },
           observers: [
             // GetObserver(null, Get.routing),
             HeroController(),
             ...?observers,
           ],
-          transitionDelegate:
-              transitionDelegate ?? const DefaultTransitionDelegate<dynamic>(),
+          transitionDelegate: transitionDelegate ?? const DefaultTransitionDelegate<dynamic>(),
         );
 }

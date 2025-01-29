@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 
 import 'animations.dart';
 
+/// Base builder class for all animations
+/// Handles animation controller lifecycle and timing
 class GetAnimatedBuilder<T> extends StatefulWidget {
   final Duration duration;
   final Duration delay;
@@ -13,6 +15,7 @@ class GetAnimatedBuilder<T> extends StatefulWidget {
   final ValueWidgetBuilder<T> builder;
   final Curve curve;
 
+  /// Total duration including initial delay
   Duration get totalDuration => duration + delay;
 
   const GetAnimatedBuilder({
@@ -31,8 +34,9 @@ class GetAnimatedBuilder<T> extends StatefulWidget {
   GetAnimatedBuilderState<T> createState() => GetAnimatedBuilderState<T>();
 }
 
-class GetAnimatedBuilderState<T> extends State<GetAnimatedBuilder<T>>
-    with SingleTickerProviderStateMixin {
+/// State class for GetAnimatedBuilder
+/// Manages animation controller and handles animation lifecycle
+class GetAnimatedBuilderState<T> extends State<GetAnimatedBuilder<T>> with SingleTickerProviderStateMixin {
   late final AnimationController _controller;
   late final Animation<T> _animation;
 
@@ -48,6 +52,7 @@ class GetAnimatedBuilderState<T> extends State<GetAnimatedBuilder<T>>
 
   bool get willResetOnDispose => _willResetOnDispose;
 
+  /// Handles animation status changes and callbacks
   void _listener(AnimationStatus status) {
     switch (status) {
       case AnimationStatus.completed:
@@ -71,8 +76,7 @@ class GetAnimatedBuilderState<T> extends State<GetAnimatedBuilder<T>>
     super.initState();
 
     if (widget is OpacityAnimation) {
-      final current =
-          context.findRootAncestorStateOfType<GetAnimatedBuilderState>();
+      final current = context.findRootAncestorStateOfType<GetAnimatedBuilderState>();
       final isLast = current == null;
 
       if (widget is FadeInAnimation) {

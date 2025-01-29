@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 
-import '../../../get.dart';
+import '../../../../getx.dart';
 
 @immutable
 class RouteDecoder {
@@ -14,8 +14,7 @@ class RouteDecoder {
   factory RouteDecoder.fromRoute(String location) {
     var uri = Uri.parse(location);
     final args = PageSettings(uri);
-    final decoder =
-        (Get.rootController.rootDelegate).matchRoute(location, arguments: args);
+    final decoder = (Get.rootController.rootDelegate).matchRoute(location, arguments: args);
     decoder.route = decoder.route?.copyWith(
       completer: null,
       arguments: args,
@@ -24,11 +23,9 @@ class RouteDecoder {
     return decoder;
   }
 
-  GetPage? get route =>
-      currentTreeBranch.isEmpty ? null : currentTreeBranch.last;
+  GetPage? get route => currentTreeBranch.isEmpty ? null : currentTreeBranch.last;
 
-  GetPage routeOrUnknown(GetPage onUnknow) =>
-      currentTreeBranch.isEmpty ? onUnknow : currentTreeBranch.last;
+  GetPage routeOrUnknown(GetPage onUnknow) => currentTreeBranch.isEmpty ? onUnknow : currentTreeBranch.last;
 
   set route(GetPage? getPage) {
     if (getPage == null) return;
@@ -68,17 +65,14 @@ class RouteDecoder {
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
 
-    return other is RouteDecoder &&
-        listEquals(other.currentTreeBranch, currentTreeBranch) &&
-        other.pageSettings == pageSettings;
+    return other is RouteDecoder && listEquals(other.currentTreeBranch, currentTreeBranch) && other.pageSettings == pageSettings;
   }
 
   @override
   int get hashCode => currentTreeBranch.hashCode ^ pageSettings.hashCode;
 
   @override
-  String toString() =>
-      'RouteDecoder(currentTreeBranch: $currentTreeBranch, pageSettings: $pageSettings)';
+  String toString() => 'RouteDecoder(currentTreeBranch: $currentTreeBranch, pageSettings: $pageSettings)';
 }
 
 class ParseRouteTree {
@@ -187,21 +181,11 @@ class ParseRouteTree {
     final parentPath = route.name;
     for (var page in route.children) {
       // Add Parent middlewares to children
-      final parentMiddlewares = [
-        if (page.middlewares.isNotEmpty) ...page.middlewares,
-        if (route.middlewares.isNotEmpty) ...route.middlewares
-      ];
+      final parentMiddlewares = [if (page.middlewares.isNotEmpty) ...page.middlewares, if (route.middlewares.isNotEmpty) ...route.middlewares];
 
-      final parentBindings = [
-        if (page.binding != null) page.binding!,
-        if (page.bindings.isNotEmpty) ...page.bindings,
-        if (route.bindings.isNotEmpty) ...route.bindings
-      ];
+      final parentBindings = [if (page.binding != null) page.binding!, if (page.bindings.isNotEmpty) ...page.bindings, if (route.bindings.isNotEmpty) ...route.bindings];
 
-      final parentBinds = [
-        if (page.binds.isNotEmpty) ...page.binds,
-        if (route.binds.isNotEmpty) ...route.binds
-      ];
+      final parentBinds = [if (page.binds.isNotEmpty) ...page.binds, if (route.binds.isNotEmpty) ...route.binds];
 
       result.add(
         _addChild(
@@ -247,9 +231,7 @@ class ParseRouteTree {
   ) {
     return origin.copyWith(
       middlewares: middlewares,
-      name: origin.inheritParentPath
-          ? (parentPath + origin.name).replaceAll(r'//', '/')
-          : origin.name,
+      name: origin.inheritParentPath ? (parentPath + origin.name).replaceAll(r'//', '/') : origin.name,
       bindings: bindings,
       binds: binds,
       // key:

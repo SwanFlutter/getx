@@ -6,17 +6,22 @@ import 'package:flutter/material.dart';
 import '../../../get_core/get_core.dart';
 import '../../get_navigation.dart';
 
+/// Callback for snackbar tap events
 typedef OnTap = void Function(GetSnackBar snack);
-typedef OnHover = void Function(
-    GetSnackBar snack, SnackHoverState snackHoverState);
 
+/// Callback for snackbar hover events
+typedef OnHover = void Function(GetSnackBar snack, SnackHoverState snackHoverState);
+
+/// Callback for tracking snackbar status changes
 typedef SnackbarStatusCallback = void Function(SnackbarStatus? status);
 
+/// A highly customizable snackbar widget for GetX
+/// Supports various positions, animations, and user interactions
 class GetSnackBar extends StatefulWidget {
-  /// A callback for you to listen to the different Snack status
+  /// Callback for tracking snackbar status changes
   final SnackbarStatusCallback? snackbarStatus;
 
-  /// The title displayed to the user
+  /// Title text or widget
   final String? title;
 
   /// Defines how the snack bar area, including margin, will behave during hit testing.
@@ -33,7 +38,7 @@ class GetSnackBar extends StatefulWidget {
   /// when [snackPosition] == [SnackPosition.TOP]
   final DismissDirection? dismissDirection;
 
-  /// The message displayed to the user.
+  /// Message text or widget
   final String? message;
 
   /// Replaces [title]. Although this accepts a [Widget], it is meant
@@ -44,7 +49,7 @@ class GetSnackBar extends StatefulWidget {
   /// to receive [Text] or  [RichText]
   final Widget? messageText;
 
-  /// Will be ignored if [backgroundGradient] is not null
+  /// Visual customization
   final Color backgroundColor;
 
   /// If not null, shows a left vertical colored bar on notification.
@@ -83,8 +88,7 @@ class GetSnackBar extends StatefulWidget {
   /// A callback that registers the user's hover anywhere over the Snackbar.
   final OnHover? onHover;
 
-  /// How long until Snack will hide itself (be dismissed).
-  /// To make it indefinite, leave it null.
+  /// Timing and animation
   final Duration? duration;
 
   /// True if you want to show a [LinearProgressIndicator].
@@ -100,11 +104,7 @@ class GetSnackBar extends StatefulWidget {
   /// A [LinearProgressIndicator] configuration parameter.
   final Animation<Color>? progressIndicatorValueColor;
 
-  /// Determines if the user can swipe or click the overlay
-  /// (if [overlayBlur] > 0) to dismiss.
-  /// It is recommended that you set [duration] != null if this is false.
-  /// If the user swipes to dismiss or clicks the overlay, no value
-  /// will be returned.
+  /// Behavior
   final bool isDismissible;
 
   /// Used to limit Snack width (usually on large screens)
@@ -216,15 +216,11 @@ class GetSnackBar extends StatefulWidget {
   @override
   State createState() => GetSnackBarState();
 
-  /// Show the snack. It's call [SnackbarStatus.OPENING] state
-  /// followed by [SnackbarStatus.OPEN]
-  SnackbarController show() {
-    return Get.showSnackbar(this);
-  }
+  /// Show this snackbar
+  SnackbarController show() => Get.showSnackbar(this);
 }
 
-class GetSnackBarState extends State<GetSnackBar>
-    with TickerProviderStateMixin {
+class GetSnackBarState extends State<GetSnackBar> with TickerProviderStateMixin {
   AnimationController? _fadeController;
   late Animation<double> _fadeAnimation;
 
@@ -271,14 +267,9 @@ class GetSnackBarState extends State<GetSnackBar>
     return Align(
       heightFactor: 1.0,
       child: Material(
-        color: widget.snackStyle == SnackStyle.floating
-            ? Colors.transparent
-            : widget.backgroundColor,
+        color: widget.snackStyle == SnackStyle.floating ? Colors.transparent : widget.backgroundColor,
         child: SafeArea(
-          minimum: widget.snackPosition == SnackPosition.bottom
-              ? EdgeInsets.only(
-                  bottom: MediaQuery.of(context).viewInsets.bottom)
-              : EdgeInsets.only(top: MediaQuery.of(context).padding.top),
+          minimum: widget.snackPosition == SnackPosition.bottom ? EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom) : EdgeInsets.only(top: MediaQuery.of(context).padding.top),
           bottom: widget.snackPosition == SnackPosition.bottom,
           top: widget.snackPosition == SnackPosition.top,
           left: false,
@@ -295,15 +286,13 @@ class GetSnackBarState extends State<GetSnackBar>
                     return ClipRRect(
                       borderRadius: BorderRadius.circular(widget.borderRadius),
                       child: BackdropFilter(
-                        filter: ImageFilter.blur(
-                            sigmaX: widget.barBlur, sigmaY: widget.barBlur),
+                        filter: ImageFilter.blur(sigmaX: widget.barBlur, sigmaY: widget.barBlur),
                         child: Container(
                           height: snapshot.data!.height,
                           width: snapshot.data!.width,
                           decoration: BoxDecoration(
                             color: Colors.transparent,
-                            borderRadius:
-                                BorderRadius.circular(widget.borderRadius),
+                            borderRadius: BorderRadius.circular(widget.borderRadius),
                           ),
                         ),
                       ),
@@ -313,10 +302,7 @@ class GetSnackBarState extends State<GetSnackBar>
                   }
                 },
               ),
-              if (widget.userInputForm != null)
-                _containerWithForm()
-              else
-                _containerWithoutForm()
+              if (widget.userInputForm != null) _containerWithForm() else _containerWithoutForm()
             ],
           ),
         ),
@@ -339,11 +325,7 @@ class GetSnackBarState extends State<GetSnackBar>
   void initState() {
     super.initState();
 
-    assert(
-        widget.userInputForm != null ||
-            ((widget.message != null && widget.message!.isNotEmpty) ||
-                widget.messageText != null),
-        '''
+    assert(widget.userInputForm != null || ((widget.message != null && widget.message!.isNotEmpty) || widget.messageText != null), '''
 You need to either use message[String], or messageText[Widget] or define a userInputForm[Form] in GetSnackbar''');
 
     _isTitlePresent = (widget.title != null || widget.titleText != null);
@@ -395,18 +377,15 @@ You need to either use message[String], or messageText[Widget] or define a userI
   }
 
   void _configureProgressIndicatorAnimation() {
-    if (widget.showProgressIndicator &&
-        widget.progressIndicatorController != null) {
+    if (widget.showProgressIndicator && widget.progressIndicatorController != null) {
       widget.progressIndicatorController!.addListener(_updateProgress);
 
-      _progressAnimation = CurvedAnimation(
-          curve: Curves.linear, parent: widget.progressIndicatorController!);
+      _progressAnimation = CurvedAnimation(curve: Curves.linear, parent: widget.progressIndicatorController!);
     }
   }
 
   void _configurePulseAnimation() {
-    _fadeController =
-        AnimationController(vsync: this, duration: _pulseAnimationDuration);
+    _fadeController = AnimationController(vsync: this, duration: _pulseAnimationDuration);
     _fadeAnimation = Tween(begin: _initialOpacity, end: _finalOpacity).animate(
       CurvedAnimation(
         parent: _fadeController!,
@@ -429,9 +408,7 @@ You need to either use message[String], or messageText[Widget] or define a userI
   Widget _containerWithForm() {
     return Container(
       key: _backgroundBoxKey,
-      constraints: widget.maxWidth != null
-          ? BoxConstraints(maxWidth: widget.maxWidth!)
-          : null,
+      constraints: widget.maxWidth != null ? BoxConstraints(maxWidth: widget.maxWidth!) : null,
       decoration: BoxDecoration(
         color: widget.backgroundColor,
         gradient: widget.backgroundGradient,
@@ -445,8 +422,7 @@ You need to either use message[String], or messageText[Widget] or define a userI
             : null,
       ),
       child: Padding(
-        padding: const EdgeInsets.only(
-            left: 8.0, right: 8.0, bottom: 8.0, top: 16.0),
+        padding: const EdgeInsets.only(left: 8.0, right: 8.0, bottom: 8.0, top: 16.0),
         child: FocusScope(
           node: _focusNode,
           autofocus: true,
@@ -458,34 +434,24 @@ You need to either use message[String], or messageText[Widget] or define a userI
 
   Widget _containerWithoutForm() {
     final iconPadding = widget.padding.left > 16.0 ? widget.padding.left : 0.0;
-    final left = _rowStyle == RowStyle.icon || _rowStyle == RowStyle.all
-        ? 4.0
-        : widget.padding.left;
-    final right = _rowStyle == RowStyle.action || _rowStyle == RowStyle.all
-        ? 8.0
-        : widget.padding.right;
+    final left = _rowStyle == RowStyle.icon || _rowStyle == RowStyle.all ? 4.0 : widget.padding.left;
+    final right = _rowStyle == RowStyle.action || _rowStyle == RowStyle.all ? 8.0 : widget.padding.right;
     return Container(
       key: _backgroundBoxKey,
-      constraints: widget.maxWidth != null
-          ? BoxConstraints(maxWidth: widget.maxWidth!)
-          : null,
+      constraints: widget.maxWidth != null ? BoxConstraints(maxWidth: widget.maxWidth!) : null,
       decoration: BoxDecoration(
         color: widget.backgroundColor,
         gradient: widget.backgroundGradient,
         boxShadow: widget.boxShadows,
         borderRadius: BorderRadius.circular(widget.borderRadius),
-        border: widget.borderColor != null
-            ? Border.all(color: widget.borderColor!, width: widget.borderWidth!)
-            : null,
+        border: widget.borderColor != null ? Border.all(color: widget.borderColor!, width: widget.borderWidth!) : null,
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           widget.showProgressIndicator
               ? LinearProgressIndicator(
-                  value: widget.progressIndicatorController != null
-                      ? _progressAnimation.value
-                      : null,
+                  value: widget.progressIndicatorController != null ? _progressAnimation.value : null,
                   backgroundColor: widget.progressIndicatorBackgroundColor,
                   valueColor: widget.progressIndicatorValueColor,
                 )
@@ -496,8 +462,7 @@ You need to either use message[String], or messageText[Widget] or define a userI
               _buildLeftBarIndicator(),
               if (_rowStyle == RowStyle.icon || _rowStyle == RowStyle.all)
                 ConstrainedBox(
-                  constraints:
-                      BoxConstraints.tightFor(width: 42.0 + iconPadding),
+                  constraints: BoxConstraints.tightFor(width: 42.0 + iconPadding),
                   child: _getIcon(),
                 ),
               Expanded(
@@ -535,8 +500,7 @@ You need to either use message[String], or messageText[Widget] or define a userI
                       child: widget.messageText ??
                           Text(
                             widget.message ?? "",
-                            style: const TextStyle(
-                                fontSize: 14.0, color: Colors.white),
+                            style: const TextStyle(fontSize: 14.0, color: Colors.white),
                           ),
                     ),
                   ],

@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 
-import '../../../get.dart';
 import '../router_report.dart';
 
+/// A modal bottom sheet route that provides customizable appearance and behavior.
+/// Extends PopupRoute to create a bottom sheet with animation support.
 class GetModalBottomSheetRoute<T> extends PopupRoute<T> {
   GetModalBottomSheetRoute({
     this.builder,
@@ -25,23 +26,28 @@ class GetModalBottomSheetRoute<T> extends PopupRoute<T> {
   }) {
     RouterReportManager.instance.reportCurrentRoute(this);
   }
-  final bool? isPersistent;
-  final WidgetBuilder? builder;
+
+  // Appearance properties
   final ThemeData? theme;
-  final bool isScrollControlled;
   final Color? backgroundColor;
   final double? elevation;
   final ShapeBorder? shape;
   final Clip? clipBehavior;
   final Color? modalBarrierColor;
+
+  // Behavior properties
+  final bool? isPersistent;
+  final bool isScrollControlled;
   final bool isDismissible;
   final bool enableDrag;
-  // final String name;
+  final bool removeTop;
+
+  // Animation properties
   final Duration enterBottomSheetDuration;
   final Duration exitBottomSheetDuration;
   final Curve? curve;
-  // remove safearea from top
-  final bool removeTop;
+
+  final WidgetBuilder? builder;
 
   @override
   Duration get transitionDuration => const Duration(milliseconds: 700);
@@ -74,33 +80,28 @@ class GetModalBottomSheetRoute<T> extends PopupRoute<T> {
   @override
   AnimationController createAnimationController() {
     assert(_animationController == null);
-    _animationController =
-        BottomSheet.createAnimationController(navigator!.overlay!);
+    _animationController = BottomSheet.createAnimationController(navigator!.overlay!);
     _animationController!.duration = enterBottomSheetDuration;
     _animationController!.reverseDuration = exitBottomSheetDuration;
     return _animationController!;
   }
 
+  /// Builds the bottom sheet page with proper styling and configuration.
+  /// Handles theme inheritance and padding adjustments.
   @override
-  Widget buildPage(BuildContext context, Animation<double> animation,
-      Animation<double> secondaryAnimation) {
-    final sheetTheme =
-        theme?.bottomSheetTheme ?? Theme.of(context).bottomSheetTheme;
-    // By definition, the bottom sheet is aligned to the bottom of the page
-    // and isn't exposed to the top padding of the MediaQuery.
+  Widget buildPage(BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation) {
+    final sheetTheme = theme?.bottomSheetTheme ?? Theme.of(context).bottomSheetTheme;
+
+    // Create bottom sheet with proper settings and padding
     Widget bottomSheet = MediaQuery.removePadding(
       context: context,
       removeTop: removeTop,
       child: Padding(
-        padding:
-            EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+        padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
         child: _GetModalBottomSheet<T>(
           route: this,
-          backgroundColor: backgroundColor ??
-              sheetTheme.modalBackgroundColor ??
-              sheetTheme.backgroundColor,
-          elevation:
-              elevation ?? sheetTheme.modalElevation ?? sheetTheme.elevation,
+          backgroundColor: backgroundColor ?? sheetTheme.modalBackgroundColor ?? sheetTheme.backgroundColor,
+          elevation: elevation ?? sheetTheme.modalElevation ?? sheetTheme.elevation,
           shape: shape,
           clipBehavior: clipBehavior,
           isScrollControlled: isScrollControlled,
@@ -108,11 +109,14 @@ class GetModalBottomSheetRoute<T> extends PopupRoute<T> {
         ),
       ),
     );
+
+    // Apply theme if provided
     if (theme != null) bottomSheet = Theme(data: theme!, child: bottomSheet);
     return bottomSheet;
   }
 }
 
+/// Internal widget that builds the modal bottom sheet content
 class _GetModalBottomSheet<T> extends StatefulWidget {
   const _GetModalBottomSheet({
     super.key,
@@ -140,8 +144,7 @@ class _GetModalBottomSheet<T> extends StatefulWidget {
 
 class _GetModalBottomSheetState<T> extends State<_GetModalBottomSheet<T>> {
   String _getRouteLabel(MaterialLocalizations localizations) {
-    if ((Theme.of(context).platform == TargetPlatform.android) ||
-        (Theme.of(context).platform == TargetPlatform.fuchsia)) {
+    if ((Theme.of(context).platform == TargetPlatform.android) || (Theme.of(context).platform == TargetPlatform.fuchsia)) {
       return localizations.dialogLabel;
     } else {
       return '';
@@ -161,9 +164,7 @@ class _GetModalBottomSheetState<T> extends State<_GetModalBottomSheet<T>> {
       builder: (context, child) {
         // Disable the initial animation when accessible navigation is on so
         // that the semantics are added to the tree at the correct time.
-        final animationValue = mediaQuery.accessibleNavigation
-            ? 1.0
-            : widget.route!.animation!.value;
+        final animationValue = mediaQuery.accessibleNavigation ? 1.0 : widget.route!.animation!.value;
         return Semantics(
           scopesRoute: true,
           namesRoute: true,
@@ -171,8 +172,7 @@ class _GetModalBottomSheetState<T> extends State<_GetModalBottomSheet<T>> {
           explicitChildNodes: true,
           child: ClipRect(
             child: CustomSingleChildLayout(
-                delegate: _GetModalBottomSheetLayout(
-                    animationValue, widget.isScrollControlled),
+                delegate: _GetModalBottomSheetLayout(animationValue, widget.isScrollControlled),
                 child: widget.isPersistent == false
                     ? BottomSheet(
                         animationController: widget.route!._animationController,
@@ -190,8 +190,7 @@ class _GetModalBottomSheetState<T> extends State<_GetModalBottomSheet<T>> {
                       )
                     : Scaffold(
                         bottomSheet: BottomSheet(
-                          animationController:
-                              widget.route!._animationController,
+                          animationController: widget.route!._animationController,
                           onClosing: () {
                             // if (widget.route.isCurrent) {
                             //   Navigator.pop(context);
@@ -235,16 +234,13 @@ class _GetPerModalBottomSheet<T> extends StatefulWidget {
 
   @override
   // ignore: lines_longer_than_80_chars
-  _GetPerModalBottomSheetState<T> createState() =>
-      _GetPerModalBottomSheetState<T>();
+  _GetPerModalBottomSheetState<T> createState() => _GetPerModalBottomSheetState<T>();
 }
 
 // ignore: lines_longer_than_80_chars
-class _GetPerModalBottomSheetState<T>
-    extends State<_GetPerModalBottomSheet<T>> {
+class _GetPerModalBottomSheetState<T> extends State<_GetPerModalBottomSheet<T>> {
   String _getRouteLabel(MaterialLocalizations localizations) {
-    if ((Theme.of(context).platform == TargetPlatform.android) ||
-        (Theme.of(context).platform == TargetPlatform.fuchsia)) {
+    if ((Theme.of(context).platform == TargetPlatform.android) || (Theme.of(context).platform == TargetPlatform.fuchsia)) {
       return localizations.dialogLabel;
     } else {
       return '';
@@ -264,9 +260,7 @@ class _GetPerModalBottomSheetState<T>
       builder: (context, child) {
         // Disable the initial animation when accessible navigation is on so
         // that the semantics are added to the tree at the correct time.
-        final animationValue = mediaQuery.accessibleNavigation
-            ? 1.0
-            : widget.route!.animation!.value;
+        final animationValue = mediaQuery.accessibleNavigation ? 1.0 : widget.route!.animation!.value;
         return Semantics(
           scopesRoute: true,
           namesRoute: true,
@@ -274,8 +268,7 @@ class _GetPerModalBottomSheetState<T>
           explicitChildNodes: true,
           child: ClipRect(
             child: CustomSingleChildLayout(
-                delegate: _GetModalBottomSheetLayout(
-                    animationValue, widget.isScrollControlled),
+                delegate: _GetModalBottomSheetLayout(animationValue, widget.isScrollControlled),
                 child: widget.isPersistent == false
                     ? BottomSheet(
                         animationController: widget.route!._animationController,
@@ -293,8 +286,7 @@ class _GetPerModalBottomSheetState<T>
                       )
                     : Scaffold(
                         bottomSheet: BottomSheet(
-                          animationController:
-                              widget.route!._animationController,
+                          animationController: widget.route!._animationController,
                           onClosing: () {
                             // if (widget.route.isCurrent) {
                             //   Navigator.pop(context);
@@ -315,10 +307,14 @@ class _GetPerModalBottomSheetState<T>
   }
 }
 
+/// Layout delegate for the modal bottom sheet that handles size and position
 class _GetModalBottomSheetLayout extends SingleChildLayoutDelegate {
   _GetModalBottomSheetLayout(this.progress, this.isScrollControlled);
 
+  /// Animation progress value between 0.0 and 1.0
   final double progress;
+
+  /// Whether the bottom sheet can scroll beyond its default height
   final bool isScrollControlled;
 
   @override
@@ -327,9 +323,8 @@ class _GetModalBottomSheetLayout extends SingleChildLayoutDelegate {
       minWidth: constraints.maxWidth,
       maxWidth: constraints.maxWidth,
       minHeight: 0.0,
-      maxHeight: isScrollControlled
-          ? constraints.maxHeight
-          : constraints.maxHeight * 9.0 / 16.0,
+      // If scrollable, use full height, otherwise limit to 9/16 of screen height
+      maxHeight: isScrollControlled ? constraints.maxHeight : constraints.maxHeight * 9.0 / 16.0,
     );
   }
 

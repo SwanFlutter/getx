@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
 
-import '../../../get.dart';
+import '../../../../getx.dart';
 
 /// The Page Middlewares.
 /// The Functions will be called in this order
@@ -99,15 +99,11 @@ abstract class GetMiddleware {
 }
 
 class MiddlewareRunner {
-  MiddlewareRunner(List<GetMiddleware>? middlewares)
-      : _middlewares = middlewares != null
-            ? (List.of(middlewares)..sort(_compareMiddleware))
-            : const [];
+  MiddlewareRunner(List<GetMiddleware>? middlewares) : _middlewares = middlewares != null ? (List.of(middlewares)..sort(_compareMiddleware)) : const [];
 
   final List<GetMiddleware> _middlewares;
 
-  static int _compareMiddleware(GetMiddleware a, GetMiddleware b) =>
-      a.priority.compareTo(b.priority);
+  static int _compareMiddleware(GetMiddleware a, GetMiddleware b) => a.priority.compareTo(b.priority);
 
   GetPage? runOnPageCalled(GetPage? page) {
     for (final middleware in _middlewares) {
@@ -168,8 +164,7 @@ class PageRedirect {
   });
 
   // redirect all pages that needes redirecting
-  GetPageRoute<T> getPageToRoute<T>(
-      GetPage rou, GetPage? unk, BuildContext context) {
+  GetPageRoute<T> getPageToRoute<T>(GetPage rou, GetPage? unk, BuildContext context) {
     while (needRecheck(context)) {}
     final r = (isUnknown ? unk : rou)!;
 
@@ -190,8 +185,7 @@ class PageRedirect {
       binding: r.binding,
       binds: r.binds,
       transitionDuration: r.transitionDuration ?? Get.defaultTransitionDuration,
-      reverseTransitionDuration:
-          r.reverseTransitionDuration ?? Get.defaultTransitionDuration,
+      reverseTransitionDuration: r.reverseTransitionDuration ?? Get.defaultTransitionDuration,
       // performIncomeAnimation: _r.performIncomeAnimation,
       // performOutGoingAnimation: _r.performOutGoingAnimation,
       transition: r.transition,
