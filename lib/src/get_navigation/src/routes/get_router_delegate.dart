@@ -265,8 +265,6 @@ class GetDelegate extends RouterDelegate<RouteDecoder> with ChangeNotifier, PopN
         return await _popHistory<T>(result);
       case PopMode.page:
         return await _popPage<T>(result);
-      default:
-        return null;
     }
   }
 

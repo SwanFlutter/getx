@@ -79,7 +79,6 @@ class GetDialogRoute<T> extends PopupRoute<T> {
   @override
   bool get maintainState => _maintainState;
 
-  @override
   bool get fullscreenDialog => _fullscreenDialog;
 
   @override
