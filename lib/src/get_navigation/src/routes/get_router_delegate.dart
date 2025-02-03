@@ -5,13 +5,6 @@ import 'package:flutter/material.dart';
 
 import '../../../../getx.dart';
 
-/// A delegate that handles routing decisions in the GetX navigation system.
-///
-/// This class is responsible for:
-/// - Managing the navigation stack
-/// - Handling route transitions
-/// - Processing navigation events
-/// - Managing route history
 class GetDelegate extends RouterDelegate<RouteDecoder> with ChangeNotifier, PopNavigatorRouterDelegateMixin<RouteDecoder>, IGetNavigation {
   factory GetDelegate.createDelegate({
     GetPage<dynamic>? notFoundRoute,
@@ -21,7 +14,6 @@ class GetDelegate extends RouterDelegate<RouteDecoder> with ChangeNotifier, PopN
     PopMode backButtonPopMode = PopMode.history,
     PreventDuplicateHandlingMode preventDuplicateHandlingMode = PreventDuplicateHandlingMode.reorderRoutes,
     GlobalKey<NavigatorState>? navigatorKey,
-    bool preventDuplicates = false,
   }) {
     return GetDelegate(
       notFoundRoute: notFoundRoute,
@@ -31,32 +23,19 @@ class GetDelegate extends RouterDelegate<RouteDecoder> with ChangeNotifier, PopN
       preventDuplicateHandlingMode: preventDuplicateHandlingMode,
       pages: pages,
       navigatorKey: navigatorKey,
-      preventDuplicates: preventDuplicates,
     );
   }
 
-  /// Stack of active pages in the navigation history
   final List<RouteDecoder> _activePages = <RouteDecoder>[];
-
-  /// Controls how the back button behaves
   final PopMode backButtonPopMode;
-
-  /// Controls how duplicate routes are handled
   final PreventDuplicateHandlingMode preventDuplicateHandlingMode;
 
-  /// Route to show when requested page is not found
   final GetPage notFoundRoute;
 
-  /// List of observers that track navigation events
   final List<NavigatorObserver>? navigatorObservers;
-
-  /// Custom transition delegate for animations
   final TransitionDelegate<dynamic>? transitionDelegate;
 
   final Iterable<GetPage> Function(RouteDecoder currentNavStack)? pickPagesForRootNavigator;
-
-  /// Prevents duplicate routes from being added
-  final bool preventDuplicates;
 
   List<RouteDecoder> get activePages => _activePages;
 
@@ -102,7 +81,6 @@ class GetDelegate extends RouterDelegate<RouteDecoder> with ChangeNotifier, PopN
     bool showHashOnUrl = false,
     GlobalKey<NavigatorState>? navigatorKey,
     required List<GetPage> pages,
-    this.preventDuplicates = false,
   })  : navigatorKey = navigatorKey ?? GlobalKey<NavigatorState>(),
         notFoundRoute = notFoundRoute ??= GetPage(
           name: '/404',
@@ -265,6 +243,8 @@ class GetDelegate extends RouterDelegate<RouteDecoder> with ChangeNotifier, PopN
         return await _popHistory<T>(result);
       case PopMode.page:
         return await _popPage<T>(result);
+      default:
+        return null;
     }
   }
 
@@ -304,13 +284,13 @@ class GetDelegate extends RouterDelegate<RouteDecoder> with ChangeNotifier, PopN
   ///
   /// visual pages must have [GetPage.participatesInRootNavigator] set to true
   Iterable<GetPage> getVisualPages(RouteDecoder? currentHistory) {
-    final res = currentHistory!.currentTreeBranch.where((r) => r.participatesInRootNavigator != null);
+    final res = currentHistory!.currentTreeBranch.where((r) => r?.participatesInRootNavigator != null);
     if (res.isEmpty) {
       //default behavior, all routes participate in root navigator
       return _activePages.map((e) => e.route!);
     } else {
       //user specified at least one participatesInRootNavigator
-      return res.where((element) => element.participatesInRootNavigator == true);
+      return res.where((element) => element?.participatesInRootNavigator == true);
     }
   }
 
@@ -725,31 +705,45 @@ class GetDelegate extends RouterDelegate<RouteDecoder> with ChangeNotifier, PopN
     return decoder;
   }
 
-  /// Pushes a new route onto the navigation stack
   Future<T?> _push<T>(RouteDecoder decoder, {bool rebuildStack = true}) async {
-    // Handle duplicate routes if prevention is enabled
-    if (preventDuplicates) {
-      final duplicateRoute = _findDuplicateRoute(decoder);
-      if (duplicateRoute != null) {
-        return _handleDuplicateRoute<T>(duplicateRoute, decoder);
+    var res = await runMiddleware(decoder);
+    if (res == null) return null;
+    // final res = mid ?? decoder;
+    // if (res == null) res = decoder;
+
+    final preventDuplicateHandlingMode = res.route?.preventDuplicateHandlingMode ?? PreventDuplicateHandlingMode.reorderRoutes;
+
+    final onStackPage = _activePages.firstWhereOrNull((element) => element.route?.key == res.route?.key);
+
+    /// There are no duplicate routes in the stack
+    if (onStackPage == null) {
+      _activePages.add(res);
+    } else {
+      /// There are duplicate routes, reorder
+      switch (preventDuplicateHandlingMode) {
+        case PreventDuplicateHandlingMode.doNothing:
+          break;
+        case PreventDuplicateHandlingMode.reorderRoutes:
+          _activePages.remove(onStackPage);
+          _activePages.add(res);
+          break;
+        case PreventDuplicateHandlingMode.popUntilOriginalRoute:
+          while (_activePages.last == onStackPage) {
+            _popWithResult();
+          }
+          break;
+        case PreventDuplicateHandlingMode.recreate:
+          _activePages.remove(onStackPage);
+          _activePages.add(res);
+          break;
+        default:
       }
     }
-
-    // Add new route to stack
-    _activePages.add(decoder);
-
     if (rebuildStack) {
       notifyListeners();
     }
 
     return decoder.route?.completer?.future as Future<T?>?;
-  }
-
-  /// Finds a duplicate route in the current stack
-  RouteDecoder? _findDuplicateRoute(RouteDecoder newRoute) {
-    return _activePages.cast<RouteDecoder?>().firstWhereOrNull(
-          (element) => element?.pageSettings?.name == newRoute.pageSettings?.name,
-        );
   }
 
   @override
@@ -828,14 +822,5 @@ class GetDelegate extends RouterDelegate<RouteDecoder> with ChangeNotifier, PopN
     notifyListeners();
     //return !route.navigator!.userGestureInProgress;
     return true;
-  }
-
-  // Define the _handleDuplicateRoute method
-  Future<T?> _handleDuplicateRoute<T>(RouteDecoder duplicateRoute, RouteDecoder newRoute) async {
-    // Implement logic to handle duplicate routes
-    // For example, you might want to pop the duplicate route or replace it
-    await _unsafeHistoryRemoveAt(_activePages.indexOf(duplicateRoute), null);
-    await _unsafeHistoryAdd(newRoute);
-    return null;
   }
 }

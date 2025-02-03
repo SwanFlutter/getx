@@ -17,11 +17,12 @@ class GetNavigator extends Navigator {
   }) : super(
           //keys should be optional
           onPopPage: onPopPage ??
-              (Route<dynamic> route, dynamic result) {
-                if (route.didPop(result)) {
-                  return true;
+              (route, result) {
+                final didPop = route.didPop(result);
+                if (!didPop) {
+                  return false;
                 }
-                return false;
+                return true;
               },
           onGenerateRoute: (settings) {
             final selectedPageList = pages.where((element) => element.name == settings.name);
@@ -53,11 +54,12 @@ class GetNavigator extends Navigator {
   }) : super(
           //keys should be optional
           onPopPage: onPopPage ??
-              (Route<dynamic> route, dynamic result) {
-                if (route.didPop(result)) {
-                  return true;
+              (route, result) {
+                final didPop = route.didPop(result);
+                if (!didPop) {
+                  return false;
                 }
-                return false;
+                return true;
               },
           observers: [
             // GetObserver(null, Get.routing),

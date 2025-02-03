@@ -156,10 +156,4 @@ class GetPageRoute<T> extends PageRoute<T> with GetPageRouteTransitionMixin<T>, 
 
   @override
   final double Function(BuildContext context)? gestureWidth;
-
-  @override
-  Widget buildPage(BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation) {
-    // TODO: implement buildPage
-    throw UnimplementedError();
-  }
 }

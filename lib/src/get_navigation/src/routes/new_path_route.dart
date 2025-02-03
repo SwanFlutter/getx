@@ -51,8 +51,7 @@ class RouteMatcher {
   }
 
   RouteNode? _findChild(RouteNode currentNode, String segment) {
-    return currentNode.nodeSegments
-        .firstWhereOrNull((node) => node.matches(segment));
+    return currentNode.nodeSegments.firstWhereOrNull((node) => node.matches(segment));
   }
 
   MatchResult? matchRoute(String path) {
@@ -154,8 +153,7 @@ class RouteTree {
       bindings.addAll(child.bindings);
       child = child.copyWith(middlewares: middlewares, bindings: bindings);
       if (child.inheritParentPath) {
-        child = child.copyWith(
-            name: ('${route.path}/${child.path}').replaceAll(r'//', '/'));
+        child = child.copyWith(name: ('${route.path}/${child.path}').replaceAll(r'//', '/'));
       }
       addRoute(child);
     }
@@ -199,12 +197,10 @@ class MatchResult {
   /// Route url parameters eg: adding 'user' the match result for 'user?foo=bar' will be: {foo: bar}
   final Map<String, String> urlParameters;
 
-  MatchResult(this.node, this.parameters, this.currentPath,
-      {this.urlParameters = const {}});
+  MatchResult(this.node, this.parameters, this.currentPath, {this.urlParameters = const {}});
 
   @override
-  String toString() =>
-      'MatchResult(node: $node, currentPath: $currentPath, parameters: $parameters, urlParameters: $urlParameters)';
+  String toString() => 'MatchResult(node: $node, currentPath: $currentPath, parameters: $parameters, urlParameters: $urlParameters)';
 }
 
 // A class representing a node in a routing tree.
@@ -243,8 +239,7 @@ class RouteNode {
   }
 
   @override
-  String toString() =>
-      'RouteNode(name: $path, nodeSegments: $nodeSegments, fullPath: $fullPath )';
+  String toString() => 'RouteNode(name: $path, nodeSegments: $nodeSegments, fullPath: $fullPath )';
 }
 
 extension Foo<T> on Iterable<T> {

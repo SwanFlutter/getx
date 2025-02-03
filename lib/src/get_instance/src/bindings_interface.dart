@@ -1,68 +1,70 @@
 // ignore: one_member_abstracts
 
-// ignore: one_member_abstracts
+import '../../../getx.dart';
+
+/// Interface for defining dependencies in the application.
+/// This interface provides a standard way to define dependencies
+/// across different implementations.
 abstract class BindingsInterface<T> {
+  /// Main method for defining and initializing dependencies.
+  /// The type T allows returning different types.
   T dependencies();
 }
 
-/// [Bindings] should be extended or implemented.
-/// When using `GetMaterialApp`, all `GetPage`s and navigation
-/// methods (like Get.to()) have a `binding` property that takes an
-/// instance of Bindings to manage the
-/// dependencies() (via Get.put()) for the Route you are opening.
-// ignore: one_member_abstracts
-@Deprecated('Use Binding instead')
-abstract class Bindings extends BindingsInterface<void> {
+/// Base class for managing dependency injection in the application.
+/// When using GetMaterialApp, all GetPages have a property called `binding`
+/// which receives an instance of Binding.
+///
+/// Example:
+/// ```dart
+/// class HomeBinding extends Binding {
+///   @override
+///   void dependencies() {
+///     Get.put(HomeController()); // Main controller
+///     Get.put(ApiService());     // API service
+///   }
+/// }
+/// ```
+abstract class Binding extends BindingsInterface<void> {
   @override
   void dependencies();
 }
 
-// /// Simplifies Bindings generation from a single callback.
-// /// To avoid the creation of a custom Binding instance per route.
-// ///
-// /// Example:
-// /// ```
-// /// GetPage(
-// ///   name: '/',
-// ///   page: () => Home(),
-// ///   // This might cause you an error.
-// ///   // binding: BindingsBuilder(() => Get.put(HomeController())),
-// ///   binding: BindingsBuilder(() { Get.put(HomeController(); })),
-// ///   // Using .lazyPut() works fine.
-// ///   // binding: BindingsBuilder(() => Get.lazyPut(() => HomeController())),
-// /// ),
-// /// ```
-// class BindingsBuilder<T> extends Bindings {
-//   /// Register your dependencies in the [builder] callback.
-//   final BindingBuilderCallback builder;
+/// Simplifies the creation of Bindings using a callback.
+/// This class helps define bindings without creating a separate class.
+class BindingsBuilder<T> extends Binding {
+  /// Callback function that contains the logic for registering dependencies.
+  final BindingBuilderCallback builder;
 
-//   /// Shortcut to register 1 Controller with Get.put(),
-//   /// Prevents the issue of the fat arrow function with the constructor.
-//   /// BindingsBuilder(() => Get.put(HomeController())),
-//   ///
-//   /// Sample:
-//   /// ```
-//   /// GetPage(
-//   ///   name: '/',
-//   ///   page: () => Home(),
-//   ///   binding: BindingsBuilder.put(() => HomeController()),
-//   /// ),
-//   /// ```
-//   factory BindingsBuilder.put(InstanceBuilderCallback<T> builder,
-//       {String? tag, bool permanent = false}) {
-//     return BindingsBuilder(
-//         () => Get.put<T>(builder(), tag: tag, permanent: permanent));
-//   }
+  /// Constructor for BindingsBuilder with the required callback.
+  BindingsBuilder(this.builder);
 
-//   /// WARNING: don't use `()=> Get.put(Controller())`,
-//   /// if only passing 1 callback use `BindingsBuilder.put(Controller())`
-//   /// or `BindingsBuilder(()=> Get.lazyPut(Controller()))`
-//   BindingsBuilder(this.builder);
+  /// Factory constructor for quickly placing an instance in Get.
+  ///
+  /// Parameters:
+  /// - [builder]: Instance builder function.
+  /// - [tag]: Optional tag for identifying the instance.
+  /// - [permanent]: Whether the instance should be permanent.
+  factory BindingsBuilder.put(
+    InstanceBuilderCallback<T> builder, {
+    String? tag,
+    bool permanent = false,
+  }) {
+    return BindingsBuilder(
+      () => Get.put<T>(
+        builder(),
+        tag: tag,
+        permanent: permanent,
+      ),
+    );
+  }
 
-//   @override
-//   void dependencies() {
-//     builder();
-//   }
-// }
+  @override
+  void dependencies() => builder();
+}
 
+/// Type definition for binding builder callback functions.
 typedef BindingBuilderCallback = void Function();
+
+/// Type definition for instance builder callback functions.
+typedef InstanceBuilderCallback<T> = T Function();

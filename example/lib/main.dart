@@ -1,4 +1,4 @@
-import 'package:example/screen/home.dart';
+import 'package:example/screen/login.dart';
 import 'package:flutter/material.dart';
 import 'package:getx/getx.dart';
 
@@ -14,11 +14,12 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return GetMaterialApp(
       title: 'Flutter Demo',
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const Home(),
+      home: const LoginPage(),
     );
   }
 }

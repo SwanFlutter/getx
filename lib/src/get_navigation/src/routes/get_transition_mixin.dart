@@ -362,8 +362,8 @@ Cannot read the previousTitle for a route that has not yet been installed''',
       if (route.customTransition != null) {
         return route.customTransition!.buildTransition(
           context,
-          route.curve ?? Curves.linear,
-          route.alignment ?? Alignment.center,
+          finalCurve,
+          route.alignment,
           animation,
           secondaryAnimation,
           GetBackGestureDetector<T>(
@@ -663,14 +663,7 @@ Cannot read the previousTitle for a route that has not yet been installed''',
           final customTransition = GetRoot.of(context).config.customTransition;
 
           if (customTransition != null) {
-            return customTransition.buildTransition(
-              context,
-              route.curve ?? Curves.linear,
-              route.alignment ?? Alignment.center,
-              animation,
-              secondaryAnimation,
-              child,
-            );
+            return customTransition.buildTransition(context, route.curve, route.alignment, animation, secondaryAnimation, child);
           }
 
           PageTransitionsTheme pageTransitionsTheme = Theme.of(context).pageTransitionsTheme;

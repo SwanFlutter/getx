@@ -10,5 +10,5 @@ export 'src/get_core/get_core.dart';
 export 'src/get_instance/get_instance.dart';
 export 'src/get_navigation/get_navigation.dart';
 export 'src/get_rx/get_rx.dart';
-export 'src/get_state_manager/get_state_manager.dart';
+export 'src/get_state_manager/get_state_manager.dart' hide Binding;
 export 'src/get_utils/get_utils.dart';

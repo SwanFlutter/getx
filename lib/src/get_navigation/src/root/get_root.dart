@@ -1,41 +1,20 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:getx/src/get_core/get_core.dart';
-import 'package:getx/src/get_instance/src/extension_instance.dart';
-import 'package:getx/src/get_navigation/src/extension_navigation.dart';
-import 'package:getx/src/get_navigation/src/root/internacionalization.dart';
-import 'package:getx/src/get_navigation/src/routes/index.dart';
-import 'package:getx/src/get_navigation/src/snackbar/snackbar_controller.dart';
-import 'package:getx/src/get_state_manager/src/simple/get_state.dart';
-import 'package:getx/src/get_utils/src/extensions/context_extensions.dart';
-import 'package:getx/src/get_utils/src/extensions/event_loop_extensions.dart';
-import 'package:getx/src/get_utils/src/extensions/internacionalization.dart';
-import 'package:getx/src/get_utils/src/platform/platform.dart';
+import 'package:getx/src/get_navigation/src/routes/test_kit.dart';
 
+import '../../../../getx.dart';
 import '../router_report.dart';
 
-/// Configuration data class that holds all GetX app settings and parameters
 class ConfigData {
-  /// Callback for routing events
   final ValueChanged<Routing?>? routingCallback;
-
-  /// Default transition animation for routes
   final Transition? defaultTransition;
-
-  /// Lifecycle callbacks
   final VoidCallback? onInit;
   final VoidCallback? onReady;
   final VoidCallback? onDispose;
-
-  /// Logging configuration
   final bool? enableLog;
   final LogWriterCallback? logWriterCallback;
-
-  /// Dependency injection and state management
   final SmartManagement smartManagement;
   final List<Bind> binds;
-
-  /// Navigation and routing configuration
   final Duration? transitionDuration;
   final bool? defaultGlobalState;
   final List<GetPage>? getPages;
@@ -47,34 +26,24 @@ class ConfigData {
   final List<NavigatorObserver>? navigatorObservers;
   final GlobalKey<NavigatorState>? navigatorKey;
   final GlobalKey<ScaffoldMessengerState>? scaffoldMessengerKey;
-
-  /// Internationalization settings
   final Map<String, Map<String, String>>? translationsKeys;
   final Translations? translations;
   final Locale? locale;
   final Locale? fallbackLocale;
-
-  /// Route settings
   final String? initialRoute;
   final CustomTransition? customTransition;
   final Widget? home;
-
-  /// Theme configuration
+  final bool testMode;
+  final Key? unikey;
   final ThemeData? theme;
   final ThemeData? darkTheme;
   final ThemeMode? themeMode;
-
-  /// Navigation behavior settings
   final bool defaultPopGesture;
   final bool defaultOpaqueRoute;
   final Duration defaultTransitionDuration;
   final Curve defaultTransitionCurve;
   final Curve defaultDialogTransitionCurve;
   final Duration defaultDialogTransitionDuration;
-
-  /// Internal state
-  final bool testMode;
-  final Key? unikey;
   final Routing routing;
   final Map<String, String?> parameters;
   final SnackBarQueue snackBarQueue = SnackBarQueue();
@@ -301,26 +270,21 @@ class ConfigData {
   }
 }
 
-/// Root widget for GetX applications
-/// Manages the application state, configuration, and lifecycle
 class GetRoot extends StatefulWidget {
   const GetRoot({
     super.key,
     required this.config,
     required this.child,
   });
-
   final ConfigData config;
   final Widget child;
-
   @override
   State<GetRoot> createState() => GetRootState();
 
-  /// Check if the GetX widget tree is initialized
   static bool get treeInitialized => GetRootState._controller != null;
 
-  /// Get the root state from a BuildContext
   static GetRootState of(BuildContext context) {
+    // Handles the case where the input context is a navigator element.
     GetRootState? root;
     if (context is StatefulElement && context.state is GetRootState) {
       root = context.state as GetRootState;
@@ -330,7 +294,8 @@ class GetRoot extends StatefulWidget {
       if (root == null) {
         throw FlutterError(
           'GetRoot operation requested with a context that does not include a GetRoot.\n'
-          'The context used must be that of a widget that is a descendant of a GetRoot widget.',
+          'The context used must be that of a '
+          'widget that is a descendant of a GetRoot widget.',
         );
       }
       return true;
@@ -339,97 +304,35 @@ class GetRoot extends StatefulWidget {
   }
 }
 
-/// State management for GetRoot widget
-/// Handles lifecycle, configuration, and state updates
 class GetRootState extends State<GetRoot> with WidgetsBindingObserver {
   static GetRootState? _controller;
-
-  /// Global access to root state controller
   static GetRootState get controller {
     if (_controller == null) {
-      throw Exception('GetRoot is not part of the tree');
+      throw Exception('GetRoot is not part of the three');
+    } else {
+      return _controller!;
     }
-    return _controller!;
   }
 
   late ConfigData config;
 
   @override
   void initState() {
-    super.initState();
     config = widget.config;
     GetRootState._controller = this;
     ambiguate(Engine.instance)!.addObserver(this);
     onInit();
+    super.initState();
   }
 
-  /// Initialize the application
-  void onInit() {
-    _validateConfiguration();
-    _setupRouting();
-    _setupInternationalization();
-    _setupConfiguration();
-    Future(() => onReady());
-  }
+  // @override
+  // void didUpdateWidget(covariant GetRoot oldWidget) {
+  //   if (oldWidget.config != widget.config) {
+  //     config = widget.config;
+  //   }
 
-  /// Validate required configuration
-  void _validateConfiguration() {
-    if (config.getPages == null && config.home == null) {
-      throw 'You need to add pages or home';
-    }
-  }
-
-  /// Setup routing configuration
-  void _setupRouting() {
-    if (config.routerDelegate == null) {
-      _setupDefaultDelegate();
-    }
-
-    if (config.routeInformationParser == null) {
-      _setupDefaultParser();
-    }
-  }
-
-  /// Setup internationalization
-  void _setupInternationalization() {
-    if (config.locale != null) Get.locale = config.locale;
-    if (config.fallbackLocale != null) Get.fallbackLocale = config.fallbackLocale;
-    if (config.translations != null) {
-      Get.addTranslations(config.translations!.keys);
-    } else if (config.translationsKeys != null) {
-      Get.addTranslations(config.translationsKeys!);
-    }
-  }
-
-  /// Setup general configuration
-  void _setupConfiguration() {
-    Get.smartManagement = config.smartManagement;
-    Get.isLogEnable = config.enableLog ?? kDebugMode;
-    Get.log = config.logWriterCallback ?? defaultLogWriterCallback;
-
-    if (config.defaultTransition == null) {
-      config = config.copyWith(defaultTransition: getThemeTransition());
-    }
-  }
-
-  /// Setup a default router delegate if none is provided
-  void _setupDefaultDelegate() {
-    config = config.copyWith(
-      routerDelegate: GetDelegate(
-        pages: config.getPages ?? [],
-        navigatorKey: config.navigatorKey,
-      ),
-    );
-  }
-
-  /// Setup a default route information parser if none is provided
-  void _setupDefaultParser() {
-    config = config.copyWith(
-      routeInformationParser: GetInformationParser(
-        initialRoute: config.initialRoute ?? '/',
-      ),
-    );
-  }
+  //   super.didUpdateWidget(oldWidget);
+  // }
 
   void onClose() {
     config.onDispose?.call();
@@ -446,6 +349,77 @@ class GetRootState extends State<GetRoot> with WidgetsBindingObserver {
   void dispose() {
     onClose();
     super.dispose();
+  }
+
+  void onInit() {
+    if (config.getPages == null && config.home == null) {
+      throw 'You need add pages or home';
+    }
+
+    if (config.routerDelegate == null) {
+      final newDelegate = GetDelegate.createDelegate(
+        pages: config.getPages ??
+            [
+              GetPage(
+                name: cleanRouteName("/${config.home.runtimeType}"),
+                page: () => config.home!,
+              ),
+            ],
+        notFoundRoute: config.unknownRoute,
+        navigatorKey: config.navigatorKey,
+        navigatorObservers: (config.navigatorObservers == null
+            ? <NavigatorObserver>[GetObserver(config.routingCallback, Get.routing)]
+            : <NavigatorObserver>[GetObserver(config.routingCallback, config.routing), ...config.navigatorObservers!]),
+      );
+      config = config.copyWith(routerDelegate: newDelegate);
+    }
+
+    if (config.routeInformationParser == null) {
+      final newRouteInformationParser = GetInformationParser.createInformationParser(
+        initialRoute: config.initialRoute ?? config.getPages?.first.name ?? cleanRouteName("/${config.home.runtimeType}"),
+      );
+
+      config = config.copyWith(routeInformationParser: newRouteInformationParser);
+    }
+
+    if (config.locale != null) Get.locale = config.locale;
+
+    if (config.fallbackLocale != null) {
+      Get.fallbackLocale = config.fallbackLocale;
+    }
+
+    if (config.translations != null) {
+      Get.addTranslations(config.translations!.keys);
+    } else if (config.translationsKeys != null) {
+      Get.addTranslations(config.translationsKeys!);
+    }
+
+    Get.smartManagement = config.smartManagement;
+    config.onInit?.call();
+
+    Get.isLogEnable = config.enableLog ?? kDebugMode;
+    Get.log = config.logWriterCallback ?? defaultLogWriterCallback;
+
+    if (config.defaultTransition == null) {
+      config = config.copyWith(defaultTransition: getThemeTransition());
+    }
+
+    // defaultOpaqueRoute = config.opaqueRoute ?? true;
+    // defaultPopGesture = config.popGesture ?? GetPlatform.isIOS;
+    // defaultTransitionDuration =
+    //     config.transitionDuration ?? Duration(milliseconds: 300);
+
+    Future(() => onReady());
+  }
+
+  set parameters(Map<String, String?> newParameters) {
+    // rootController.parameters = newParameters;
+    config = config.copyWith(parameters: newParameters);
+  }
+
+  set testMode(bool isTest) {
+    config = config.copyWith(testMode: isTest);
+    GetTestMode.active = isTest;
   }
 
   void onReady() {
