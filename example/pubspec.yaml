@@ -37,6 +37,7 @@ dependencies:
   getx: 
     path: ../
   intl: ^0.20.2
+  app_bar_auto_hide: ^0.0.1
 
 dev_dependencies:
   flutter_test:
