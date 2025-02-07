@@ -21,9 +21,8 @@ This document provides an overview of the `CustomExpandableBottomSheetRoute` cla
 
 ## Introduction
 
-![customExpandableBottomSheet](https://github.com/user-attachments/assets/f8232e77-47f5-4b66-a582-a411c408f1dc)
 
-![20250206_222644](https://github.com/user-attachments/assets/22849080-4090-439e-aca0-e9a34d8c520d)
+<img src="https://github.com/user-attachments/assets/f8232e77-47f5-4b66-a582-a411c408f1dc" width="300"/> <img src="https://github.com/user-attachments/assets/22849080-4090-439e-aca0-e9a34d8c520d" width="300"/>
 
 
 ---
