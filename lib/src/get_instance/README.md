@@ -2,190 +2,202 @@
 
 This section of the code is responsible for managing dependencies and instances of classes in your application. With this system, you can easily create, manage, and delete class instances.
 
+
+---
+
+
 ## Key Features
 
-### 1. **SmartPut**
-`SmartPut` is an advanced method for dependency injection that combines the features of `put()` and `lazyPut()`.
+# Smart Dependency Management Extension
 
-#### Practical Examples:
+## Overview
+
+The `SmartDependencyManagement` extension provides advanced dependency injection and management strategies for Dart applications using GetX.
+
+## Methods
+
+### 1. `smartPut<S>`
+
+#### Description
+Intelligently manages dependency injection with conditional logic and instance validation.
+
+#### Example
 ```dart
-// Authentication service that needs to be ready early
-Get.smartPut(
-  () => AuthService(),
-  priority: Priority.high,
-  permanent: true,
-  lazy: false,
-);
-```
-
-### 2. **Lifecycle Management**
-Using `GetLifeCycleMixin`, you can manage the lifecycle of controllers and services. This includes methods like `onInit()`, `onReady()`, and `onClose()`.
-
-#### Example:
-```dart
-class SomeController with GetLifeCycleMixin {
+class AppBindings extends Bindings {
   @override
-  void onInit() {
-    super.onInit();
-    // Initialization code
+  void dependencies() {
+    Get.smartPut(
+      builder: () => TodosController(),
+      condition: () => true, // Optional condition
+      validityCheck: (controller) => controller.todos.isEmpty,
+      permanent: true,
+    );
   }
 }
 ```
 
-### 3. **Group Management**
-With `GroupManagement`, you can delete or reload all instances with a specific tag prefix.
+### 2. `smartPutIf<S>`
 
-#### Example:
+#### Description
+Advanced dependency management with primary and secondary conditions, including fallback mechanisms.
+
+#### Example
 ```dart
-// Delete all instances with the prefix 'user'
-Get.deleteGroup('user');
-```
-
-### 4. **Instance Status**
-Using `InstanceStatus`, you can get the status of all registered instances and check if any instance is in an error state.
-
-#### Example:
-```dart
-final status = Get.getAllInstancesStatus();
-final hasErrors = Get.hasErrors();
-```
-
-## How to Use
-
-To use this system, simply utilize the methods provided in the various classes. These methods allow you to easily manage dependencies and take advantage of lifecycle management and instance status features.
-
-### Important Notes
-
-- It is not necessary to set all properties. In most cases, default values are sufficient and only need to be configured in specific cases.
-- This system provides great flexibility and control over how your services and controllers are initialized and managed throughout your application's lifecycle.
-
-```dart
-// Complete example of usage in a real project:
-
-class MyApp extends StatelessWidget {
+class AppBindings extends Bindings {
   @override
-  Widget build(BuildContext context) {
-    // 1. Core services with high priority
-    Get.smartPut(
-      () => AuthenticationService(),
-      priority: Priority.high,  // Initializes first
-      permanent: true,         // Never removed from memory
-      lazy: false,            // Created immediately
+  void dependencies() {
+    Get.smartPutIf(
+      primaryCondition: () => authController.isLoggedIn,
+      builder: () => UserProfileController(),
+      fallbackBuilder: () => GuestProfileController(),
+      secondaryValidation: (controller) => controller.isProfileComplete(),
+      enableLogging: true,
+      permanent: true,
     );
+  }
+}
+```
 
-    // 2. Main controller with preload
-    Get.smartPut(
-      () => MainController(),
-      preload: () async {
-        await loadInitialData();
+### 3. `lazyManage<S>`
+
+#### Description
+Simplified lazy initialization of dependencies with optional creation conditions.
+
+#### Example
+```dart
+class AppBindings extends Bindings {
+  @override
+  void dependencies() {
+    Get.lazyManage(
+      builder: () => ExpensiveServiceController(),
+      initCondition: () => FeatureFlags.isAdvancedFeatureEnabled,
+      permanent: false,
+    );
+  }
+}
+```
+
+## Best Practices
+
+- Use `smartPut` for simple conditional initialization
+- Prefer `smartPutIf` for complex dependency scenarios
+- Utilize `lazyManage` for performance-sensitive or optional services
+- Always provide meaningful conditions and validation checks
+- Enable logging during development for better debugging
+
+## Use Cases
+
+- Conditional service initialization
+- Authentication-based dependency management
+- Feature flag-controlled service creation
+- Fallback strategies for dependencies
+- Lazy loading of resource-intensive services
+
+## Performance Considerations
+
+- Minimal overhead for dependency management
+- Efficient instance caching and reuse
+- Supports multiple instances with tagging
+
+---
+
+
+# Authentication Dependency Management Example
+
+## Scenario: Multi-Role Authentication System
+
+### User Roles and Controllers
+```dart
+// Base authentication controller
+class AuthController extends GetxController {
+  final _userRole = UserRole.guest.obs;
+  UserRole get userRole => _userRole.value;
+
+  void login(String username, String password) {
+    if (username == 'admin' && password == 'admin123') {
+      _userRole.value = UserRole.admin;
+    } else if (username == 'user' && password == 'user123') {
+      _userRole.value = UserRole.premium;
+    }
+  }
+}
+
+// Enum for user roles
+enum UserRole { guest, user, premium, admin }
+
+// Different controllers for each role
+class GuestController extends GetxController {
+  List<String> get availableFeatures => ['limited_view'];
+}
+
+class UserController extends GetxController {
+  List<String> get availableFeatures => ['basic_crud', 'profile_edit'];
+}
+
+class PremiumUserController extends GetxController {
+  List<String> get availableFeatures => ['advanced_analytics', 'priority_support'];
+}
+
+class AdminController extends GetxController {
+  List<String> get availableFeatures => [
+    'user_management', 
+    'system_config', 
+    'full_dashboard_access'
+  ];
+}
+```
+
+### Smart Dependency Binding
+```dart
+class AuthBindings extends Bindings {
+  @override
+  void dependencies() {
+    // Global authentication controller
+    Get.put(AuthController(), permanent: true);
+
+    // Smart role-based controller injection
+    Get.smartPutIf(
+      primaryCondition: () {
+        final auth = Get.find<AuthController>();
+        return auth.userRole != UserRole.guest;
       },
-      tag: 'main',           // Access with specific tag
+      builder: () {
+        final auth = Get.find<AuthController>();
+        switch (auth.userRole) {
+          case UserRole.admin:
+            return AdminController();
+          case UserRole.premium:
+            return PremiumUserController();
+          case UserRole.user:
+            return UserController();
+          default:
+            return GuestController();
+        }
+      },
+      fallbackBuilder: () => GuestController(),
+      permanent: false,
+      enableLogging: true
     );
-
-    // 3. Regular service with lazy loading
-    Get.smartPut(
-      () => UserService(),
-      lazy: true,            // Created only on first use
-      fenix: true,          // Can be recreated after deletion
-    );
-
-    return GetMaterialApp(/*...*/);
   }
 }
 ```
 
-Property Explanations:
-
-1. **priority** (Optional, default: normal)
+### Usage Example
 ```dart
-// Three priority levels:
-Priority.high    // For critical services that need early initialization
-Priority.normal  // For most services and controllers
-Priority.low     // For non-essential services
-```
-
-2. **lazy** (Optional, default: true)
-```dart
-lazy: true   // Instance is created only when first requested
-lazy: false  // Instance is created immediately upon registration
-```
-
-3. **permanent** (Optional, default: false)
-```dart
-permanent: true   // Instance is never removed from memory
-permanent: false  // Instance can be removed with Get.delete()
-```
-
-4. **fenix** (Optional)
-```dart
-fenix: true   // If instance is deleted, it can be recreated
-fenix: false  // After deletion, cannot be recreated
-```
-
-5. **tag** (Optional)
-```dart
-// Access instance with specific tag
-Get.smartPut(() => UserController(), tag: 'user');
-final controller = Get.find<UserController>(tag: 'user');
-```
-
-6. **preload** (Optional)
-```dart
-Get.smartPut(
-  () => DatabaseService(),
-  preload: () async {
-    await initializeDatabase();
-    await loadConfigs();
+class LoginPage extends GetView<AuthController> {
+  void performLogin(String username, String password) {
+    controller.login(username, password);
+    
+    // Automatically loads appropriate role controller
+    final roleController = Get.find<dynamic>();
+    
+    print('Available Features: ${roleController.availableFeatures}');
   }
-);
+}
 ```
 
-Practical Examples:
-
-1. For Core Services:
-```dart
-// Authentication service that needs to be ready early
-Get.smartPut(
-  () => AuthService(),
-  priority: Priority.high,
-  permanent: true,
-  lazy: false,
-);
-```
-
-2. For Page Controllers:
-```dart
-// Page controller that needs lazy loading
-Get.smartPut(
-  () => HomeController(),
-  lazy: true,
-  tag: 'home',
-);
-```
-
-3. For Services Requiring Setup:
-```dart
-// API service needing initial setup
-Get.smartPut(
-  () => ApiService(),
-  preload: () async {
-    await loadApiKeys();
-    await setupInterceptors();
-  },
-  priority: Priority.high,
-);
-```
-
-4. For Temporary Services:
-```dart
-// Temporary service that can be deleted later
-Get.smartPut(
-  () => CacheService(),
-  permanent: false,
-  fenix: true,
-);
-```
-
-Important Note: It's not necessary to set all properties. In most cases, default values are sufficient and only need to be configured in specific cases.
-
-This dependency injection system provides great flexibility and control over how your services and controllers are initialized and managed throughout your application's lifecycle.
+## Key Benefits
+- Dynamic role-based dependency injection
+- Secure and flexible authentication management
+- Automatic controller switching based on user role
+- Fallback to guest controller for unauthorized access

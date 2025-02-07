@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:getx/src/get_core/src/get_interface.dart';
 
 import 'get_instance.dart';
@@ -143,5 +144,185 @@ extension Inst on GetInterface {
     final permanent = (info.isPermanent ?? false);
     delete<P>(tag: tag, force: permanent);
     lazyPut(builder, tag: tag, fenix: fenix ?? permanent);
+  }
+}
+
+/// Extension for advanced dependency management with intelligent injection strategies
+extension SmartDependencyManagement on GetInterface {
+  /// Smartly manages dependency injection with advanced conditional logic
+  ///
+  /// [S] is the type of instance to be managed
+  ///
+  /// Parameters:
+  /// - [builder]: Callback to create the instance
+  /// - [condition]: Optional condition to check before instance creation
+  /// - [validityCheck]: Optional function to validate existing instance
+  /// - [tag]: Optional tag for multiple instances of same type
+  /// - [permanent]: Whether the instance should persist
+  /// - [fenix]: Enable lazy initialization with recreation capability
+  ///
+  /// Returns the managed instance of type [S]
+  ///
+  /// Example:
+  /// ```dart
+  /// // Create a database service only if network is available
+  /// final dbService = smartPut<DatabaseService>(
+  ///   builder: () => DatabaseService(),
+  ///   condition: () => NetworkManager.isConnected,
+  ///   validityCheck: (service) => service.isConnectionValid(),
+  ///   permanent: true
+  /// );
+  /// ```
+  S smartPut<S>({
+    required InstanceBuilderCallback<S> builder,
+    bool Function()? condition,
+    bool Function(S instance)? validityCheck,
+    String? tag,
+    bool permanent = false,
+    bool fenix = false,
+  }) {
+    // Check if instance is already registered
+    if (isRegistered<S>(tag: tag)) {
+      final existingInstance = find<S>(tag: tag);
+
+      // Validate existing instance if a validity check is provided
+      if (validityCheck != null && !validityCheck(existingInstance)) {
+        // Delete invalid instance
+        delete<S>(tag: tag, force: true);
+      } else {
+        // Return existing valid instance
+        return existingInstance;
+      }
+    }
+
+    // Check creation condition if provided
+    if (condition != null && !condition()) {
+      throw ArgumentError('Instance creation condition not met for $S');
+    }
+
+    // Create new instance
+    final instance = builder();
+
+    // Register instance based on fenix flag
+    if (fenix) {
+      lazyPut(() => instance, tag: tag, fenix: true);
+    } else {
+      put(instance, tag: tag, permanent: permanent);
+    }
+
+    return instance;
+  }
+
+  /// Advanced version of smartPut with more flexible dependency management
+  ///
+  /// Provides enhanced control over instance creation and fallback mechanisms
+  ///
+  /// Parameters:
+  /// - [primaryCondition]: Main condition for instance creation
+  /// - [builder]: Primary instance creation callback
+  /// - [secondaryValidation]: Additional validation for existing instances
+  /// - [fallbackBuilder]: Alternative instance creation if primary fails
+  /// - [tag]: Optional tag for multiple instances of same type
+  /// - [permanent]: Whether the instance should persist
+  /// - [enableLogging]: Enable detailed logging for debugging
+  ///
+  /// Returns the managed instance of type [S]
+  ///
+  /// Example:
+  /// ```dart
+  /// final userService = smartPutIf<UserService>(
+  ///   primaryCondition: () => AuthManager.isLoggedIn,
+  ///   builder: () => UserService(),
+  ///   fallbackBuilder: () => GuestUserService(),
+  ///   secondaryValidation: (service) => service.hasValidPermissions(),
+  ///   enableLogging: true
+  /// );
+  /// ```
+  S smartPutIf<S>({
+    required bool Function() primaryCondition,
+    required InstanceBuilderCallback<S> builder,
+    bool Function(S instance)? secondaryValidation,
+    InstanceBuilderCallback<S>? fallbackBuilder,
+    String? tag,
+    bool permanent = false,
+    bool enableLogging = false,
+  }) {
+    // Logging utility for debugging
+    void log(String message) {
+      if (enableLogging) {
+        debugPrint('[SmartPutIf] $message');
+      }
+    }
+
+    // Check for existing registered instance
+    if (isRegistered<S>(tag: tag)) {
+      final existingInstance = find<S>(tag: tag);
+
+      // Perform secondary validation if provided
+      if (secondaryValidation != null) {
+        if (secondaryValidation(existingInstance)) {
+          log('Using existing validated instance of $S');
+          return existingInstance;
+        } else {
+          log('Existing instance of $S failed validation');
+          delete<S>(tag: tag, force: true);
+        }
+      } else {
+        log('Returning existing instance of $S');
+        return existingInstance;
+      }
+    }
+
+    // Check primary condition for instance creation
+    if (!primaryCondition()) {
+      // Use fallback builder if provided
+      if (fallbackBuilder != null) {
+        log('Primary condition failed. Using fallback builder for $S');
+        return put(fallbackBuilder(), tag: tag, permanent: permanent);
+      }
+
+      log('Primary condition failed. Skipping instance creation for $S');
+      throw ArgumentError('Instance creation condition not met for $S');
+    }
+
+    // Create and register new instance
+    final instance = builder();
+    log('Creating and registering new instance of $S');
+    return put(instance, tag: tag, permanent: permanent);
+  }
+
+  /// Utility method to create a managed lazy dependency
+  ///
+  /// Simplifies lazy initialization with optional creation conditions
+  ///
+  /// Parameters:
+  /// - [builder]: Instance creation callback
+  /// - [initCondition]: Optional condition for initialization
+  /// - [tag]: Optional tag for multiple instances of same type
+  /// - [permanent]: Whether the instance should persist
+  ///
+  /// Returns the lazily managed instance of type [S]
+  ///
+  /// Example:
+  /// ```dart
+  /// final expensiveService = lazyManage<ExpensiveService>(
+  ///   builder: () => ExpensiveService(),
+  ///   initCondition: () => FeatureFlags.isServiceEnabled,
+  ///   permanent: true
+  /// );
+  /// ```
+  S lazyManage<S>({
+    required InstanceBuilderCallback<S> builder,
+    bool Function()? initCondition,
+    String? tag,
+    bool permanent = false,
+  }) {
+    return smartPut<S>(
+      builder: builder,
+      condition: initCondition,
+      tag: tag,
+      permanent: permanent,
+      fenix: true,
+    );
   }
 }

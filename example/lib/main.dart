@@ -1,3 +1,4 @@
+import 'package:example/bindings/bindings.dart';
 import 'package:example/screen/login.dart';
 import 'package:flutter/material.dart';
 import 'package:getx/getx.dart';
@@ -15,6 +16,7 @@ class MyApp extends StatelessWidget {
     return GetMaterialApp(
       title: 'Flutter Demo',
       debugShowCheckedModeBanner: false,
+      initialBinding: MyBinding(),
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,

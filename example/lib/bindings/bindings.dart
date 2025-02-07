@@ -4,9 +4,9 @@ import 'package:getx/getx.dart';
 class MyBinding extends Bindings {
   @override
   void dependencies() {
-    Get.put(() => TodosController());
+    // Get.put(() => TodosController());
 
-    /* Get.smartPut(
+    Get.smartPut(
       builder: () => TodosController(),
       // Optional condition for when you want the controller to be built only under certain conditions
       condition: () => true, // You can add a specific condition
@@ -14,8 +14,10 @@ class MyBinding extends Bindings {
       // Check the controller validity (optional)
       validityCheck: (controller) => true, // You can add validation logic
 
+      fenix: false,
+
       // If you want this controller to be available always
       permanent: true,
-    );*/
+    );
   }
 }
