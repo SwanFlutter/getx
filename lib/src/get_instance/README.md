@@ -201,3 +201,224 @@ class LoginPage extends GetView<AuthController> {
 - Secure and flexible authentication management
 - Automatic controller switching based on user role
 - Fallback to guest controller for unauthorized access
+
+
+--- 
+
+
+# Advanced Smart Dependency Management Examples
+
+## 1. Real-Time Chat System (`smartPut`)
+```dart
+// Real-time chat system with connection management
+class ChatBindings extends Bindings {
+  @override
+  void dependencies() {
+    // Socket connection controller with validation
+    Get.smartPut<SocketController>(
+      builder: () => SocketController(),
+      condition: () => NetworkUtils.hasInternetConnection(),
+      validityCheck: (controller) => controller.isConnectionActive(),
+      permanent: true,
+      fenix: true,
+    );
+  }
+}
+
+class SocketController extends GetxController {
+  final _connection = WebSocketConnection();
+  final _messages = <ChatMessage>[].obs;
+  final _connectionStatus = ConnectionStatus.disconnected.obs;
+
+  bool isConnectionActive() => 
+    _connectionStatus.value == ConnectionStatus.connected;
+
+  @override
+  void onInit() {
+    super.onInit();
+    _initializeConnection();
+    _setupHeartbeat();
+  }
+
+  void _initializeConnection() {
+    _connection.connect();
+    ever(_connectionStatus, (status) {
+      if (status == ConnectionStatus.disconnected) {
+        _attemptReconnect();
+      }
+    });
+  }
+
+  void _setupHeartbeat() {
+    Timer.periodic(Duration(seconds: 30), (_) {
+      if (!isConnectionActive()) {
+        _attemptReconnect();
+      }
+    });
+  }
+}
+```
+
+## 2. Multi-Environment Configuration (`smartPutIf`)
+```dart
+// Advanced configuration management with environment-specific implementations
+class ConfigBindings extends Bindings {
+  @override
+  void dependencies() {
+    Get.smartPutIf<EnvironmentConfig>(
+      primaryCondition: () => !isProduction(),
+      builder: () => DevelopmentConfig(
+        apiUrl: 'dev-api.example.com',
+        features: DevFeatures(),
+        loggingEnabled: true,
+      ),
+      fallbackBuilder: () => ProductionConfig(
+        apiUrl: 'api.example.com',
+        features: ProdFeatures(),
+        loggingEnabled: false,
+      ),
+      secondaryValidation: (config) => config.validateConfiguration(),
+      enableLogging: true,
+      permanent: true,
+    );
+  }
+}
+
+abstract class EnvironmentConfig {
+  String get apiUrl;
+  FeatureFlags get features;
+  bool get loggingEnabled;
+  bool validateConfiguration();
+}
+
+class DevelopmentConfig implements EnvironmentConfig {
+  final String apiUrl;
+  final FeatureFlags features;
+  final bool loggingEnabled;
+
+  DevelopmentConfig({
+    required this.apiUrl,
+    required this.features,
+    required this.loggingEnabled,
+  });
+
+  @override
+  bool validateConfiguration() {
+    return apiUrl.contains('dev') && loggingEnabled;
+  }
+}
+
+class ProductionConfig implements EnvironmentConfig {
+  // Similar implementation...
+}
+```
+
+## 3. Resource-Intensive Analytics System (`lazyManage`)
+```dart
+// Analytics system with lazy loading and resource management
+class AnalyticsBindings extends Bindings {
+  @override
+  void dependencies() {
+    Get.lazyManage<AnalyticsEngine>(
+      builder: () => AnalyticsEngine(
+        trackers: [
+          PerformanceTracker(),
+          UserBehaviorTracker(),
+          ErrorTracker(),
+        ],
+        configuration: AnalyticsConfig(
+          batchSize: 100,
+          sendInterval: Duration(minutes: 5),
+          maxStorageSize: 50 * 1024 * 1024, // 50MB
+        ),
+      ),
+      initCondition: () => 
+        DeviceResources.hasRequiredMemory() && 
+        UserPreferences.analyticsEnabled &&
+        !LowPowerMode.isActive,
+      permanent: false,
+    );
+  }
+}
+
+class AnalyticsEngine extends GetxController {
+  final List<BaseTracker> trackers;
+  final AnalyticsConfig configuration;
+  final _eventQueue = <AnalyticsEvent>[].obs;
+  Timer? _batchTimer;
+
+  AnalyticsEngine({
+    required this.trackers,
+    required this.configuration,
+  });
+
+  @override
+  void onInit() {
+    super.onInit();
+    _initializeTrackers();
+    _startBatchProcessing();
+  }
+
+  void _initializeTrackers() {
+    for (var tracker in trackers) {
+      tracker.initialize();
+      tracker.onEvent.listen((event) {
+        _eventQueue.add(event);
+      });
+    }
+  }
+
+  void _startBatchProcessing() {
+    _batchTimer = Timer.periodic(
+      configuration.sendInterval,
+      (_) => _processBatch(),
+    );
+  }
+
+  Future<void> _processBatch() async {
+    if (_eventQueue.length >= configuration.batchSize) {
+      final batch = _eventQueue.take(configuration.batchSize).toList();
+      await _sendBatch(batch);
+      _eventQueue.removeRange(0, configuration.batchSize);
+    }
+  }
+
+  @override
+  void onClose() {
+    _batchTimer?.cancel();
+    for (var tracker in trackers) {
+      tracker.dispose();
+    }
+    super.onClose();
+  }
+}
+```
+
+These examples demonstrate:
+
+1. **Socket Controller (`smartPut`)**
+   - Real-time connection management
+   - Automatic reconnection
+   - Connection validity checking
+   - Heartbeat monitoring
+
+2. **Environment Config (`smartPutIf`)**
+   - Environment-specific implementations
+   - Configuration validation
+   - Feature flag management
+   - Conditional initialization
+
+3. **Analytics Engine (`lazyManage`)**
+   - Resource-aware initialization
+   - Batch processing
+   - Multiple tracking systems
+   - Memory management
+   - Event queuing
+
+Each example showcases professional-grade implementation with:
+- Proper resource management
+- Error handling
+- Configuration flexibility
+- Performance optimization
+- Clean architecture principles
+
