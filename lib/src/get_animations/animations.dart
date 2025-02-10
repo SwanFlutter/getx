@@ -340,24 +340,24 @@ class SlideAnimation extends GetAnimatedBuilder<double> {
         );
 }
 
-// class ZoomAnimation extends GetAnimatedBuilder<double> {
-//   ZoomAnimation({
-//     super.key,
-//     required super.duration,
-//     required super.delay,
-//     required super.child,
-//     super.onComplete,
-//     required double begin,
-//     required double end,
-//     super.idleValue = 0,
-//   }) : super(
-//           builder: (context, value, child) => Transform.scale(
-//             scale: lerpDouble(1, end, value)!,
-//             child: child,
-//           ),
-//           tween: Tween<double>(begin: begin, end: end),
-//         );
-// }
+class ZoomAnimation extends GetAnimatedBuilder<double> {
+  ZoomAnimation({
+    super.key,
+    required super.duration,
+    required super.delay,
+    required super.child,
+    super.onComplete,
+    required double begin,
+    required double end,
+    super.idleValue = 0,
+  }) : super(
+          builder: (context, value, child) => Transform.scale(
+            scale: lerpDouble(1, end, value)!,
+            child: child,
+          ),
+          tween: Tween<double>(begin: begin, end: end),
+        );
+}
 
 class ColorAnimation extends GetAnimatedBuilder<Color?> {
   ColorAnimation({
@@ -372,7 +372,7 @@ class ColorAnimation extends GetAnimatedBuilder<Color?> {
   }) : super(
           builder: (context, value, child) => ColorFiltered(
             colorFilter: ColorFilter.mode(
-              Color.lerp(begin, end, value!.value.toDouble())!,
+              Color.lerp(begin, end, value!.a.toDouble())!,
               BlendMode.srcIn,
             ),
             child: child,

@@ -190,34 +190,6 @@ extension ObjectExtension on Object {
     return eur * conversionRate;
   }
 
-/*
-    /// Convert USD to EUR
-  Future<double> convertUsdToEur() async {
-    GetConnect http = GetConnect();
-    final response = await http.get("");
-
-    if (response.statusCode == 200) {
-      final data = json.decode(response.body);
-      double conversionRate = data['data']['EUR'];
-      return this * conversionRate;
-    } else {
-      throw Exception('Failed to load conversion rate');
-    }
-  }
-
-  /// Convert EUR to USD
-  Future<double> convertEurToUsd() async {
-    final response = await http.get(Uri.parse('https://api.freecurrencyapi.com/v1/latest?apikey=$apiKey'));
-
-    if (response.statusCode == 200) {
-      final data = json.decode(response.body);
-      double conversionRate = 1 / data['data']['EUR']; // معکوس نرخ تبدیل
-      return this * conversionRate;
-    } else {
-      throw Exception('Failed to load conversion rate');
-    }
-  }*/
-
   /// Convert IRR to Toman
   ///
   /// Example:

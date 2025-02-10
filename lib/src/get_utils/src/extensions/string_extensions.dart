@@ -1,6 +1,6 @@
+import 'package:flutter/material.dart';
+import 'package:getx/getx.dart';
 import 'package:intl/intl.dart';
-
-import '../get_utils/get_utils.dart';
 
 extension GetStringUtils on String {
   /// Discover if the String is a valid number
@@ -449,5 +449,124 @@ extension StringNumberFormatter on String {
     } catch (e) {
       return this;
     }
+  }
+}
+
+/// Extension on String to provide responsive text widget creation.
+///
+/// This extension adds a method to the String class to create a Text widget
+/// with responsive font size based on the screen dimensions.
+///
+/// Example usage:
+/// ```dart
+/// String myText = "Hello, World!";
+/// Text responsiveText = myText.responsive(fontSize: 16.0);
+/// ```
+///
+/// The `responsive` method takes the following optional parameters:
+/// - `key`: A Key for the Text widget.
+/// - `fontSize`: The base font size to be scaled responsively. Defaults to 14.0.
+/// - `fontWeight`: The font weight of the text.
+/// - `color`: The color of the text.
+/// - `textAlign`: How the text should be aligned horizontally.
+/// - `maxLines`: The maximum number of lines for the text.
+/// - `overflow`: How visual overflow should be handled.
+///
+/// The `_getResponsiveFontSize` method calculates the responsive font size
+/// based on the screen width and height, using a base design width and height
+/// (e.g., iPhone X dimensions). The scale is clamped between 0.8 and 1.3 to
+/// prevent extremely large or small fonts.
+
+extension ResponsiveText on String {
+  Text responsive({
+    Key? key,
+    double? fontSize,
+    FontWeight? fontWeight,
+    Color? color,
+    TextAlign? textAlign,
+    int? maxLines,
+    TextOverflow? overflow,
+  }) {
+    return Text(
+      this,
+      key: key,
+      style: TextStyle(
+        fontSize: _getResponsiveFontSize(fontSize ?? 14.0),
+        fontWeight: fontWeight,
+        color: color,
+      ),
+      textAlign: textAlign,
+      maxLines: maxLines,
+      overflow: overflow,
+    );
+  }
+
+  double _getResponsiveFontSize(double fontSize) {
+    double screenWidth = Get.width;
+    double screenHeight = Get.height;
+
+    double baseWidth = 375.0; // Base design width (e.g., iPhone X)
+    double baseHeight = 812.0; // Base design height (e.g., iPhone X)
+
+    double widthScale = screenWidth / baseWidth;
+    double heightScale = screenHeight / baseHeight;
+
+    // Use the average of width and height scale for better calculation
+    double scale = (widthScale + heightScale) / 2;
+
+    // Limit the scale to prevent extremely large or small fonts
+    scale = scale.clamp(0.8, 1.3);
+
+    return (fontSize * scale).roundToDouble();
+  }
+}
+
+/// Extension on nullable String to provide responsive text styling.
+///
+/// This extension provides methods to handle nullable strings and apply
+/// responsive text styles based on the screen size.
+///
+/// Methods:
+/// - `value`: Returns the string value or an empty string if null.
+/// - `responsiveStyle`: Returns a `TextStyle` with responsive font size,
+///   font weight, and color based on the provided parameters and screen size.
+/// - `_getResponsiveFontSize`: Calculates the responsive font size based on
+///   the screen width and height.
+///
+/// Example usage:
+/// ```dart
+/// String? myText = "Hello, World!";
+/// TextStyle style = myText.responsiveStyle(fontSize: 16.0, fontWeight: FontWeight.bold);
+/// ```
+extension ResponsiveTextNull on String? {
+  String get value => this ?? '';
+
+  TextStyle responsiveStyle({
+    double? fontSize,
+    FontWeight? fontWeight,
+    Color? color,
+    TextStyle? baseStyle,
+  }) {
+    return (baseStyle ?? TextStyle()).copyWith(
+      fontSize: _getResponsiveFontSize(fontSize ?? 14.0),
+      fontWeight: fontWeight,
+      color: color,
+    );
+  }
+
+  double _getResponsiveFontSize(double fontSize) {
+    double screenWidth = Get.width;
+    double screenHeight = Get.height;
+
+    double baseWidth = 375.0; // Base design width (e.g., iPhone X)
+    double baseHeight = 812.0; // Base design height (e.g., iPhone X)
+
+    double widthScale = screenWidth / baseWidth;
+    double heightScale = screenHeight / baseHeight;
+
+    double scale = (widthScale + heightScale) / 2;
+    scale = scale.clamp(0.8, 1.3);
+
+    return (fontSize * scale).roundToDouble();
   }
 }
