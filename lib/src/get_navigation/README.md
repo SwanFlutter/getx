@@ -238,7 +238,7 @@ class HomeScreen extends StatelessWidget {
 
 # GetSnackBar
 
-```markdown
+
 
 `GetSnackBar` is a widget in the GetX Flutter library used to display short, temporary messages to the user (like notifications or confirmation messages). It's a replacement for Flutter's default `SnackBar` and offers more features, including:
 
@@ -370,6 +370,6 @@ Get.showSnackbar(
   ),
 );
 
-```
+---
 
 
