@@ -235,3 +235,139 @@ class HomeScreen extends StatelessWidget {
 
 ---
 
+```markdown
+# GetSnackBar
+
+`GetSnackBar` is a widget in the GetX Flutter library used to display short, temporary messages to the user (like notifications or confirmation messages). It's a replacement for Flutter's default `SnackBar` and offers more features, including:
+
+-   Appearance customization (color, border, shadow, gradient, ...)
+-   Icon display and animation for the icon
+-   Adding an action button
+-   Displaying a progress indicator
+-   Support for input forms
+-   Position control (top or bottom of the screen) and style (floating or grounded)
+-   Control of entry and exit animations
+-   Ability to close by swiping or touching the background
+-   Snackbar queue management (display one after another)
+
+## Usage
+
+To display a `GetSnackBar`, you first need to create a `GetSnackBar` and then pass it to `Get` using the `show()` method:
+
+```dart
+Get.showSnackbar(
+  GetSnackBar(
+    title: 'Title',
+    message: 'Snackbar message',
+    duration: Duration(seconds: 3),
+  ),
+);
+```
+
+This code shows the simplest way to use GetSnackbar.
+
+### GetSnackBar Parameters
+
+`GetSnackBar` has many parameters for customization. Here we review the most important ones:
+
+| Parameter                     | Type                      | Description                                                                                                                                                                                            | Default                  |
+| :---------------------------- | :------------------------ | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :----------------------- |
+| `title`                       | `String?`                 | Snackbar title                                                                                                                                                                                         | `null`                   |
+| `message`                     | `String?`                 | Main snackbar message                                                                                                                                                                                       | `null`                   |
+| `titleText`                   | `Widget?`                 | Widget to display the title (replaces `title`)                                                                                                                                                                 | `null`                   |
+| `messageText`                 | `Widget?`                 | Widget to display the message (replaces `message`)                                                                                                                                                               | `null`                   |
+| `icon`                        | `Widget?`                 | Widget to display an icon next to the message                                                                                                                                                                       | `null`                   |
+| `shouldIconPulse`            | `bool`                    | If `true`, the icon will have a pulse animation                                                                                                                                                         | `true`                   |
+| `mainButton`                  | `Widget?`                 | Action button                                                                                                                                                                            | `null`                   |
+| `onTap`                       | `OnTap?`                  | Function called when the snackbar is tapped (except for the action button)                                                                                                                                                 | `null`                   |
+| `duration`                    | `Duration?`               | Duration of the snackbar display. If `null`, the snackbar will be displayed until manually closed.                                                                                               | `null`                   |
+| `isDismissible`               | `bool`                    | If `true`, the user can close the snackbar by swiping or touching the background.                                                                                                                          | `true`                   |
+| `dismissDirection`            | `DismissDirection?`       | Swipe direction to close the snackbar                                                                                                                                                                              | `DismissDirection.down`  |
+| `showProgressIndicator`       | `bool`                    | If `true`, a progress bar will be displayed at the top of the snackbar.                                                                                                                                           | `false`                  |
+| `progressIndicatorController` | `AnimationController?`     | Animation controller for the progress bar.                                                                                                                                                                    | `null`                   |
+| `snackPosition`               | `SnackPosition`           | Snackbar position (`SnackPosition.TOP` or `SnackPosition.BOTTOM`)                                                                                                                                          | `SnackPosition.BOTTOM`  |
+| `snackStyle`                  | `SnackStyle`              | Snackbar style (`SnackStyle.FLOATING` or `SnackStyle.GROUNDED`)                                                                                                                                            | `SnackStyle.FLOATING` |
+| `backgroundColor`             | `Color`                   | Background color                                                                                                                                                                                         | `Color(0xFF303030)`     |
+| `userInputForm`                | `Form?`                  | A `Form` widget to get user input. If this parameter is set, other widgets will be ignored.  |   `null`                   |
+| `snackbarStatus`               | `SnackbarStatusCallback?` | A function called when snackbar status changes                                                                                                                                     | `null`                   |
+
+### Examples
+
+#### Example 1: Simple Snackbar
+
+```dart
+Get.showSnackbar(
+  GetSnackBar(
+    title: 'Notification',
+    message: 'You received a new message!',
+    duration: Duration(seconds: 3),
+  ),
+);
+```
+
+#### Example 2: Snackbar with Icon and Action Button
+
+```dart
+Get.showSnackbar(
+  GetSnackBar(
+    title: 'Error',
+    message: 'Internet connection failed.',
+    icon: Icon(Icons.error, color: Colors.red),
+    mainButton: TextButton(
+      child: Text('Retry', style: TextStyle(color: Colors.white)),
+      onPressed: () {
+        // Perform operation to reconnect
+        Get.back(); // Close the snackbar
+      },
+    ),
+    duration: Duration(seconds: 5),
+    backgroundColor: Colors.grey[800]!,
+  ),
+);
+```
+
+#### Example 3: Snackbar with Form
+
+```dart
+ Get.showSnackbar(GetSnackBar(
+  title: "User input form",
+      userInputForm: Form(
+        child: Row(
+          children: [
+            Expanded(
+              child: TextField(
+                decoration: InputDecoration(
+                  hintText: 'Type your message',
+                ),
+              ),
+            ),
+            TextButton(onPressed: (){
+              //do something
+            }, child: Text("Send"))
+          ],
+        ),
+      ),
+ ));
+```
+
+#### Example 4: Using `snackbarStatus`
+
+```dart
+Get.showSnackbar(
+  GetSnackBar(
+    title: 'Status',
+    message: 'Loading...',
+    duration: Duration(seconds: 5),
+    snackbarStatus: (status) {
+      print('Snackbar status: $status');
+      // Snackbar status: SnackbarStatus.OPENING
+      // Snackbar status: SnackbarStatus.OPEN
+      // Snackbar status: SnackbarStatus.CLOSING
+      // Snackbar status: SnackbarStatus.CLOSED
+    },
+  ),
+);
+
+```
+
+

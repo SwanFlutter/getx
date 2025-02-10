@@ -1,3 +1,5 @@
+// ignore_for_file: no_wildcard_variable_uses
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 

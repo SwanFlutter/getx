@@ -3,7 +3,7 @@
 
 A powerful and easy-to-use animation library for Flutter, built on top of GetX.
 
-[![pub package](https://img.shields.io/pub/v/get_animations.svg)](https://pub.dev/packages/get_animations)
+
 
 ## Features
 
@@ -14,19 +14,12 @@ A powerful and easy-to-use animation library for Flutter, built on top of GetX.
 - 💪 Built on top of Flutter's animation system
 - 📱 Optimized for performance
 
-## Installation
 
-Add this to your `pubspec.yaml`:
-
-```yaml
-dependencies:
-  get_animations: ^latest_version
-```
 
 ## Basic Usage
 
 ```dart
-import 'package:get_animations/get_animations.dart';
+
 
 // Simple fade in animation
 Container(
