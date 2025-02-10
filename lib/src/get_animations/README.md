@@ -86,17 +86,49 @@ Animate(
 // Slide-in from left animation
 Animate(
   duration: Duration(milliseconds: 500),
-  type: AnimationType.slideInLeft,
-  child: Container(width: 100, height: 100, color: Colors.blue),
-)
+);
+```
 
-// Blur animation
-Animate(
-    duration: const Duration(seconds: 1),
-    type: AnimationType.blur,
-    begin: 0,
-    end: 25,
-    child: Container(
+--- 
+
+# Flutter Animations Documentation
+
+
+
+## Core Concept: `GetAnimatedBuilder`
+
+All animations in this library extend `GetAnimatedBuilder<T>`, which itself is a generic class that uses flutter `AnimatedBuilder`.  It handles the animation lifecycle, value updates, and rebuilding of the widget tree.  You don't interact with `GetAnimatedBuilder` directly, but understanding its role is important:
+
+*   **`tween`**: Defines the range of values the animation will produce (e.g., from 0.0 to 1.0 for opacity).
+*   **`builder`**: A function that's called every time the animation value changes.  It receives the current animation value and the child widget, and it returns the *transformed* widget (e.g., a widget with adjusted opacity, scale, or position).
+*   **`duration`**:  How long the animation takes to complete.
+*   **`delay`**:  How long to wait before starting the animation.
+*   **`onComplete`**:  A callback function that's executed when the animation finishes.
+*  **`idleValue`**: The value of tween when the animation is not active.
+*   **`curve`**: An optional parameter to specify the animation curve, influencing the rate of change over time (e.g., `Curves.easeOut`, `Curves.bounceIn`).
+
+## Available Animations
+
+The following animation widgets are provided, each with specific parameters and usage examples:
+
+### 1. `OpacityAnimation`
+
+Changes the opacity of a widget.
+
+*   **`begin`**:  Starting opacity (0.0 = transparent, 1.0 = opaque).
+*   **`end`**: Ending opacity.
+* **`idleValue`**: Default value of opacity for the animation.
+
+```dart
+OpacityAnimation(
+  duration: const Duration(seconds: 1),
+  delay: const Duration(milliseconds: 500),
+  begin: 0.0,
+  end: 1.0,
+  idleValue: 0,
+  child: Container(
+    width: 100,
+    height: 100,
     color: Colors.blue,
     width: 200,
     height: 200,
