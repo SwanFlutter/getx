@@ -1,17 +1,15 @@
+//get_animated_builder.dart
 import 'package:flutter/material.dart';
 
-import 'animations.dart';
-
-/// Base builder class for all animations
-/// Handles animation controller lifecycle and timing
+/// A generic animated builder that handles animation setup and disposal.
 class GetAnimatedBuilder<T> extends StatefulWidget {
   final Duration duration;
   final Duration delay;
   final Widget child;
   final ValueSetter<AnimationController>? onComplete;
-  final ValueSetter<AnimationController>? onStart;
+  final ValueSetter<AnimationController>? onStart; // Optional onStart callback
   final Tween<T> tween;
-  final T idleValue;
+  final T idleValue; // Required idleValue
   final ValueWidgetBuilder<T> builder;
   final Curve curve;
 
@@ -22,10 +20,10 @@ class GetAnimatedBuilder<T> extends StatefulWidget {
     super.key,
     this.curve = Curves.linear,
     this.onComplete,
-    this.onStart,
+    this.onStart, // Include onStart in the constructor
     required this.duration,
     required this.tween,
-    required this.idleValue,
+    required this.idleValue, // idleValue is now required
     required this.builder,
     required this.child,
     required this.delay,
@@ -35,21 +33,12 @@ class GetAnimatedBuilder<T> extends StatefulWidget {
 }
 
 /// State class for GetAnimatedBuilder
-/// Manages animation controller and handles animation lifecycle
 class GetAnimatedBuilderState<T> extends State<GetAnimatedBuilder<T>> with SingleTickerProviderStateMixin {
   late final AnimationController _controller;
   late final Animation<T> _animation;
-
-  // AnimationController get controller => _controller;
-  // Animation<T> get animation => _animation;
-
   bool _wasStarted = false;
-  // bool get wasStarted => _wasStarted;
-
-  late T _idleValue;
-
-  bool _willResetOnDispose = false;
-
+  late T _idleValue; // Remove the dynamic type
+  final bool _willResetOnDispose = false;
   bool get willResetOnDispose => _willResetOnDispose;
 
   /// Handles animation status changes and callbacks
@@ -63,6 +52,7 @@ class GetAnimatedBuilderState<T> extends State<GetAnimatedBuilder<T>> with Singl
         break;
       // case AnimationStatus.dismissed:
       case AnimationStatus.forward:
+        //call on start
         widget.onStart?.call(_controller);
         break;
       // case AnimationStatus.reverse:
@@ -74,25 +64,7 @@ class GetAnimatedBuilderState<T> extends State<GetAnimatedBuilder<T>> with Singl
   @override
   void initState() {
     super.initState();
-
-    if (widget is OpacityAnimation) {
-      final current = context.findRootAncestorStateOfType<GetAnimatedBuilderState>();
-      final isLast = current == null;
-
-      if (widget is FadeInAnimation) {
-        _idleValue = 1.0 as dynamic;
-      } else {
-        if (isLast) {
-          _willResetOnDispose = false;
-        } else {
-          _willResetOnDispose = true;
-        }
-        _idleValue = widget.idleValue;
-      }
-    } else {
-      _idleValue = widget.idleValue;
-    }
-
+    _idleValue = widget.idleValue; // Assign directly
     _controller = AnimationController(
       vsync: this,
       duration: widget.duration,
@@ -115,6 +87,30 @@ class GetAnimatedBuilderState<T> extends State<GetAnimatedBuilder<T>> with Singl
         });
       }
     });
+  }
+
+  @override
+  void didUpdateWidget(covariant GetAnimatedBuilder<T> oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.duration != widget.duration) {
+      _controller.duration = widget.duration;
+    }
+    if (oldWidget.delay != widget.delay || oldWidget.tween.begin != widget.tween.begin || oldWidget.tween.end != widget.tween.end || oldWidget.curve != widget.curve) {
+      // Restart animation if key parameters change, for hot reload.
+      _controller.reset();
+      _animation = widget.tween.animate(
+        CurvedAnimation(parent: _controller, curve: widget.curve),
+      );
+      Future.delayed(widget.delay, () {
+        if (mounted) {
+          setState(() {
+            _wasStarted = true;
+            _controller.forward();
+          });
+        }
+      });
+    }
+    // Note: No need to update _animation directly; it's driven by the controller.
   }
 
   @override

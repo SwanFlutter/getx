@@ -1,383 +1,147 @@
 import 'dart:math';
 import 'dart:ui';
 
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
 
 import 'get_animated_builder.dart';
 
 typedef OffsetBuilder = Offset Function(BuildContext, double);
 
-class FadeInAnimation extends OpacityAnimation {
-  FadeInAnimation({
+/// A versatile animation widget that simplifies creating various transitions.
+class Animate extends StatelessWidget {
+  /// The duration of the animation.
+  final Duration duration;
+
+  /// The delay before the animation starts. Defaults to zero.
+  final Duration? delay;
+
+  /// The widget to animate.
+  final Widget child;
+
+  /// A callback function that's called when the animation completes.
+  /// It provides the AnimationController instance.
+  final ValueSetter<AnimationController>? onComplete;
+
+  /// The type of animation to apply.
+  final AnimationType type;
+
+  /// The starting value of the animation.
+  final double begin;
+
+  /// The ending value of the animation.
+  final double end;
+
+  /// The animation curve to use. Defaults to Curves.linear.
+  final Curve curve;
+
+  /// Creates an Animate widget.
+  const Animate({
     super.key,
-    required super.duration,
-    required super.delay,
-    required super.child,
-    super.onComplete,
-    super.begin = 0,
-    super.end = 1,
-    super.idleValue = 0,
+    required this.duration,
+    this.delay,
+    required this.child,
+    this.onComplete,
+    required this.type,
+    this.begin = 0.0,
+    this.end = 1.0,
+    this.curve = Curves.linear,
   });
-}
 
-class FadeOutAnimation extends OpacityAnimation {
-  FadeOutAnimation({
-    super.key,
-    required super.duration,
-    required super.delay,
-    required super.child,
-    super.onComplete,
-    super.begin = 1,
-    super.end = 0,
-    super.idleValue = 1,
-  });
-}
+  @override
+  Widget build(BuildContext context) {
+    final effectiveDelay = delay ?? Duration.zero;
 
-/// Base animation class for opacity transitions
-/// [begin] - Starting opacity value (0.0 to 1.0)
-/// [end] - Ending opacity value (0.0 to 1.0)
-class OpacityAnimation extends GetAnimatedBuilder<double> {
-  OpacityAnimation({
-    super.key,
-    required super.duration,
-    required super.delay,
-    required super.child,
-    required super.onComplete,
-    required double begin,
-    required double end,
-    required super.idleValue,
-  }) : super(
-          tween: Tween<double>(begin: begin, end: end),
-          builder: (context, value, child) => Opacity(
-            opacity: value,
-            child: child!,
-          ),
-        );
-}
-
-class RotateAnimation extends GetAnimatedBuilder<double> {
-  RotateAnimation({
-    super.key,
-    required super.duration,
-    required super.delay,
-    required super.child,
-    super.onComplete,
-    required double begin,
-    required double end,
-    super.idleValue = 0,
-  }) : super(
-          builder: (context, value, child) => Transform.rotate(
-            angle: value,
-            child: child,
-          ),
-          tween: Tween<double>(begin: begin, end: end),
-        );
-}
-
-class ScaleAnimation extends GetAnimatedBuilder<double> {
-  ScaleAnimation({
-    super.key,
-    required super.duration,
-    required super.delay,
-    required super.child,
-    super.onComplete,
-    required double begin,
-    required double end,
-    super.idleValue = 0,
-  }) : super(
-          builder: (context, value, child) => Transform.scale(
-            scale: value,
-            child: child,
-          ),
-          tween: Tween<double>(begin: begin, end: end),
-        );
-}
-
-// class SlideAnimation extends GetAnimatedBuilder<Offset> {
-//   SlideAnimation({
-//     super.key,
-//     required super.duration,
-//     required super.delay,
-//     required super.child,
-//     super.onComplete,
-//     required Offset begin,
-//     required Offset end,
-//     super.idleValue = const Offset(0, 0),
-//   }) : super(
-//           builder: (context, value, child) => Transform.translate(
-//             offset: value,
-//             child: child,
-//           ),
-//           tween: Tween(begin: begin, end: end),
-//         );
-// }
-
-class BounceAnimation extends GetAnimatedBuilder<double> {
-  BounceAnimation({
-    super.key,
-    required super.duration,
-    required super.delay,
-    required super.child,
-    super.onComplete,
-    super.curve = Curves.bounceOut,
-    required double begin,
-    required double end,
-    super.idleValue = 0,
-  }) : super(
-          builder: (context, value, child) => Transform.scale(
-            scale: 1 + value.abs(),
-            child: child,
-          ),
-          tween: Tween<double>(begin: begin, end: end),
-        );
-}
-
-class SpinAnimation extends GetAnimatedBuilder<double> {
-  SpinAnimation({
-    super.key,
-    required super.duration,
-    required super.delay,
-    required super.child,
-    super.onComplete,
-    super.idleValue = 0,
-  }) : super(
-          builder: (context, value, child) => Transform.rotate(
-            angle: value * pi / 180.0,
-            child: child,
-          ),
-          tween: Tween<double>(begin: 0, end: 360),
-        );
-}
-
-class SizeAnimation extends GetAnimatedBuilder<double> {
-  SizeAnimation({
-    super.key,
-    required super.duration,
-    required super.delay,
-    required super.child,
-    super.onComplete,
-    super.idleValue = 0,
-    required double begin,
-    required double end,
-  }) : super(
-          builder: (context, value, child) => Transform.scale(
-            scale: value,
-            child: child,
-          ),
-          tween: Tween<double>(begin: begin, end: end),
-        );
-}
-
-class BlurAnimation extends GetAnimatedBuilder<double> {
-  BlurAnimation({
-    super.key,
-    required super.duration,
-    required super.delay,
-    required super.child,
-    super.onComplete,
-    required double begin,
-    required double end,
-    super.idleValue = 0,
-  }) : super(
-          builder: (context, value, child) => BackdropFilter(
-            filter: ImageFilter.blur(
-              sigmaX: value,
-              sigmaY: value,
-            ),
-            child: child,
-          ),
-          tween: Tween<double>(begin: begin, end: end),
-        );
-}
-
-class FlipAnimation extends GetAnimatedBuilder<double> {
-  FlipAnimation({
-    super.key,
-    required super.duration,
-    required super.delay,
-    required super.child,
-    super.onComplete,
-    required double begin,
-    required double end,
-    super.idleValue = 0,
-  }) : super(
-          builder: (context, value, child) {
-            final radians = value * pi;
+    return GetAnimatedBuilder<double>(
+      duration: duration,
+      delay: effectiveDelay,
+      tween: Tween<double>(begin: begin, end: end),
+      curve: curve,
+      idleValue: begin,
+      builder: (context, value, child) {
+        switch (type) {
+          case AnimationType.fadeIn:
+            return Opacity(opacity: value, child: child);
+          case AnimationType.fadeOut:
+            return Opacity(opacity: 1 - value, child: child);
+          case AnimationType.rotate:
+            return Transform.rotate(angle: value * pi * 2 * (end - begin), child: child);
+          case AnimationType.scale:
+            return Transform.scale(scale: value * (end - begin) + begin, child: child);
+          case AnimationType.bounce:
+            return Transform.scale(scale: 1 + value.abs() * (end - begin), child: child);
+          case AnimationType.spin:
+            return Transform.rotate(angle: value * 360 * pi / 180.0, child: child);
+          case AnimationType.size:
+            return Transform.scale(scale: value * (end - begin) + begin, child: child);
+          case AnimationType.blur:
+            return BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: value * (end - begin), sigmaY: value * (end - begin)),
+              child: child,
+            );
+          case AnimationType.flip:
             return Transform(
-              transform: Matrix4.rotationY(radians),
+              transform: Matrix4.rotationY(value * pi * (end - begin)),
               alignment: Alignment.center,
               child: child,
             );
-          },
-          tween: Tween<double>(begin: begin, end: end),
-        );
+          case AnimationType.wave:
+            return Transform(
+              transform: Matrix4.translationValues(0.0, 20.0 * sin(value * pi * 2), 0.0),
+              child: child,
+            );
+          case AnimationType.wobble:
+            return Transform(
+              transform: Matrix4.identity()
+                ..setEntry(3, 2, 0.001)
+                ..rotateZ(sin(value * pi * 2) * 0.1 * (end - begin)),
+              alignment: Alignment.center,
+              child: child,
+            );
+          case AnimationType.slideInLeft:
+            return Transform.translate(offset: Offset(value * MediaQuery.of(context).size.width * (end - begin), 0), child: child);
+          case AnimationType.slideInRight:
+            return Transform.translate(offset: Offset((1 - value) * MediaQuery.of(context).size.width * (end - begin), 0), child: child);
+          case AnimationType.slideInUp:
+            return Transform.translate(offset: Offset(0, value * MediaQuery.of(context).size.height * (end - begin)), child: child);
+          case AnimationType.slideInDown:
+            return Transform.translate(offset: Offset((1 - value) * MediaQuery.of(context).size.height * (end - begin), 0), child: child);
+          case AnimationType.zoom:
+            return Transform.scale(scale: lerpDouble(1, end, value)!, child: child);
+          case AnimationType.color:
+            final beginColor = begin is Color ? begin as Color : Colors.transparent;
+            final endColor = end is Color ? end as Color : Colors.transparent;
+            return ColorFiltered(
+              colorFilter: ColorFilter.mode(
+                Color.lerp(beginColor, endColor, value)!,
+                BlendMode.srcIn,
+              ),
+              child: child,
+            );
+        }
+      },
+      onComplete: onComplete,
+      child: child,
+    );
+  }
 }
 
-class WaveAnimation extends GetAnimatedBuilder<double> {
-  WaveAnimation({
-    super.key,
-    required super.duration,
-    required super.delay,
-    required super.child,
-    super.onComplete,
-    required double begin,
-    required double end,
-    super.idleValue = 0,
-  }) : super(
-          builder: (context, value, child) => Transform(
-            transform: Matrix4.translationValues(
-              0.0,
-              20.0 * sin(value * pi * 2),
-              0.0,
-            ),
-            child: child,
-          ),
-          tween: Tween<double>(begin: begin, end: end),
-        );
-}
-
-class WobbleAnimation extends GetAnimatedBuilder<double> {
-  WobbleAnimation({
-    super.key,
-    required super.duration,
-    required super.delay,
-    required super.child,
-    super.onComplete,
-    required double begin,
-    required double end,
-    super.idleValue = 0,
-  }) : super(
-          builder: (context, value, child) => Transform(
-            transform: Matrix4.identity()
-              ..setEntry(3, 2, 0.001)
-              ..rotateZ(sin(value * pi * 2) * 0.1),
-            alignment: Alignment.center,
-            child: child,
-          ),
-          tween: Tween<double>(begin: begin, end: end),
-        );
-}
-
-class SlideInLeftAnimation extends SlideAnimation {
-  SlideInLeftAnimation({
-    super.key,
-    required super.duration,
-    required super.delay,
-    required super.child,
-    super.onComplete,
-    required super.begin,
-    required super.end,
-    super.idleValue = 0,
-  }) : super(
-          offsetBuild: (context, value) => Offset(value * MediaQuery.of(context).size.width, 0),
-        );
-}
-
-class SlideInRightAnimation extends SlideAnimation {
-  SlideInRightAnimation({
-    super.key,
-    required super.duration,
-    required super.delay,
-    required super.child,
-    super.onComplete,
-    required super.begin,
-    required super.end,
-    super.idleValue = 0,
-  }) : super(
-          offsetBuild: (context, value) => Offset((1 - value) * MediaQuery.of(context).size.width, 0),
-        );
-}
-
-class SlideInUpAnimation extends SlideAnimation {
-  SlideInUpAnimation({
-    super.key,
-    required super.duration,
-    required super.delay,
-    required super.child,
-    super.onComplete,
-    required super.begin,
-    required super.end,
-    super.idleValue = 0,
-  }) : super(
-          offsetBuild: (context, value) => Offset(0, value * MediaQuery.of(context).size.height),
-        );
-}
-
-class SlideInDownAnimation extends SlideAnimation {
-  SlideInDownAnimation({
-    super.key,
-    required super.duration,
-    required super.delay,
-    required super.child,
-    super.onComplete,
-    required super.begin,
-    required super.end,
-    super.idleValue = 0,
-  }) : super(
-          offsetBuild: (context, value) => Offset(0, (1 - value) * MediaQuery.of(context).size.height),
-        );
-}
-
-/// Animation class for sliding elements with customizable direction
-/// [offsetBuild] - Function to calculate offset based on animation value
-class SlideAnimation extends GetAnimatedBuilder<double> {
-  SlideAnimation({
-    super.key,
-    required super.duration,
-    required super.delay,
-    required super.child,
-    required double begin,
-    required double end,
-    required OffsetBuilder offsetBuild,
-    super.onComplete,
-    super.idleValue = 0,
-  }) : super(
-          builder: (context, value, child) => Transform.translate(
-            offset: offsetBuild(context, value),
-            child: child,
-          ),
-          tween: Tween<double>(begin: begin, end: end),
-        );
-}
-
-class ZoomAnimation extends GetAnimatedBuilder<double> {
-  ZoomAnimation({
-    super.key,
-    required super.duration,
-    required super.delay,
-    required super.child,
-    super.onComplete,
-    required double begin,
-    required double end,
-    super.idleValue = 0,
-  }) : super(
-          builder: (context, value, child) => Transform.scale(
-            scale: lerpDouble(1, end, value)!,
-            child: child,
-          ),
-          tween: Tween<double>(begin: begin, end: end),
-        );
-}
-
-class ColorAnimation extends GetAnimatedBuilder<Color?> {
-  ColorAnimation({
-    super.key,
-    required super.duration,
-    required super.delay,
-    required super.child,
-    super.onComplete,
-    required Color begin,
-    required Color end,
-    Color? idleColor,
-  }) : super(
-          builder: (context, value, child) => ColorFiltered(
-            colorFilter: ColorFilter.mode(
-              Color.lerp(begin, end, value!.a.toDouble())!,
-              BlendMode.srcIn,
-            ),
-            child: child,
-          ),
-          idleValue: idleColor ?? begin,
-          tween: ColorTween(begin: begin, end: end),
-        );
+/// Enum defining the available animation types.
+enum AnimationType {
+  fadeIn,
+  fadeOut,
+  rotate,
+  scale,
+  bounce,
+  spin,
+  size,
+  blur,
+  flip,
+  wave,
+  wobble,
+  slideInLeft,
+  slideInRight,
+  slideInUp,
+  slideInDown,
+  zoom,
+  color,
 }
