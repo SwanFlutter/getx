@@ -6,6 +6,7 @@ export 'event_loop_extensions.dart';
 export 'int_extensions.dart';
 export 'internacionalization.dart' hide FirstWhereExt;
 export 'iterable_extensions.dart';
+export 'list_extensions.dart';
 export 'num_extensions.dart';
 export 'string_extensions.dart';
 export 'widget_extensions.dart';
