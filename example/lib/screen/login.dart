@@ -1,5 +1,6 @@
 // ignore_for_file: library_private_types_in_public_api
 
+import 'package:example/controller/login_controller.dart';
 import 'package:example/screen/home.dart';
 import 'package:example/screen/signup.dart';
 import 'package:flutter/material.dart';
@@ -13,9 +14,6 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  final _usernameController = TextEditingController();
-  final _passwordController = TextEditingController();
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -26,7 +24,7 @@ class _LoginPageState extends State<LoginPage> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           TextField(
-            controller: _usernameController,
+            controller: LoginController.to.usernameController,
             decoration: InputDecoration(
               labelText: 'Username',
               border: OutlineInputBorder(),
@@ -34,7 +32,7 @@ class _LoginPageState extends State<LoginPage> {
           ),
           SizedBox(height: 20),
           TextField(
-            controller: _passwordController,
+            controller: LoginController.to.passwordController,
             obscureText: true,
             decoration: InputDecoration(
               labelText: 'Password',

@@ -7,4 +7,12 @@ class TodosController extends GetxController {
   final ValueNotifier<ScrollNotification?> notifier = ValueNotifier(null);
 
   final RxList<String> todos = <String>[].obs;
+
+  late List<String> sort;
+
+  @override
+  void onInit() {
+    super.onInit();
+    sort = todos.sortList(descending: true);
+  }
 }
