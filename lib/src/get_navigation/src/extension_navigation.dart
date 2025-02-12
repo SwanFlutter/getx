@@ -105,117 +105,120 @@ extension ExtensionBottomSheet on GetInterface {
   ///
   /// This method uses the [CustomExpandableBottomSheetRoute] to display a highly customizable
   /// bottom sheet.
-  Future<T?>? customExpandableBottomSheet<T>(
-      {
-      /// Required. A builder function that returns the widget tree for the bottom sheet content.
-      required WidgetBuilder builder,
+  Future<T?>? customExpandableBottomSheet<T>({
+    /// Required. A builder function that returns the widget tree for the bottom sheet content.
+    required WidgetBuilder builder,
 
-      /// The initial size of the bottom sheet (fraction of screen height). Defaults to 0.0 for top-down.
-      double initialChildSize = 0.0,
+    /// The initial size of the bottom sheet (fraction of screen height). Defaults to 0.0 for top-down.
+    double initialChildSize = 0.0,
 
-      /// The minimum size of the bottom sheet (fraction of screen height). Defaults to 0.0 for top-down.
-      double minChildSize = 0.0,
+    /// The minimum size of the bottom sheet (fraction of screen height). Defaults to 0.0 for top-down.
+    double minChildSize = 0.0,
 
-      /// The maximum size of the bottom sheet (fraction of screen height). Defaults to 1.0.
-      double maxChildSize = 1.0,
+    /// The maximum size of the bottom sheet (fraction of screen height). Defaults to 1.0.
+    double maxChildSize = 1.0,
 
-      /// The radius of the rounded corners. Defaults to 15.0.
-      double borderRadius = 15.0,
+    /// The radius of the rounded corners. Defaults to 15.0.
+    double borderRadius = 15.0,
 
-      /// Whether the bottom sheet can be dismissed by tapping the barrier. Defaults to true.
-      bool isDismissible = true,
+    /// Whether the bottom sheet can be dismissed by tapping the barrier. Defaults to true.
+    bool isDismissible = true,
 
-      /// Whether the bottom sheet can be dragged. Defaults to true.
-      bool enableDrag = true,
+    /// Whether the bottom sheet can be dragged. Defaults to true.
+    bool enableDrag = true,
 
-      /// Whether the bottom sheet should snap to specific sizes. Defaults to false.
-      bool snap = false,
+    /// Whether the bottom sheet should snap to specific sizes. Defaults to false.
+    bool snap = false,
 
-      /// The background color of the bottom sheet.
-      Color? backgroundColor,
+    /// The background color of the bottom sheet.
+    Color? backgroundColor = Colors.white,
 
-      /// The elevation of the bottom sheet.
-      double? elevation,
+    /// The elevation of the bottom sheet.
+    double? elevation,
 
-      /// The duration of the entrance animation.
-      Duration? enterBottomSheetDuration,
+    /// The duration of the entrance animation.
+    Duration? enterBottomSheetDuration,
 
-      /// The duration of the exit animation.
-      Duration? exitBottomSheetDuration,
+    /// The duration of the exit animation.
+    Duration? exitBottomSheetDuration,
 
-      /// A theme to apply to the bottom sheet.
-      ThemeData? theme,
+    /// A theme to apply to the bottom sheet.
+    ThemeData? theme,
 
-      /// The animation curve.
-      Curve? curve,
+    /// The animation curve.
+    Curve? curve,
 
-      /// The shape of the bottom sheet.
-      ShapeBorder? shape,
+    /// The shape of the bottom sheet.
+    ShapeBorder? shape,
 
-      /// The label for the barrier.
-      String? barrierLabel,
+    /// The label for the barrier.
+    String? barrierLabel,
 
-      /// The clip behavior.
-      Clip? clipBehavior,
+    /// The clip behavior.
+    Clip? clipBehavior,
 
-      /// Whether the bottom sheet is persistent (cannot be dismissed by tapping outside). Defaults to false.
-      bool isPersistent = false,
+    /// Whether the bottom sheet is persistent (cannot be dismissed by tapping outside). Defaults to false.
+    bool isPersistent = false,
 
-      /// Whether the bottom sheet is scroll-controlled. Defaults to true.
-      bool isScrollControlled = true,
+    /// Whether the bottom sheet is scroll-controlled. Defaults to true.
+    bool isScrollControlled = true,
 
-      /// A key for accessing the ScaffoldMessengerState.
-      GlobalKey<ScaffoldMessengerState>? messengerKey,
+    /// A key for accessing the ScaffoldMessengerState.
+    GlobalKey<ScaffoldMessengerState>? messengerKey,
 
-      /// The color of the modal barrier.
-      Color? modalBarrierColor,
+    /// The color of the modal barrier.
+    Color? modalBarrierColor,
 
-      /// A key for accessing the ScaffoldState.
-      GlobalKey<ScaffoldState>? scaffoldKey,
+    /// A key for accessing the ScaffoldState.
+    GlobalKey<ScaffoldState>? scaffoldKey,
 
-      /// Route settings.
-      RouteSettings? settings,
+    /// Route settings.
+    RouteSettings? settings,
 
-      /// Whether the bottom sheet should open from the top. Defaults to true.
-      bool startFromTop = true,
+    /// Whether the bottom sheet should open from the top. Defaults to true.
+    bool startFromTop = true,
 
-      /// Whether to show close button
-      bool isShowCloseBottom = false,
+    /// Whether to show close button
+    bool isShowCloseBottom = false,
 
-      /// Whether to show close button
-      IconData closeIcon = Icons.close,
+    /// Whether to show close button
+    IconData closeIcon = Icons.close,
 
-      /// [indicatorColor] The color of the indicatorColor.
-      Color indicatorColor = const Color.fromRGBO(224, 224, 224, 1)}) {
+    /// [indicatorColor] The color of the indicatorColor.
+    Color indicatorColor = const Color.fromRGBO(224, 224, 224, 1),
+    double? itemPaddingTop = 60.0,
+  }) {
     return Navigator.of(Get.context!).push(
       CustomExpandableBottomSheetRoute<T>(
-          builder: builder,
-          initialChildSize: initialChildSize,
-          minChildSize: minChildSize,
-          maxChildSize: maxChildSize,
-          borderRadius: borderRadius,
-          isDismissible: isDismissible,
-          enableDrag: enableDrag,
-          backgroundColor: backgroundColor,
-          elevation: elevation,
-          enterBottomSheetDuration: enterBottomSheetDuration ?? const Duration(milliseconds: 250),
-          exitBottomSheetDuration: exitBottomSheetDuration ?? const Duration(milliseconds: 200),
-          theme: theme,
-          curve: curve,
-          shape: shape,
-          snap: snap,
-          barrierLabel: barrierLabel,
-          clipBehavior: clipBehavior,
-          isPersistent: isPersistent,
-          isScrollControlled: isScrollControlled,
-          messengerKey: messengerKey,
-          modalBarrierColor: modalBarrierColor,
-          scaffoldKey: scaffoldKey,
-          settings: settings,
-          startFromTop: startFromTop,
-          isShowCloseBottom: isShowCloseBottom,
-          closeIcon: closeIcon,
-          indicatorColor: indicatorColor),
+        builder: builder,
+        initialChildSize: initialChildSize,
+        minChildSize: minChildSize,
+        maxChildSize: maxChildSize,
+        borderRadius: borderRadius,
+        isDismissible: isDismissible,
+        enableDrag: enableDrag,
+        backgroundColor: backgroundColor,
+        elevation: elevation,
+        enterBottomSheetDuration: enterBottomSheetDuration ?? const Duration(milliseconds: 250),
+        exitBottomSheetDuration: exitBottomSheetDuration ?? const Duration(milliseconds: 200),
+        theme: theme,
+        curve: curve,
+        shape: shape,
+        snap: snap,
+        barrierLabel: barrierLabel,
+        clipBehavior: clipBehavior,
+        isPersistent: isPersistent,
+        isScrollControlled: isScrollControlled,
+        messengerKey: messengerKey,
+        modalBarrierColor: modalBarrierColor,
+        scaffoldKey: scaffoldKey,
+        settings: settings,
+        startFromTop: startFromTop,
+        isShowCloseBottom: isShowCloseBottom,
+        closeIcon: closeIcon,
+        indicatorColor: indicatorColor,
+        itemPaddingTop: itemPaddingTop!,
+      ),
     );
   }
 }
@@ -324,7 +327,7 @@ extension ExtensionDialog on GetInterface {
     List<Widget>? actions,
 
     // onWillPop Scope
-    WillPopCallback? onWillPop,
+    void Function(bool, dynamic)? onWillPop,
 
     // the navigator used to push the dialog
     GlobalKey<NavigatorState>? navigatorKey,
@@ -405,8 +408,8 @@ extension ExtensionDialog on GetInterface {
 
     return dialog<T>(
       onWillPop != null
-          ? WillPopScope(
-              onWillPop: onWillPop,
+          ? PopScope(
+              onPopInvokedWithResult: onWillPop,
               child: baseAlertDialog,
             )
           : baseAlertDialog,
@@ -577,7 +580,7 @@ extension ExtensionSnackbar on GetInterface {
         margin: margin ?? const EdgeInsets.symmetric(horizontal: 10),
         duration: duration,
         barBlur: barBlur ?? 7.0,
-        backgroundColor: backgroundColor ?? Colors.grey.withOpacity(0.2),
+        backgroundColor: backgroundColor ?? Colors.grey.withValues(alpha: 0.2),
         icon: icon,
         shouldIconPulse: shouldIconPulse ?? true,
         maxWidth: maxWidth,

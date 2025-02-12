@@ -40,6 +40,7 @@ class CustomExpandableBottomSheetRoute<T> extends PopupRoute<T> {
     this.isShowCloseBottom = true,
     this.closeIcon = Icons.close,
     this.indicatorColor = const Color.fromRGBO(224, 224, 224, 1),
+    this.itemPaddingTop = 60,
   }) {
     RouterReportManager.reportCurrentRoute(this);
   }
@@ -237,6 +238,8 @@ class CustomExpandableBottomSheetRoute<T> extends PopupRoute<T> {
   /// [indicatorColor] - The color of the indicator.
   final Color indicatorColor;
 
+  final double? itemPaddingTop;
+
   @override
   Animation<double> createAnimation() {
     return curve != null ? CurvedAnimation(curve: curve!, parent: _animationController.view) : _animationController.view;
@@ -299,7 +302,7 @@ class CustomExpandableBottomSheetRoute<T> extends PopupRoute<T> {
                       child: Stack(
                         alignment: startFromTop ? Alignment.bottomCenter : Alignment.topCenter, // تغییر alignment بر اساس startFromTop
                         children: [
-                          builder(context),
+                          builder(context).paddingOnly(top: itemPaddingTop!),
                           // Container handle
                           Positioned(
                             top: startFromTop ? null : 0,

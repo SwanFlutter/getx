@@ -1647,7 +1647,189 @@ double invalidHeight = 120.0.hp; // Throws an assertion error because 120 is > 1
 
 ---
 
+# List Sort Extension Documentation
 
+A powerful Dart extension that provides advanced sorting capabilities for lists. This extension adds multiple sorting methods to any List type in Dart.
+
+
+## Features
+
+- Regular list sorting with ascending/descending options
+- Sort by specific fields
+- Multi-field sorting
+- Custom comparison sorting
+- Duplicate removal while sorting
+- Chunk-based sorting for large lists
+
+## Usage Examples
+
+### Basic Sorting
+
+```dart
+final numbers = [3, 1, 4, 1, 5];
+
+// Regular sorting (ascending)
+final sorted = numbers.sortList();
+print(sorted); // [1, 1, 3, 4, 5]
+
+// Descending order
+final descending = numbers.sortList(descending: true);
+print(descending); // [5, 4, 3, 1, 1]
+```
+
+### Sorting Objects by Field
+
+```dart
+class Person {
+  final String name;
+  final int age;
+  
+  Person(this.name, this.age);
+  
+  @override
+  String toString() => '$name ($age)';
+}
+
+final people = [
+  Person('Alice', 30),
+  Person('Bob', 25),
+  Person('Charlie', 35)
+];
+
+// Sort by age
+final sortedByAge = people.sortByField((p) => p.age);
+print(sortedByAge); // [Bob (25), Alice (30), Charlie (35)]
+
+// Sort by name
+final sortedByName = people.sortByField((p) => p.name);
+print(sortedByName); // [Alice (30), Bob (25), Charlie (35)]
+```
+
+### Multi-Field Sorting
+
+```dart
+final people = [
+  Person('Alice', 30),
+  Person('Bob', 30),
+  Person('Charlie', 25)
+];
+
+// Sort by age first, then by name
+final sortedByAgeAndName = people.sortByMultipleFields([
+  (a, b) => a.age.compareTo(b.age),
+  (a, b) => a.name.compareTo(b.name)
+]);
+print(sortedByAgeAndName); 
+// [Charlie (25), Alice (30), Bob (30)]
+```
+
+### Custom Comparison
+
+```dart
+final words = ['apple', 'Banana', 'cherry'];
+
+// Case-insensitive sorting
+final sortedCaseInsensitive = words.sortWithComparison(
+  (a, b) => a.toLowerCase().compareTo(b.toLowerCase())
+);
+print(sortedCaseInsensitive); // [apple, Banana, cherry]
+```
+
+### Sorting with Duplicate Removal
+
+```dart
+final numbers = [3, 1, 4, 1, 5, 3];
+
+// Sort and remove duplicates
+final uniqueSorted = numbers.sortUnique();
+print(uniqueSorted); // [1, 3, 4, 5]
+
+// Sort descending and remove duplicates
+final uniqueDescending = numbers.sortUnique(descending: true);
+print(uniqueDescending); // [5, 4, 3, 1]
+```
+
+### Chunk Sorting for Large Lists
+
+```dart
+final largeList = List.generate(10000, (i) => Random().nextInt(1000));
+
+// Sort in chunks of 1000 elements
+final chunkSorted = largeList.chunkSort(chunkSize: 1000);
+print(chunkSorted.length); // 10000
+```
+
+## Advanced Usage
+
+### Combining Multiple Features
+
+```dart
+class Product {
+  final String name;
+  final double price;
+  final int stock;
+  
+  Product(this.name, this.price, this.stock);
+}
+
+final products = [
+  Product('Laptop', 999.99, 5),
+  Product('Phone', 599.99, 10),
+  Product('Tablet', 399.99, 8),
+  Product('Phone', 649.99, 3)
+];
+
+// Sort by name, then by price (descending)
+final sortedProducts = products.sortByMultipleFields([
+  (a, b) => a.name.compareTo(b.name),
+  (a, b) => b.price.compareTo(a.price)
+]);
+```
+
+## Performance Considerations
+
+- Regular sorting operations have O(n log n) time complexity
+- Chunk sorting is useful for large lists to maintain memory efficiency
+- The `sortUnique` method has additional overhead due to duplicate removal
+- For very large lists, consider using `chunkSort` with an appropriate chunk size
+
+## Best Practices
+
+1. Choose the appropriate sorting method based on your needs:
+   - Use `sortList` for simple sorting
+   - Use `sortByField` when sorting objects by a specific property
+   - Use `sortByMultipleFields` when multiple sort criteria are needed
+   - Use `sortUnique` when duplicates should be removed
+   - Use `chunkSort` for very large lists
+
+2. Consider memory usage:
+   - All sorting methods create a new list instead of modifying the original
+   - For large lists, be mindful of memory usage when creating sorted copies
+
+3. Type Safety:
+   - The extension is type-safe and works with any type T
+   - When using `sortByField`, ensure the field selector returns a Comparable type
+
+## Error Handling
+
+The extension includes built-in error handling for common cases:
+
+- Non-comparable types default to string comparison
+- Null values are handled appropriately in comparisons
+- Invalid chunk sizes are adjusted automatically
+
+## Contributing
+
+Feel free to contribute to this extension by:
+1. Adding new sorting algorithms
+2. Improving performance
+3. Adding new features
+4. Fixing bugs
+5. Improving documentation
+
+## License
+
+This code is available under the MIT License. Feel free to use it in your projects.
 
 
 

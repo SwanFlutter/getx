@@ -1,4 +1,3 @@
-//get_animated_builder.dart
 import 'package:flutter/material.dart';
 
 /// A generic animated builder that handles animation setup and disposal.
@@ -28,17 +27,18 @@ class GetAnimatedBuilder<T> extends StatefulWidget {
     required this.child,
     required this.delay,
   });
+
   @override
   GetAnimatedBuilderState<T> createState() => GetAnimatedBuilderState<T>();
 }
 
 /// State class for GetAnimatedBuilder
-class GetAnimatedBuilderState<T> extends State<GetAnimatedBuilder<T>> with SingleTickerProviderStateMixin {
-  late final AnimationController _controller;
-  late final Animation<T> _animation;
-  bool _wasStarted = false;
+class GetAnimatedBuilderState<T> extends State<GetAnimatedBuilder<T>> with TickerProviderStateMixin {
+  late AnimationController _controller; // Remove 'final'
+  Animation<T>? _animation; // Make nullable and remove 'late final'
   late T _idleValue; // Remove the dynamic type
   final bool _willResetOnDispose = false;
+  bool wasStarted = false; // Define _wasStarted
   bool get willResetOnDispose => _willResetOnDispose;
 
   /// Handles animation status changes and callbacks
@@ -50,12 +50,9 @@ class GetAnimatedBuilderState<T> extends State<GetAnimatedBuilder<T>> with Singl
           _controller.reset();
         }
         break;
-      // case AnimationStatus.dismissed:
       case AnimationStatus.forward:
-        //call on start
         widget.onStart?.call(_controller);
         break;
-      // case AnimationStatus.reverse:
       default:
         break;
     }
@@ -65,6 +62,19 @@ class GetAnimatedBuilderState<T> extends State<GetAnimatedBuilder<T>> with Singl
   void initState() {
     super.initState();
     _idleValue = widget.idleValue; // Assign directly
+    _initializeAnimation();
+    Future.delayed(
+      widget.delay,
+      () {
+        if (mounted) {
+          _controller.forward();
+          wasStarted = true;
+        }
+      },
+    );
+  }
+
+  void _initializeAnimation() {
     _controller = AnimationController(
       vsync: this,
       duration: widget.duration,
@@ -78,39 +88,22 @@ class GetAnimatedBuilderState<T> extends State<GetAnimatedBuilder<T>> with Singl
         curve: widget.curve,
       ),
     );
-
-    Future.delayed(widget.delay, () {
-      if (mounted) {
-        setState(() {
-          _wasStarted = true;
-          _controller.forward();
-        });
-      }
-    });
   }
 
   @override
   void didUpdateWidget(covariant GetAnimatedBuilder<T> oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.duration != widget.duration) {
-      _controller.duration = widget.duration;
-    }
-    if (oldWidget.delay != widget.delay || oldWidget.tween.begin != widget.tween.begin || oldWidget.tween.end != widget.tween.end || oldWidget.curve != widget.curve) {
-      // Restart animation if key parameters change, for hot reload.
-      _controller.reset();
-      _animation = widget.tween.animate(
-        CurvedAnimation(parent: _controller, curve: widget.curve),
-      );
+    if (oldWidget.duration != widget.duration || oldWidget.tween != widget.tween || oldWidget.curve != widget.curve || oldWidget.delay != widget.delay) {
+      _controller.dispose(); // Dispose of the old controller
+      _initializeAnimation(); // Re-initialize the animation
+
       Future.delayed(widget.delay, () {
         if (mounted) {
-          setState(() {
-            _wasStarted = true;
-            _controller.forward();
-          });
+          _controller.forward();
+          wasStarted = true;
         }
       });
     }
-    // Note: No need to update _animation directly; it's driven by the controller.
   }
 
   @override
@@ -122,13 +115,15 @@ class GetAnimatedBuilderState<T> extends State<GetAnimatedBuilder<T>> with Singl
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: _animation,
-      builder: (context, child) {
-        final value = _wasStarted ? _animation.value : _idleValue;
-        return widget.builder(context, value, child);
-      },
-      child: widget.child,
-    );
+    return _animation == null
+        ? widget.builder(context, _idleValue, widget.child)
+        : AnimatedBuilder(
+            animation: _animation!,
+            builder: (context, child) {
+              final value = _animation!.value;
+              return widget.builder(context, value, child);
+            },
+            child: widget.child,
+          );
   }
 }

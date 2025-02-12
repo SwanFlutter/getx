@@ -35,6 +35,75 @@ class Home extends StatelessWidget {
                 ),
         ),
       ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Get.customExpandableBottomSheet(
+            initialChildSize: 0.5,
+            minChildSize: 0.25,
+            maxChildSize: 0.75,
+            borderRadius: 20.0,
+            isDismissible: true,
+            enableDrag: true,
+            startFromTop: true,
+            isShowCloseBottom: true,
+            itemPaddingTop: 50,
+            builder: (context) {
+              return LoginWidget();
+            },
+          );
+        },
+        child: const Icon(Icons.add),
+      ),
+    );
+  }
+}
+
+class LoginWidget extends StatelessWidget {
+  const LoginWidget({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: Get.width,
+      height: Get.height,
+      //  color: Colors.white,
+      child: Column(
+        spacing: 15.0,
+        children: [
+          TextFormField(
+            decoration: InputDecoration(
+              labelText: "Title",
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12.0),
+              ),
+            ),
+          ),
+          TextFormField(
+            minLines: 4,
+            maxLines: 5,
+            decoration: InputDecoration(
+              labelText: "Description",
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12.0),
+              ),
+            ),
+          ),
+          MaterialButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            minWidth: context.width,
+            color: Colors.deepPurpleAccent,
+            height: 56,
+            child: Text(
+              "Add",
+              style: TextStyle(color: Colors.white),
+            ),
+          ),
+        ],
+      ).paddingAll(15.0),
     );
   }
 }

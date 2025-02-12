@@ -28,14 +28,16 @@ class SignUp extends StatelessWidget {
               ),
             ),
             SizedBox(height: 20),
-            MaterialButton(
-              minWidth: Get.width / 2,
-              height: 56,
-              color: context.theme.colorScheme.inversePrimary,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-              onPressed: () {},
-              child: AnimationExtension(Text('SignUp', style: TextStyle(color: Colors.deepPurpleAccent, fontSize: 14.sp))).rotate(begin: 0, end: 6.5),
-            ),
+            AnimationExtension(
+              MaterialButton(
+                minWidth: Get.width / 2,
+                height: 56,
+                color: context.theme.colorScheme.inversePrimary,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                onPressed: () {},
+                child: AnimationExtension(Text('SignUp', style: TextStyle(color: Colors.deepPurpleAccent, fontSize: 14.sp))).rotate(begin: 0, end: 1),
+              ),
+            ).wave(),
             SizedBox(height: 5),
             Row(
               // Center-align the row

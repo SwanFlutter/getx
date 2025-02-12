@@ -42,7 +42,7 @@ class _LoginPageState extends State<LoginPage> {
             ),
           ),
           SizedBox(height: 20),
-          MaterialButton(
+          AnimationExtension(MaterialButton(
             minWidth: Get.width / 2,
             height: 56,
             color: context.theme.colorScheme.inversePrimary,
@@ -53,8 +53,8 @@ class _LoginPageState extends State<LoginPage> {
             child: AnimationExtension(Text(
               'Login',
               style: TextStyle(color: Colors.deepPurpleAccent, fontSize: 14.sp),
-            )).rotate(begin: 0, end: 6.3),
-          ),
+            )).rotate(begin: 0, end: 1),
+          )).rotate(begin: 0, end: 1),
           SizedBox(height: 5),
           Row(
             children: [
