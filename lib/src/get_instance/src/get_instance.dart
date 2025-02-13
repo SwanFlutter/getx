@@ -298,7 +298,7 @@ class GetInstance {
       return i ?? dep.getDependency() as S;
     } else {
       // ignore: lines_longer_than_80_chars
-      throw '"$S" not found. You need to call "Get.put($S())" or "Get.lazyPut(()=>$S())"';
+      throw '"$S" not found. You need to call "Get.put($S())" OR "Get.lazyPut(()=>$S())" OR "Get.smartPut(()=>$S()" OR "Get.lazyManage(()=>$S()" OR "Get.smartPutIf(()=>$S()"';
     }
   }
 

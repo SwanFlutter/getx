@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 
@@ -1452,47 +1453,94 @@ extension NavTwoExt on GetInterface {
   }
 }
 
+/// Extension for adding overlay functionality to GetInterface
 extension OverlayExt on GetInterface {
+  /// Shows an overlay with loading indicator while executing an async function
+  ///
+  /// Parameters:
+  /// - asyncFunction: Future function to execute while showing overlay
+  /// - opacityColor: Background color of overlay (default: black)
+  /// - loadingWidget: Custom loading widget (default: simple loading text)
+  /// - opacity: Opacity level of overlay background (default: 0.5)
+  ///
+  /// Returns the result of asyncFunction
   Future<T> showOverlay<T>({
     required Future<T> Function() asyncFunction,
     Color opacityColor = Colors.black,
     Widget? loadingWidget,
     double opacity = .5,
+    bool dismissible = false,
   }) async {
+    // Get navigator and overlay state
     final navigatorState = Navigator.of(Get.overlayContext!, rootNavigator: false);
     final overlayState = navigatorState.overlay!;
 
-    final overlayEntryOpacity = OverlayEntry(builder: (context) {
-      return Opacity(
-          opacity: opacity,
-          child: Container(
-            color: opacityColor,
-          ));
-    });
-    final overlayEntryLoader = OverlayEntry(builder: (context) {
-      return loadingWidget ??
-          const Center(
-              child: SizedBox(
-            height: 90,
-            width: 90,
-            child: Text('Loading...'),
-          ));
-    });
+    // Create background overlay entry
+    final overlayEntryOpacity = OverlayEntry(
+      builder: (context) {
+        return GestureDetector(
+          onTap: dismissible ? () => Navigator.of(context).pop() : null,
+          child: Opacity(
+            opacity: opacity,
+            child: Container(
+              color: opacityColor,
+            ),
+          ),
+        );
+      },
+    );
+
+    // Create loading widget overlay entry
+    final overlayEntryLoader = OverlayEntry(
+      builder: (context) {
+        return Center(
+          child: Material(
+            color: Colors.transparent,
+            child: loadingWidget ??
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(8),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.1),
+                        blurRadius: 8,
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: const [
+                      CircularProgressIndicator(),
+                      SizedBox(height: 8),
+                      Text('Loading...'),
+                    ],
+                  ),
+                ),
+          ),
+        );
+      },
+    );
+
+    // Insert overlays
     overlayState.insert(overlayEntryOpacity);
     overlayState.insert(overlayEntryLoader);
 
-    T data;
-
     try {
-      data = await asyncFunction();
-    } on Exception catch (_) {
+      // Execute async function
+      final data = await asyncFunction();
+      return data;
+    } on Exception catch (e) {
+      // Handle errors
+      if (kDebugMode) {
+        print('Error in overlay: $e');
+      }
+      rethrow;
+    } finally {
+      // Clean up overlays
       overlayEntryLoader.remove();
       overlayEntryOpacity.remove();
-      rethrow;
     }
-
-    overlayEntryLoader.remove();
-    overlayEntryOpacity.remove();
-    return data;
   }
 }

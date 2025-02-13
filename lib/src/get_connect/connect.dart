@@ -135,6 +135,24 @@ class GetConnect extends GetConnectInterface {
       withCredentials: withCredentials,
       findProxy: findProxy);
 
+  /// Performs a GET request to the specified URL.
+  ///
+  /// Parameters:
+  /// - [url]: The endpoint URL (e.g., '/api/users')
+  /// - [headers]: Optional HTTP headers (e.g., {'Authorization': 'Bearer token'})
+  /// - [contentType]: Optional content type (e.g., 'application/json')
+  /// - [query]: Optional query parameters (e.g., {'page': '1', 'limit': '10'})
+  /// - [decoder]: Optional custom response decoder
+  ///
+  /// Example:
+  /// ```dart
+  /// final response = await client.get<UserModel>(
+  ///   '/api/users',
+  ///   headers: {'Authorization': 'Bearer $token'},
+  ///   query: {'page': '1', 'limit': '10'},
+  ///   decoder: (json) => UserModel.fromJson(json),
+  /// );
+  /// ```
   @override
   Future<Response<T>> get<T>(
     String url, {
@@ -153,6 +171,28 @@ class GetConnect extends GetConnectInterface {
     );
   }
 
+  /// Performs a POST request to create or submit data to the specified URL.
+  ///
+  /// Parameters:
+  /// - [url]: The endpoint URL
+  /// - [body]: Request payload (can be Map, List, or custom object)
+  /// - [contentType]: Optional content type
+  /// - [headers]: Optional HTTP headers
+  /// - [query]: Optional query parameters
+  /// - [decoder]: Optional custom response decoder
+  /// - [uploadProgress]: Optional callback for upload progress
+  ///
+  /// Example:
+  /// ```dart
+  /// final response = await client.post<LoginResponse>(
+  ///   '/api/login',
+  ///   body: {
+  ///     'email': 'user@example.com',
+  ///     'password': '123456'
+  ///   },
+  ///   decoder: (json) => LoginResponse.fromJson(json),
+  /// );
+  /// ```
   @override
   Future<Response<T>> post<T>(
     String? url,
@@ -175,6 +215,24 @@ class GetConnect extends GetConnectInterface {
     );
   }
 
+  /// Performs a PUT request to update an entire resource at the specified URL.
+  ///
+  /// Parameters:
+  /// - [url]: The endpoint URL
+  /// - [body]: Updated resource data
+  /// - Other parameters similar to POST
+  ///
+  /// Example:
+  /// ```dart
+  /// final response = await client.put<UserModel>(
+  ///   '/api/users/123',
+  ///   body: {
+  ///     'name': 'John Doe',
+  ///     'email': 'john@example.com'
+  ///   },
+  ///   decoder: (json) => UserModel.fromJson(json),
+  /// );
+  /// ```
   @override
   Future<Response<T>> put<T>(
     String url,
@@ -197,6 +255,23 @@ class GetConnect extends GetConnectInterface {
     );
   }
 
+  /// Performs a PATCH request to partially update a resource.
+  ///
+  /// Parameters:
+  /// - [url]: The endpoint URL
+  /// - [body]: Partial update data
+  /// - Other parameters similar to POST
+  ///
+  /// Example:
+  /// ```dart
+  /// final response = await client.patch<UserModel>(
+  ///   '/api/users/123',
+  ///   body: {
+  ///     'name': 'John Doe' // Only update name
+  ///   },
+  ///   decoder: (json) => UserModel.fromJson(json),
+  /// );
+  /// ```
   @override
   Future<Response<T>> patch<T>(
     String url,
@@ -219,6 +294,22 @@ class GetConnect extends GetConnectInterface {
     );
   }
 
+  /// Performs a custom HTTP request with the specified method.
+  ///
+  /// Parameters:
+  /// - [url]: The endpoint URL
+  /// - [method]: HTTP method (e.g., 'GET', 'POST', etc.)
+  /// - Other parameters similar to POST
+  ///
+  /// Example:
+  /// ```dart
+  /// final response = await client.request<CustomModel>(
+  ///   '/api/custom-endpoint',
+  ///   'CUSTOM_METHOD',
+  ///   body: {'data': 'value'},
+  ///   decoder: (json) => CustomModel.fromJson(json),
+  /// );
+  /// ```
   @override
   Future<Response<T>> request<T>(
     String url,
@@ -243,6 +334,22 @@ class GetConnect extends GetConnectInterface {
     );
   }
 
+  /// Performs a DELETE request to remove a resource.
+  ///
+  /// Parameters:
+  /// - [url]: The endpoint URL
+  /// - [headers]: Optional HTTP headers
+  /// - [contentType]: Optional content type
+  /// - [query]: Optional query parameters
+  /// - [decoder]: Optional custom response decoder
+  ///
+  /// Example:
+  /// ```dart
+  /// final response = await client.delete<bool>(
+  ///   '/api/users/123',
+  ///   headers: {'Authorization': 'Bearer $token'},
+  /// );
+  /// ```
   @override
   Future<Response<T>> delete<T>(
     String url, {

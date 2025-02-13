@@ -1,7 +1,6 @@
 // ignore_for_file: library_private_types_in_public_api
 
 import 'package:example/controller/login_controller.dart';
-import 'package:example/screen/home.dart';
 import 'package:example/screen/signup.dart';
 import 'package:flutter/material.dart';
 import 'package:getx/getx.dart';
@@ -24,9 +23,9 @@ class _LoginPageState extends State<LoginPage> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           TextField(
-            controller: LoginController.to.usernameController,
+            controller: LoginController.to.emailController,
             decoration: InputDecoration(
-              labelText: 'Username',
+              labelText: 'Email',
               border: OutlineInputBorder(),
             ),
           ),
@@ -40,19 +39,23 @@ class _LoginPageState extends State<LoginPage> {
             ),
           ),
           SizedBox(height: 20),
-          AnimationExtension(MaterialButton(
-            minWidth: Get.width / 2,
-            height: 56,
-            color: context.theme.colorScheme.inversePrimary,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-            onPressed: () {
-              Get.off(() => Home());
-            },
-            child: AnimationExtension(Text(
-              'Login',
-              style: TextStyle(color: Colors.deepPurpleAccent, fontSize: 14.sp),
-            )).rotate(begin: 0, end: 1),
-          )).rotate(begin: 0, end: 1),
+          AnimationExtension(
+            MaterialButton(
+              minWidth: Get.width / 2,
+              height: 56,
+              color: context.theme.colorScheme.inversePrimary,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+              onPressed: () {
+                LoginController.to.chackLogin();
+              },
+              child: AnimationExtension(
+                Text(
+                  'Login',
+                  style: TextStyle(color: Colors.deepPurpleAccent, fontSize: 14.sp),
+                ),
+              ).rotate(begin: 0, end: 1),
+            ),
+          ).rotate(begin: 0, end: 1),
           SizedBox(height: 5),
           Row(
             children: [
@@ -79,9 +82,7 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   ],
                 ),
-              ).paddingOnly(
-                left: context.mediaQuery.size.width * 0.24,
-              ),
+              ).paddingOnly(left: context.mediaQuery.size.width * 0.24),
             ],
           ),
           SizedBox(height: 20),

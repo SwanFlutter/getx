@@ -1,3 +1,5 @@
+import 'package:example/controller/login_controller.dart';
+import 'package:example/controller/signup_controller.dart';
 import 'package:example/controller/todos_controller.dart';
 import 'package:getx/getx.dart';
 
@@ -19,5 +21,15 @@ class MyBinding extends Bindings {
       // If you want this controller to be available always
       permanent: true,
     );
+
+    Get.smartPut(
+      builder: () => LoginController(),
+      permanent: true,
+      fenix: true,
+      condition: () => true,
+      validityCheck: (controller) => true,
+    );
+
+    Get.lazyPut(() => SignupController());
   }
 }

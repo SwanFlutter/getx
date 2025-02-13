@@ -1,15 +1,15 @@
 import 'dart:convert';
 
 import 'package:example/model/user_model.dart';
-import 'package:example/screen/home.dart';
 import 'package:flutter/material.dart';
 import 'package:getx/getx.dart';
 
-class LoginController extends GetxController {
-  static LoginController get to => Get.find();
+class SignupController extends GetxController {
+  static SignupController get to => Get.find();
 
   late TextEditingController emailController;
   late TextEditingController passwordController;
+  late TextEditingController confirmPasswordController;
 
   GetConnect http = GetConnect(
     allowAutoSignedCert: true,
@@ -21,6 +21,7 @@ class LoginController extends GetxController {
   void onInit() {
     emailController = TextEditingController();
     passwordController = TextEditingController();
+    confirmPasswordController = TextEditingController();
     super.onInit();
   }
 
@@ -31,11 +32,25 @@ class LoginController extends GetxController {
     super.onClose();
   }
 
-  void chackLogin() async {
-    if (emailController.text.isEmpty || passwordController.text.isEmpty) {
+  void chackSignup() async {
+    if (emailController.text.isEmpty) {
       showMassage(
         title: "Worning",
-        message: 'Please fill all fields',
+        message: 'Please enter your email address',
+        icon: Icons.error,
+        iconColor: Colors.redAccent,
+      );
+    } else if (passwordController.text.isEmpty) {
+      showMassage(
+        title: "Worning",
+        message: 'Please enter your password',
+        icon: Icons.error,
+        iconColor: Colors.redAccent,
+      );
+    } else if (confirmPasswordController.text.isEmpty) {
+      showMassage(
+        title: "Worning",
+        message: 'Please enter your confirm password',
         icon: Icons.error,
         iconColor: Colors.redAccent,
       );
@@ -53,9 +68,16 @@ class LoginController extends GetxController {
         icon: Icons.error,
         iconColor: Colors.redAccent,
       );
+    } else if (passwordController.text != confirmPasswordController.text) {
+      showMassage(
+        title: "Worning",
+        message: 'Password does not match',
+        icon: Icons.error,
+        iconColor: Colors.redAccent,
+      );
     } else {
       Get.showOverlay(
-        asyncFunction: () => login(),
+        asyncFunction: () => signUp(),
         opacity: 1,
         loadingWidget: const Center(
           child: CircularProgressIndicator.adaptive(),
@@ -64,19 +86,20 @@ class LoginController extends GetxController {
     }
   }
 
-  Future<UserModel?> login() async {
+  Future<UserModel?> signUp() async {
+    final baseUrl = 'http://192.168.1.103/todos/';
     Map<String, String> header = {
       'Content-Type': 'application/json',
       'Accept': 'application/json',
     };
 
     var body = {
-      'email': emailController.text,
-      'password': passwordController.text,
+      'email': emailController.text.trim(),
+      'password': passwordController.text.trim(),
     };
 
     final response = await http.post(
-      '',
+      '$baseUrl/register',
       headers: header,
       body,
     );
@@ -95,7 +118,7 @@ class LoginController extends GetxController {
           icon: Icons.check,
           iconColor: Colors.green,
         );
-        Get.off(() => Home());
+        Get.back();
         return user;
       } else {
         showMassage(

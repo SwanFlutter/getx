@@ -50,14 +50,3 @@ class UserModel {
   @override
   int get hashCode => email.hashCode ^ pasword.hashCode;
 }
-
-mixin Auths {
-  void login();
-}
-
-class Users with Auths {
-  @override
-  void login() {
-    // TODO: implement login
-  }
-}
