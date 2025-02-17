@@ -2,14 +2,17 @@ import 'dart:convert';
 
 import 'package:example/model/user_model.dart';
 import 'package:flutter/material.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:getx/getx.dart';
 
 class SignupController extends GetxController {
-  static SignupController get to => Get.find();
+  static SignupController get to => Get.smartFind<SignupController>();
 
   late TextEditingController emailController;
   late TextEditingController passwordController;
   late TextEditingController confirmPasswordController;
+
+  final storage = GetStorage();
 
   GetConnect http = GetConnect(
     allowAutoSignedCert: true,
@@ -26,9 +29,18 @@ class SignupController extends GetxController {
   }
 
   @override
+  void dispose() {
+    emailController.dispose();
+    passwordController.dispose();
+    confirmPasswordController.dispose();
+    super.dispose();
+  }
+
+  @override
   void onClose() {
     emailController.dispose();
     passwordController.dispose();
+    confirmPasswordController.dispose();
     super.onClose();
   }
 
@@ -61,7 +73,7 @@ class SignupController extends GetxController {
         icon: Icons.error,
         iconColor: Colors.redAccent,
       );
-    } else if (passwordController.text.length > 6) {
+    } else if (passwordController.text.length < 6) {
       showMassage(
         title: "Worning",
         message: 'Password must be at least 6 characters',
@@ -78,7 +90,7 @@ class SignupController extends GetxController {
     } else {
       Get.showOverlay(
         asyncFunction: () => signUp(),
-        opacity: 1,
+        opacity: 0.5,
         loadingWidget: const Center(
           child: CircularProgressIndicator.adaptive(),
         ),
@@ -86,17 +98,22 @@ class SignupController extends GetxController {
     }
   }
 
+  Future<String?> getToken() async {
+    return storage.read('token');
+  }
+
   Future<UserModel?> signUp() async {
-    final baseUrl = 'http://192.168.1.103/todos/';
+    final baseUrl = 'http://192.168.1.103/todos';
+
     Map<String, String> header = {
       'Content-Type': 'application/json',
       'Accept': 'application/json',
     };
 
-    var body = {
+    String body = jsonEncode({
       'email': emailController.text.trim(),
       'password': passwordController.text.trim(),
-    };
+    });
 
     final response = await http.post(
       '$baseUrl/register',
@@ -104,38 +121,58 @@ class SignupController extends GetxController {
       body,
     );
 
-    var jsonData = json.decode(response.bodyString!);
+    print("response: ${response.statusCode}");
+    print("response: ${response.body}");
+    print("response: ${response.bodyString!}");
 
-    if (jsonData is Map) {
-      bool success = jsonData['success'];
-      String message = jsonData['message'];
+    if (response.body.isEmpty) {
+      throw Exception('Empty response from server');
+    }
 
-      if (success) {
-        UserModel user = UserModel.fromJson(jsonData['data']);
-        showMassage(
-          title: "Success",
-          message: message,
-          icon: Icons.check,
-          iconColor: Colors.green,
-        );
-        Get.back();
-        return user;
+    try {
+      var jsonData = json.decode(response.body);
+
+      if (jsonData is Map) {
+        bool success = jsonData['success'];
+        String message = jsonData['message'];
+
+        print("jsonData: $jsonData");
+
+        if (success) {
+          UserModel user = UserModel.fromJson(jsonData['data']);
+          showMassage(
+            title: "Success",
+            message: message,
+            icon: Icons.check,
+            iconColor: Colors.green,
+          );
+          Get.back();
+          return user;
+        } else {
+          showMassage(
+            title: "Error",
+            message: message,
+            icon: Icons.error,
+            iconColor: Colors.redAccent,
+          );
+        }
       } else {
         showMassage(
           title: "Error",
-          message: message,
+          message: 'Something went wrong',
           icon: Icons.error,
           iconColor: Colors.redAccent,
         );
       }
-    } else {
+    } catch (e) {
       showMassage(
         title: "Error",
-        message: 'Something went wrong',
+        message: 'Invalid response format',
         icon: Icons.error,
         iconColor: Colors.redAccent,
       );
     }
+
     return null;
   }
 
@@ -162,3 +199,60 @@ class SignupController extends GetxController {
     );
   }
 }
+
+
+
+
+/** try {
+      final response = await http.post(
+        '$baseUrl/register',
+        headers: header,
+        body,
+      );
+
+      print("response: ${response.statusCode}");
+      print("response: ${response.statusText!}");
+
+      var jsonData = json.decode(response.bodyString!);
+
+      if (jsonData is Map) {
+        bool success = jsonData['success'];
+        String message = jsonData['message'];
+
+        print("jsonData: $jsonData");
+
+        if (success) {
+          UserModel user = UserModel.fromJson(jsonData['data']);
+          showMassage(
+            title: "Success",
+            message: message,
+            icon: Icons.check,
+            iconColor: Colors.green,
+          );
+          Get.back();
+          return user;
+        } else {
+          showMassage(
+            title: "Error",
+            message: message,
+            icon: Icons.error,
+            iconColor: Colors.redAccent,
+          );
+        }
+      } else {
+        showMassage(
+          title: "Error",
+          message: 'Something went wrong',
+          icon: Icons.error,
+          iconColor: Colors.redAccent,
+        );
+      }
+    } catch (e) {
+      debugPrint("Error: $e");
+      showMassage(
+        title: "Error",
+        message: 'Connection error',
+        icon: Icons.error,
+        iconColor: Colors.redAccent,
+      );
+    } */

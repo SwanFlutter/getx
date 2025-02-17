@@ -147,6 +147,77 @@ extension Inst on GetInterface {
   }
 }
 
+extension SmartLazyPut on GetInterface {
+  /// Enhanced version of lazyPut that handles controller recreation.
+  ///
+  /// Use this method to register a controller with GetX, ensuring that
+  /// the controller is only created if it hasn't been registered before
+  /// or if it has been removed. It also checks if the builder for the
+  /// controller has been prepared before proceeding.
+  ///
+  /// Example:
+  /// ```
+  /// Get.smartLazyPut<MyController>(() => MyController());
+  /// ```
+  ///
+  /// Parameters:
+  ///   - [builder]: A callback function that returns an instance of the controller.
+  ///   - [tag]: An optional tag to identify the controller instance.
+  ///   - [fenix]: If true (default), the controller instance will remain in memory even when not in use.
+  ///   - [autoRemove]: If true, the controller instance will be automatically removed when not in use.
+  void smartLazyPut<S>(
+    InstanceBuilderCallback<S> builder, {
+    String? tag,
+    bool? fenix,
+    bool autoRemove = true,
+  }) {
+    // If it is not registered previously or has been removed
+    if (!isRegistered<S>(tag: tag)) {
+      // Check if the builder has been prepared before
+      if (!isPrepared<S>(tag: tag)) {
+        lazyPut<S>(
+          builder,
+          tag: tag,
+          // If fenix is not specified, default to true
+          fenix: fenix ?? true,
+        );
+      }
+    }
+  }
+
+  /// Enhanced version of find that ensures the controller exists.
+  ///
+  /// Use this method to retrieve a registered controller from GetX. If the
+  /// controller is not found and its builder is prepared, a new instance
+  /// of the controller will be created.
+  ///
+  /// Example:
+  /// ```
+  /// MyController myController = Get.smartFind<MyController>();
+  /// ```
+  ///
+  /// Parameters:
+  ///   - [tag]: An optional tag to identify the controller instance.
+  ///
+  /// Returns:
+  ///   - The controller instance.
+  ///
+  /// Throws:
+  ///   - An exception if the controller is not found and its builder is not prepared.
+  S smartFind<S>({String? tag}) {
+    try {
+      return find<S>(tag: tag);
+    } catch (e) {
+      // If the controller was not found and its builder is prepared
+      if (isPrepared<S>(tag: tag)) {
+        // Create a new instance
+        return find<S>(tag: tag);
+      }
+      rethrow;
+    }
+  }
+}
+
 /// Extension for advanced dependency management with intelligent injection strategies
 extension SmartDependencyManagement on GetInterface {
   /// Smartly manages dependency injection with advanced conditional logic

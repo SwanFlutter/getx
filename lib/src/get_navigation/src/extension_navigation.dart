@@ -1,6 +1,7 @@
+// ignore_for_file: unused_catch_clause
+
 import 'dart:ui';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 
@@ -1453,94 +1454,67 @@ extension NavTwoExt on GetInterface {
   }
 }
 
-/// Extension for adding overlay functionality to GetInterface
 extension OverlayExt on GetInterface {
-  /// Shows an overlay with loading indicator while executing an async function
+  /// Displays an overlay with a loading indicator while an asynchronous function is executed.
   ///
   /// Parameters:
-  /// - asyncFunction: Future function to execute while showing overlay
-  /// - opacityColor: Background color of overlay (default: black)
-  /// - loadingWidget: Custom loading widget (default: simple loading text)
-  /// - opacity: Opacity level of overlay background (default: 0.5)
+  /// - `asyncFunction`: The asynchronous function to be executed.
+  /// - `opacityColor`: The color of the overlay background. Default is black.
+  /// - `loadingWidget`: The widget to be displayed while loading. Default is a centered text saying 'Loading...'.
+  /// - `opacity`: The opacity level of the overlay background. Default is 0.5.
   ///
-  /// Returns the result of asyncFunction
+  /// Returns the result of the asynchronous function.
   Future<T> showOverlay<T>({
     required Future<T> Function() asyncFunction,
     Color opacityColor = Colors.black,
     Widget? loadingWidget,
-    double opacity = .5,
-    bool dismissible = false,
+    double opacity = 0.5,
   }) async {
-    // Get navigator and overlay state
+    // Get the current navigator and overlay state
     final navigatorState = Navigator.of(Get.overlayContext!, rootNavigator: false);
     final overlayState = navigatorState.overlay!;
 
-    // Create background overlay entry
-    final overlayEntryOpacity = OverlayEntry(
-      builder: (context) {
-        return GestureDetector(
-          onTap: dismissible ? () => Navigator.of(context).pop() : null,
-          child: Opacity(
-            opacity: opacity,
-            child: Container(
-              color: opacityColor,
+    // Create an overlay entry for the background opacity
+    final overlayEntryOpacity = OverlayEntry(builder: (context) {
+      return Opacity(
+        opacity: opacity,
+        child: Container(color: opacityColor),
+      );
+    });
+
+    // Create an overlay entry for the loading widget
+    final overlayEntryLoader = OverlayEntry(builder: (context) {
+      return loadingWidget ??
+          const Center(
+            child: SizedBox(
+              height: 90,
+              width: 90,
+              child: CircularProgressIndicator(), // Improved loading indicator
             ),
-          ),
-        );
-      },
-    );
+          );
+    });
 
-    // Create loading widget overlay entry
-    final overlayEntryLoader = OverlayEntry(
-      builder: (context) {
-        return Center(
-          child: Material(
-            color: Colors.transparent,
-            child: loadingWidget ??
-                Container(
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(8),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.1),
-                        blurRadius: 8,
-                      ),
-                    ],
-                  ),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: const [
-                      CircularProgressIndicator(),
-                      SizedBox(height: 8),
-                      Text('Loading...'),
-                    ],
-                  ),
-                ),
-          ),
-        );
-      },
-    );
-
-    // Insert overlays
+    // Insert the overlay entries into the overlay state
     overlayState.insert(overlayEntryOpacity);
     overlayState.insert(overlayEntryLoader);
 
+    T data;
+
     try {
-      // Execute async function
-      final data = await asyncFunction();
-      return data;
+      // Execute the asynchronous function
+      data = await asyncFunction();
     } on Exception catch (e) {
-      // Handle errors
-      if (kDebugMode) {
-        print('Error in overlay: $e');
-      }
-      rethrow;
-    } finally {
-      // Clean up overlays
+      // Remove the overlay entries in case of an exception
       overlayEntryLoader.remove();
       overlayEntryOpacity.remove();
+      // Rethrow the exception after cleanup
+      rethrow;
     }
+
+    // Remove the overlay entries after the function completes
+    overlayEntryLoader.remove();
+    overlayEntryOpacity.remove();
+
+    return data;
   }
 }

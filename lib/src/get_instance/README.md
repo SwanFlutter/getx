@@ -10,6 +10,65 @@ This section of the code is responsible for managing dependencies and instances 
 
 # Smart Dependency Management Extension
 
+
+## SmartLazyPut
+
+
+
+The `smartLazyPut` extension enhances the standard `lazyPut` method from the GetX package, providing additional functionality for managing controller instances. This method ensures that controllers are only created when necessary, allowing for efficient memory usage and improved application performance.
+
+#### Overview
+
+The `smartLazyPut` method registers a controller with GetX, ensuring that the controller is only instantiated if it hasn't been registered before or if it has been removed. This extension checks if the builder for the controller has been prepared before proceeding with the registration.
+
+#### Features Compared to Standard `lazyPut`
+
+- **Controller Recreation Handling**: Unlike the standard `lazyPut`, which simply registers a controller, `smartLazyPut` checks if a controller is already registered or has been removed. If it has been removed, it allows for recreation, ensuring that you always have access to a valid instance.
+  
+- **Preparation Check**: Before registering a controller, `smartLazyPut` verifies if the builder has been prepared, adding an extra layer of safety to avoid unnecessary instantiation.
+
+- **Automatic Memory Management**: The method automatically manages memory by ensuring that controllers are only created when needed. This is particularly useful in applications with complex navigation and multiple controllers.
+
+#### Example Usage
+
+```dart
+// Define your controller
+class MyController extends GetxController {
+  final count = 0.obs;
+
+  void increment() {
+    count.value++;
+  }
+}
+
+// In your main function or wherever you manage dependencies
+void main() {
+  // Using smartLazyPut to register MyController
+  Get.smartLazyPut<MyController>(() => MyController());
+
+  // Using smartFind to retrieve MyController
+  MyController myController = Get.smartFind<MyController>();
+
+  // Now you can use myController as needed
+  myController.increment();
+  print('Count: ${myController.count.value}');
+}
+```
+
+### Parameters
+
+- **builder**: A callback function that returns an instance of the controller.
+- **tag**: An optional tag to identify the controller instance.
+- **fenix**: If true (default), the controller instance will remain in memory even when not in use.
+- **autoRemove**: If true, the controller instance will be automatically removed when not in use.
+
+### Conclusion
+
+The `smartLazyPut` extension provides a more robust and efficient way to manage controller instances in your GetX applications. By ensuring that controllers are only created when necessary and checking for existing registrations, this method enhances performance and reduces memory overhead compared to the standard `lazyPut`.
+
+
+
+
 ## Overview
 
 The `SmartDependencyManagement` extension provides advanced dependency injection and management strategies for Dart applications using GetX.

@@ -30,6 +30,15 @@ class MyBinding extends Bindings {
       validityCheck: (controller) => true,
     );
 
-    Get.lazyPut(() => SignupController());
+    Get.smartLazyPut<SignupController>(() => SignupController());
+
+    /*
+    Get.smartPut(
+      builder: () => SignupController(),
+      permanent: true,
+      fenix: false,
+      condition: () => true,
+      validityCheck: (controller) => true,
+    );*/
   }
 }
