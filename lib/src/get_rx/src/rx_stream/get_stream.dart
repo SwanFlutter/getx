@@ -1,4 +1,4 @@
-part of rx_stream;
+part of 'rx_stream.dart';
 
 /// [GetStream] is the lightest and most performative way of working
 /// with events at Dart. You sintaxe is like StreamController, but it works
@@ -112,7 +112,8 @@ class GetStream<T> {
     _value = null;
   }
 
-  LightSubscription<T> listen(void Function(T event) onData, {Function? onError, void Function()? onDone, bool? cancelOnError}) {
+  LightSubscription<T> listen(void Function(T event) onData,
+      {Function? onError, void Function()? onDone, bool? cancelOnError}) {
     final subs = LightSubscription<T>(
       removeSubscription,
       onPause: onPause,
@@ -128,12 +129,14 @@ class GetStream<T> {
     return subs;
   }
 
-  Stream<T> get stream => GetStreamTransformation(addSubscription, removeSubscription);
+  Stream<T> get stream =>
+      GetStreamTransformation(addSubscription, removeSubscription);
 }
 
 class LightSubscription<T> implements StreamSubscription<T> {
   final RemoveSubscription<T> _removeSubscription;
-  LightSubscription(this._removeSubscription, {this.onPause, this.onResume, this.onCancel});
+  LightSubscription(this._removeSubscription,
+      {this.onPause, this.onResume, this.onCancel});
   final void Function()? onPause;
   final void Function()? onResume;
   final FutureOr<void> Function()? onCancel;
@@ -189,7 +192,8 @@ class GetStreamTransformation<T> extends Stream<T> {
   GetStreamTransformation(this._addSubscription, this._removeSubscription);
 
   @override
-  LightSubscription<T> listen(void Function(T event)? onData, {Function? onError, void Function()? onDone, bool? cancelOnError}) {
+  LightSubscription<T> listen(void Function(T event)? onData,
+      {Function? onError, void Function()? onDone, bool? cancelOnError}) {
     final subs = LightSubscription<T>(_removeSubscription)
       ..onData(onData)
       ..onError(onError)
@@ -199,6 +203,7 @@ class GetStreamTransformation<T> extends Stream<T> {
   }
 }
 
-typedef RemoveSubscription<T> = FutureOr<bool?> Function(LightSubscription<T> subs);
+typedef RemoveSubscription<T> = FutureOr<bool?> Function(
+    LightSubscription<T> subs);
 
 typedef AddSubscription<T> = FutureOr<void> Function(LightSubscription<T> subs);

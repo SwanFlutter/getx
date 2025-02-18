@@ -21,7 +21,8 @@ extension GetDynamicUtils on dynamic {
   /// dynamic value = 'some error';
   /// value.printError(info: 'An error occurred');
   /// ```
-  void printError({String info = '', Function logFunction = GetUtils.printFunction}) =>
+  void printError(
+          {String info = '', Function logFunction = GetUtils.printFunction}) =>
       // ignore: unnecessary_this
       logFunction('Error: ${this.runtimeType}', this, info, isError: true);
 
@@ -35,7 +36,9 @@ extension GetDynamicUtils on dynamic {
   /// dynamic value = 'some info';
   /// value.printInfo(info: 'Some information');
   /// ```
-  void printInfo({String info = '', Function printFunction = GetUtils.printFunction}) =>
+  void printInfo(
+          {String info = '',
+          Function printFunction = GetUtils.printFunction}) =>
       // ignore: unnecessary_this
       printFunction('Info: ${this.runtimeType}', this, info);
 }

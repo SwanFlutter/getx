@@ -8,7 +8,8 @@ import '../rx_flutter/rx_notifier.dart';
 import 'list_notifier.dart';
 
 // ignore: prefer_mixin
-abstract class GetxController extends DisposableInterface with ListenableMixin, ListNotifierMixin {
+abstract class GetxController extends DisposableInterface
+    with ListenableMixin, ListNotifierMixin {
   /// Rebuilds `GetBuilder` each time you call `update()`;
   /// Can take a List of [ids], that will only update the matching
   /// `GetBuilder( id: )`,
@@ -74,7 +75,8 @@ mixin ScrollMixin on GetLifeCycleBase {
 
 abstract class RxController extends DisposableInterface {}
 
-abstract class SuperController<T> extends FullLifeCycleController with FullLifeCycleMixin, StateMixin<T> {}
+abstract class SuperController<T> extends FullLifeCycleController
+    with FullLifeCycleMixin, StateMixin<T> {}
 
 abstract class FullLifeCycleController extends GetxController
     with

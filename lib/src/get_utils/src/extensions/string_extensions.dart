@@ -28,7 +28,8 @@ extension GetStringUtils on String {
   /// String numeric = "abc123".numericOnly();
   /// // Result: "123"
   /// ```
-  String numericOnly({bool firstWordOnly = false}) => GetUtils.numericOnly(this, firstWordOnly: firstWordOnly);
+  String numericOnly({bool firstWordOnly = false}) =>
+      GetUtils.numericOnly(this, firstWordOnly: firstWordOnly);
 
   /// Discover if the String is alphanumeric only
   ///
@@ -298,7 +299,8 @@ extension GetStringUtils on String {
   /// bool contains = "Hello World".isCaseInsensitiveContains("hello");
   /// // Result: true
   /// ```
-  bool isCaseInsensitiveContains(String b) => GetUtils.isCaseInsensitiveContains(this, b);
+  bool isCaseInsensitiveContains(String b) =>
+      GetUtils.isCaseInsensitiveContains(this, b);
 
   /// Discover if the String contains any value case insensitively
   ///
@@ -307,7 +309,8 @@ extension GetStringUtils on String {
   /// bool containsAny = "Hello World".isCaseInsensitiveContainsAny("hello");
   /// // Result: true
   /// ```
-  bool isCaseInsensitiveContainsAny(String b) => GetUtils.isCaseInsensitiveContainsAny(this, b);
+  bool isCaseInsensitiveContainsAny(String b) =>
+      GetUtils.isCaseInsensitiveContainsAny(this, b);
 
   /// Capitalize the String
   ///
@@ -373,7 +376,8 @@ extension GetStringUtils on String {
   /// String capitalizedWords = "hello world".capitalizeAllWordsFirstLetter();
   /// // Result: "Hello World"
   /// ```
-  String capitalizeAllWordsFirstLetter() => GetUtils.capitalizeAllWordsFirstLetter(this);
+  String capitalizeAllWordsFirstLetter() =>
+      GetUtils.capitalizeAllWordsFirstLetter(this);
 
   /// Reverse the String
   ///

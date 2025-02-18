@@ -1,4 +1,6 @@
-part of rx_types;
+// ignore_for_file: unintended_html_in_doc_comment
+
+part of '../rx_types.dart';
 
 /// global object that registers against `GetX` and `Obx`, and allows the
 /// reactivity
@@ -131,7 +133,7 @@ mixin RxObjectMixin<T> on NotifyManager<T> {
     return subscription;
   }
 
-  /// Binds an existing `Stream<T>` to this Rx<T> to keep the values in sync.
+  /// Binds an existing `Stream<T>` to this Rx<> to keep the values in sync.
   /// You can bind multiple sources to update the value.
   /// Closing the subscription will happen automatically when the observer
   /// Widget (`GetX` or `Obx`) gets unmounted from the Widget tree.
@@ -237,7 +239,7 @@ abstract class _RxImpl<T> extends RxNotifier<T> with RxObjectMixin<T> {
   /// For example, supposed we have a `int seconds = 2` and we want to animate
   /// from invisible to visible a widget in two seconds:
   /// RxEvent<int>.call(seconds);
-  /// then after a click happens, you want to call a RxEvent<int>.call(seconds).
+  /// then after a click happens, you want to call a RxEvent<int>.call(seconds);
   /// By doing `call(seconds)`, if the value being held is the same,
   /// the listeners won't trigger, hence we need this new `trigger` function.
   /// This will refresh the listener of an AnimatedWidget and will keep
@@ -263,7 +265,7 @@ abstract class _RxImpl<T> extends RxNotifier<T> with RxObjectMixin<T> {
 }
 
 class RxBool extends Rx<bool> {
-  RxBool(bool initial) : super(initial);
+  RxBool(super.initial);
   @override
   String toString() {
     return value ? "true" : "false";
@@ -271,7 +273,7 @@ class RxBool extends Rx<bool> {
 }
 
 class RxnBool extends Rx<bool?> {
-  RxnBool([bool? initial]) : super(initial);
+  RxnBool([super.initial]);
   @override
   String toString() {
     return "$value";
@@ -291,7 +293,7 @@ extension RxBoolExt on Rx<bool> {
 
   /// Toggles the bool [value] between false and true.
   /// A shortcut for `flag.value = !flag.value;`
-  /// FIXME: why return this? fluent interface is not
+  /// fIXME: why return this? fluent interface is not
   ///  not really a dart thing since we have '..' operator
   // ignore: avoid_returning_this
   Rx<bool> toggle() {
@@ -326,7 +328,7 @@ extension RxnBoolExt on Rx<bool?> {
 
   /// Toggles the bool [value] between false and true.
   /// A shortcut for `flag.value = !flag.value;`
-  /// FIXME: why return this? fluent interface is not
+  /// fFIXME: why return this? fluent interface is not
   ///  not really a dart thing since we have '..' operator
   // ignore: avoid_returning_this
   Rx<bool?>? toggle() {
@@ -343,7 +345,7 @@ extension RxnBoolExt on Rx<bool?> {
 /// For example, any custom "Model" class, like User().obs will use `Rx` as
 /// wrapper.
 class Rx<T> extends _RxImpl<T> {
-  Rx(T initial) : super(initial);
+  Rx(super.initial);
 
   @override
   dynamic toJson() {
@@ -356,7 +358,7 @@ class Rx<T> extends _RxImpl<T> {
 }
 
 class Rxn<T> extends Rx<T?> {
-  Rxn([T? initial]) : super(initial);
+  Rxn([super.initial]);
 
   @override
   dynamic toJson() {

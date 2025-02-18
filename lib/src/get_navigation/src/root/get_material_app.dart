@@ -73,13 +73,15 @@ class GetMaterialApp extends StatelessWidget {
     this.navigatorKey,
     this.scaffoldMessengerKey,
     this.home,
-    Map<String, Widget Function(BuildContext)> this.routes = const <String, WidgetBuilder>{},
+    Map<String, Widget Function(BuildContext)> this.routes =
+        const <String, WidgetBuilder>{},
     this.initialRoute,
     this.onGenerateRoute,
     this.onGenerateInitialRoutes,
     this.onUnknownRoute,
     this.useInheritedMediaQuery = false,
-    List<NavigatorObserver> this.navigatorObservers = const <NavigatorObserver>[],
+    List<NavigatorObserver> this.navigatorObservers =
+        const <NavigatorObserver>[],
     this.builder,
     this.textDirection,
     this.title = '',
@@ -183,7 +185,8 @@ class GetMaterialApp extends StatelessWidget {
   })  : routerDelegate = routerDelegate ??= Get.createDelegate(
           notFoundRoute: unknownRoute,
         ),
-        routeInformationParser = routeInformationParser ??= Get.createInformationParser(
+        routeInformationParser =
+            routeInformationParser ??= Get.createInformationParser(
           initialRoute: getPages?.first.name ?? '/',
         ),
         //navigatorObservers = null,
@@ -235,7 +238,8 @@ class GetMaterialApp extends StatelessWidget {
             defaultTransition: defaultTransition ?? Get.defaultTransition,
             defaultOpaqueRoute: opaqueRoute ?? Get.isOpaqueRouteDefault,
             defaultPopGesture: popGesture ?? Get.isPopGestureEnable,
-            defaultDurationTransition: transitionDuration ?? Get.defaultTransitionDuration,
+            defaultDurationTransition:
+                transitionDuration ?? Get.defaultTransitionDuration,
           );
         },
         builder: (_) => routerDelegate != null
@@ -250,10 +254,12 @@ class GetMaterialApp extends StatelessWidget {
                 onGenerateTitle: onGenerateTitle,
                 color: color,
                 theme: _.theme ?? theme ?? ThemeData.fallback(),
-                darkTheme: _.darkTheme ?? darkTheme ?? theme ?? ThemeData.fallback(),
+                darkTheme:
+                    _.darkTheme ?? darkTheme ?? theme ?? ThemeData.fallback(),
                 themeMode: _.themeMode ?? themeMode,
                 locale: Get.locale ?? locale,
-                scaffoldMessengerKey: scaffoldMessengerKey ?? _.scaffoldMessengerKey,
+                scaffoldMessengerKey:
+                    scaffoldMessengerKey ?? _.scaffoldMessengerKey,
                 localizationsDelegates: localizationsDelegates,
                 localeListResolutionCallback: localeListResolutionCallback,
                 localeResolutionCallback: localeResolutionCallback,
@@ -270,22 +276,35 @@ class GetMaterialApp extends StatelessWidget {
               )
             : MaterialApp(
                 key: _.unikey,
-                navigatorKey: (navigatorKey == null ? Get.key : Get.addKey(navigatorKey!)),
-                scaffoldMessengerKey: scaffoldMessengerKey ?? _.scaffoldMessengerKey,
+                navigatorKey: (navigatorKey == null
+                    ? Get.key
+                    : Get.addKey(navigatorKey!)),
+                scaffoldMessengerKey:
+                    scaffoldMessengerKey ?? _.scaffoldMessengerKey,
                 home: home,
                 routes: routes ?? const <String, WidgetBuilder>{},
                 initialRoute: initialRoute,
-                onGenerateRoute: (getPages != null ? generator : onGenerateRoute),
-                onGenerateInitialRoutes: (getPages == null || home != null) ? onGenerateInitialRoutes : initialRoutesGenerate,
+                onGenerateRoute:
+                    (getPages != null ? generator : onGenerateRoute),
+                onGenerateInitialRoutes: (getPages == null || home != null)
+                    ? onGenerateInitialRoutes
+                    : initialRoutesGenerate,
                 onUnknownRoute: onUnknownRoute,
-                navigatorObservers: (navigatorObservers == null ? <NavigatorObserver>[GetObserver(routingCallback, Get.routing)] : <NavigatorObserver>[GetObserver(routingCallback, Get.routing)]
+                navigatorObservers: (navigatorObservers == null
+                    ? <NavigatorObserver>[
+                        GetObserver(routingCallback, Get.routing)
+                      ]
+                    : <NavigatorObserver>[
+                        GetObserver(routingCallback, Get.routing)
+                      ]
                   ..addAll(navigatorObservers!)),
                 builder: defaultBuilder,
                 title: title,
                 onGenerateTitle: onGenerateTitle,
                 color: color,
                 theme: _.theme ?? theme ?? ThemeData.fallback(),
-                darkTheme: _.darkTheme ?? darkTheme ?? theme ?? ThemeData.fallback(),
+                darkTheme:
+                    _.darkTheme ?? darkTheme ?? theme ?? ThemeData.fallback(),
                 themeMode: _.themeMode ?? themeMode,
                 locale: Get.locale ?? locale,
                 localizationsDelegates: localizationsDelegates,
@@ -307,8 +326,13 @@ class GetMaterialApp extends StatelessWidget {
 
   Widget defaultBuilder(BuildContext context, Widget? child) {
     return Directionality(
-      textDirection: textDirection ?? (rtlLanguages.contains(Get.locale?.languageCode) ? TextDirection.rtl : TextDirection.ltr),
-      child: builder == null ? (child ?? const Material()) : builder!(context, child ?? const Material()),
+      textDirection: textDirection ??
+          (rtlLanguages.contains(Get.locale?.languageCode)
+              ? TextDirection.rtl
+              : TextDirection.ltr),
+      child: builder == null
+          ? (child ?? const Material())
+          : builder!(context, child ?? const Material()),
     );
   }
 

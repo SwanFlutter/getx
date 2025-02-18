@@ -29,7 +29,8 @@ extension ListSortExtension<T> on List<T> {
   /// ];
   /// final sortedByAge = people.sortByField((p) => p.age); // Sorted by age ascending
   /// ```
-  List<T> sortByField<K extends Comparable>(K Function(T) field, {bool descending = false}) {
+  List<T> sortByField<K extends Comparable>(K Function(T) field,
+      {bool descending = false}) {
     List<T> sorted = List.from(this);
     sorted.sort((a, b) {
       if (descending) {
@@ -126,7 +127,8 @@ extension ListSortExtension<T> on List<T> {
     if (chunks.length == 1) return chunks.first;
 
     List<T> result = [];
-    List<Iterator<T>> iterators = chunks.map((chunk) => chunk.iterator).toList();
+    List<Iterator<T>> iterators =
+        chunks.map((chunk) => chunk.iterator).toList();
     List<bool> hasNext = List.filled(chunks.length, false);
     List<T> current = List.filled(chunks.length, null as T);
 
@@ -145,7 +147,10 @@ extension ListSortExtension<T> on List<T> {
       for (var i = 0; i < chunks.length; i++) {
         if (!hasNext[i]) continue;
 
-        if (bestIndex == -1 || (descending ? _compareValues(current[i], bestValue) > 0 : _compareValues(current[i], bestValue) < 0)) {
+        if (bestIndex == -1 ||
+            (descending
+                ? _compareValues(current[i], bestValue) > 0
+                : _compareValues(current[i], bestValue) < 0)) {
           bestIndex = i;
           bestValue = current[i];
         }

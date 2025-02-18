@@ -120,7 +120,8 @@ class GetMiddleware implements _RouteMiddleware {
   void onPageDispose() {}
 
   @override
-  Future<GetNavConfig?> redirectDelegate(GetNavConfig route) => SynchronousFuture(route);
+  Future<GetNavConfig?> redirectDelegate(GetNavConfig route) =>
+      SynchronousFuture(route);
 }
 
 class MiddlewareRunner {
@@ -176,7 +177,8 @@ class MiddlewareRunner {
     return page;
   }
 
-  void runOnPageDispose() => _getMiddlewares().forEach((element) => element.onPageDispose());
+  void runOnPageDispose() =>
+      _getMiddlewares().forEach((element) => element.onPageDispose());
 }
 
 class PageRedirect {

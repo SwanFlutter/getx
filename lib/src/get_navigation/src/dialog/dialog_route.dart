@@ -112,7 +112,8 @@ class GetDialogRoute<T> extends PopupRoute<T> {
 
   /// Builds the dialog's content with proper semantics wrapping.
   @override
-  Widget buildPage(BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation) {
+  Widget buildPage(BuildContext context, Animation<double> animation,
+      Animation<double> secondaryAnimation) {
     return Semantics(
       scopesRoute: true,
       explicitChildNodes: true,
@@ -125,7 +126,8 @@ class GetDialogRoute<T> extends PopupRoute<T> {
   /// If [_transitionBuilder] is null, provides a default fade transition.
   /// Otherwise, uses the custom transition builder.
   @override
-  Widget buildTransitions(BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation, Widget child) {
+  Widget buildTransitions(BuildContext context, Animation<double> animation,
+      Animation<double> secondaryAnimation, Widget child) {
     if (_transitionBuilder == null) {
       return FadeTransition(
         opacity: CurvedAnimation(

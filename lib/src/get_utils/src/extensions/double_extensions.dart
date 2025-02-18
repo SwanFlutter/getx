@@ -49,7 +49,8 @@ extension DoubleExt on double {
   /// Duration duration = 1.5.minutes;
   /// // Result: Duration(minutes: 1)
   /// ```
-  Duration get minutes => Duration(seconds: (this * Duration.secondsPerMinute).round());
+  Duration get minutes =>
+      Duration(seconds: (this * Duration.secondsPerMinute).round());
 
   /// Converts a double to a Duration in hours
   ///
@@ -58,7 +59,8 @@ extension DoubleExt on double {
   /// Duration duration = 1.5.hours;
   /// // Result: Duration(hours: 1)
   /// ```
-  Duration get hours => Duration(minutes: (this * Duration.minutesPerHour).round());
+  Duration get hours =>
+      Duration(minutes: (this * Duration.minutesPerHour).round());
 
   /// Converts a double to a Duration in days
   ///

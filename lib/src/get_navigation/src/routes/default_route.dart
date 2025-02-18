@@ -18,13 +18,14 @@ mixin PageRouteReportMixin<T> on Route<T> {
   }
 }
 
-class GetPageRoute<T> extends PageRoute<T> with GetPageRouteTransitionMixin<T>, PageRouteReportMixin {
+class GetPageRoute<T> extends PageRoute<T>
+    with GetPageRouteTransitionMixin<T>, PageRouteReportMixin {
   /// Creates a page route for use in an iOS designed app.
   ///
   /// The [builder], [maintainState], and [fullscreenDialog] arguments must not
   /// be null.
   GetPageRoute({
-    RouteSettings? settings,
+    super.settings, // Now a super parameter
     this.transitionDuration = const Duration(milliseconds: 300),
     this.opaque = true,
     this.parameter,
@@ -44,9 +45,9 @@ class GetPageRoute<T> extends PageRoute<T> with GetPageRouteTransitionMixin<T>, 
     this.showCupertinoParallax = true,
     this.barrierLabel,
     this.maintainState = true,
-    bool fullscreenDialog = false,
+    super.fullscreenDialog = false, // Now a super parameter
     this.middlewares,
-  }) : super(settings: settings, fullscreenDialog: fullscreenDialog);
+  });
 
   @override
   final Duration transitionDuration;

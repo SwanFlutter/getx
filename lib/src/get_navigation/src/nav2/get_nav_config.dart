@@ -44,7 +44,8 @@ class GetNavConfig extends RouteInformation {
   /// The currently active page, which is the last page in the [currentTreeBranch].
   ///
   /// Returns null if [currentTreeBranch] is empty.
-  GetPage? get currentPage => currentTreeBranch.isNotEmpty ? currentTreeBranch.last : null;
+  GetPage? get currentPage =>
+      currentTreeBranch.isNotEmpty ? currentTreeBranch.last : null;
 
   /// Creates a new [GetNavConfig] instance.
   ///

@@ -8,7 +8,8 @@ import '../../../get_instance/src/get_instance.dart';
 import '../../../get_rx/src/rx_types/rx_types.dart';
 import 'rx_disposable.dart';
 
-typedef GetXControllerBuilder<T extends DisposableInterface> = Widget Function(T controller);
+typedef GetXControllerBuilder<T extends DisposableInterface> = Widget Function(
+    T controller);
 
 class GetX<T extends DisposableInterface> extends StatefulWidget {
   final GetXControllerBuilder<T> builder;
@@ -18,7 +19,9 @@ class GetX<T extends DisposableInterface> extends StatefulWidget {
   // final StreamController Function(T) streamController;
   final bool autoRemove;
   final bool assignId;
-  final void Function(GetXState<T> state)? initState, dispose, didChangeDependencies;
+  final void Function(GetXState<T> state)? initState,
+      dispose,
+      didChangeDependencies;
   final void Function(GetX oldWidget, GetXState<T> state)? didUpdateWidget;
   final T? init;
   final String? tag;
@@ -47,7 +50,8 @@ class GetX<T extends DisposableInterface> extends StatefulWidget {
         DiagnosticsProperty<T>('controller', init),
       )
       ..add(DiagnosticsProperty<String>('tag', tag))
-      ..add(ObjectFlagProperty<GetXControllerBuilder<T>>.has('builder', builder));
+      ..add(
+          ObjectFlagProperty<GetXControllerBuilder<T>>.has('builder', builder));
   }
 
   @override

@@ -103,7 +103,11 @@ class ParseRouteTree {
     }
 
     // Find matching routes in the tree.
-    final treeBranch = cumulativePaths.map((e) => MapEntry(e, _findRoute(e))).where((element) => element.value != null).map((e) => MapEntry(e.key, e.value!)).toList();
+    final treeBranch = cumulativePaths
+        .map((e) => MapEntry(e, _findRoute(e)))
+        .where((element) => element.value != null)
+        .map((e) => MapEntry(e.key, e.value!))
+        .toList();
 
     // Extract URL parameters.
     final params = Map<String, String>.from(uri.queryParameters);
@@ -175,7 +179,10 @@ class ParseRouteTree {
     final parentPath = route.name;
     for (var page in route.children) {
       // Add parent middlewares to children.
-      final parentMiddlewares = [if (page.middlewares != null) ...page.middlewares!, if (route.middlewares != null) ...route.middlewares!];
+      final parentMiddlewares = [
+        if (page.middlewares != null) ...page.middlewares!,
+        if (route.middlewares != null) ...route.middlewares!
+      ];
       result.add(
         _addChild(
           page,
@@ -200,7 +207,9 @@ class ParseRouteTree {
   }
 
   /// Modifies the route for a GetPage.
-  GetPage _addChild(GetPage origin, String parentPath, List<GetMiddleware> middlewares) => origin.copy(
+  GetPage _addChild(
+          GetPage origin, String parentPath, List<GetMiddleware> middlewares) =>
+      origin.copy(
         middlewares: middlewares,
         name: (parentPath + origin.name).replaceAll(r'//', '/'),
       );

@@ -121,9 +121,9 @@ class SignupController extends GetxController {
       body,
     );
 
-    print("response: ${response.statusCode}");
-    print("response: ${response.body}");
-    print("response: ${response.bodyString!}");
+    debugPrint("response: ${response.statusCode}");
+    debugPrint("response: ${response.body}");
+    debugPrint("response: ${response.bodyString!}");
 
     if (response.body.isEmpty) {
       throw Exception('Empty response from server');
@@ -136,7 +136,7 @@ class SignupController extends GetxController {
         bool success = jsonData['success'];
         String message = jsonData['message'];
 
-        print("jsonData: $jsonData");
+        debugPrint("jsonData: $jsonData");
 
         if (success) {
           UserModel user = UserModel.fromJson(jsonData['data']);
@@ -176,7 +176,11 @@ class SignupController extends GetxController {
     return null;
   }
 
-  void showMassage({required String title, required String message, required IconData icon, required Color iconColor}) {
+  void showMassage(
+      {required String title,
+      required String message,
+      required IconData icon,
+      required Color iconColor}) {
     Get.snackbar(
       title,
       message,
@@ -199,9 +203,6 @@ class SignupController extends GetxController {
     );
   }
 }
-
-
-
 
 /** try {
       final response = await http.post(

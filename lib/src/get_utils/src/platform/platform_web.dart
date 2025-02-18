@@ -26,7 +26,8 @@ class GeneralPlatform {
   /// bool isMacOS = GeneralPlatform.isMacOS;
   /// // Result: true or false depending on the platform
   /// ```
-  static bool get isMacOS => _navigator.appVersion.contains('Mac OS') && !GeneralPlatform.isIOS;
+  static bool get isMacOS =>
+      _navigator.appVersion.contains('Mac OS') && !GeneralPlatform.isIOS;
 
   /// Returns `true` if the application is running on Windows.
   ///
@@ -44,7 +45,10 @@ class GeneralPlatform {
   /// bool isLinux = GeneralPlatform.isLinux;
   /// // Result: true or false depending on the platform
   /// ```
-  static bool get isLinux => (_navigator.appVersion.contains('Linux') || _navigator.appVersion.contains('x11')) && !isAndroid;
+  static bool get isLinux =>
+      (_navigator.appVersion.contains('Linux') ||
+          _navigator.appVersion.contains('x11')) &&
+      !isAndroid;
 
   /// Returns `true` if the application is running on Android.
   ///
@@ -64,7 +68,8 @@ class GeneralPlatform {
   /// ```
   static bool get isIOS {
     // maxTouchPoints is needed to separate iPad iOS13 vs new MacOS
-    return GetUtils.hasMatch(_navigator.platform, r'/iPad|iPhone|iPod/') || (_navigator.platform == 'MacIntel' && _navigator.maxTouchPoints > 1);
+    return GetUtils.hasMatch(_navigator.platform, r'/iPad|iPhone|iPod/') ||
+        (_navigator.platform == 'MacIntel' && _navigator.maxTouchPoints > 1);
   }
 
   /// Returns `true` if the application is running on Fuchsia.

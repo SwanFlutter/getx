@@ -33,7 +33,8 @@ class GetAnimatedBuilder<T> extends StatefulWidget {
 }
 
 /// State class for GetAnimatedBuilder
-class GetAnimatedBuilderState<T> extends State<GetAnimatedBuilder<T>> with TickerProviderStateMixin {
+class GetAnimatedBuilderState<T> extends State<GetAnimatedBuilder<T>>
+    with TickerProviderStateMixin {
   late AnimationController _controller; // Remove 'final'
   Animation<T>? _animation; // Make nullable and remove 'late final'
   late T _idleValue; // Remove the dynamic type
@@ -93,7 +94,10 @@ class GetAnimatedBuilderState<T> extends State<GetAnimatedBuilder<T>> with Ticke
   @override
   void didUpdateWidget(covariant GetAnimatedBuilder<T> oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.duration != widget.duration || oldWidget.tween != widget.tween || oldWidget.curve != widget.curve || oldWidget.delay != widget.delay) {
+    if (oldWidget.duration != widget.duration ||
+        oldWidget.tween != widget.tween ||
+        oldWidget.curve != widget.curve ||
+        oldWidget.delay != widget.delay) {
       _controller.dispose(); // Dispose of the old controller
       _initializeAnimation(); // Re-initialize the animation
 

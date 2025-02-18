@@ -76,9 +76,14 @@ class GetInstance {
     S dependency, {
     String? tag,
     bool permanent = false,
-    @Deprecated("Do not use builder, it will be removed in the next update") InstanceBuilderCallback<S>? builder,
+    @Deprecated("Do not use builder, it will be removed in the next update")
+    InstanceBuilderCallback<S>? builder,
   }) {
-    _insert(isSingleton: true, name: tag, permanent: permanent, builder: builder ?? (() => dependency));
+    _insert(
+        isSingleton: true,
+        name: tag,
+        permanent: permanent,
+        builder: builder ?? (() => dependency));
     return find<S>(tag: tag);
   }
 

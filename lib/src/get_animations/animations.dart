@@ -64,18 +64,24 @@ class Animate extends StatelessWidget {
           case AnimationType.fadeOut:
             return Opacity(opacity: 1 - value, child: child);
           case AnimationType.rotate:
-            return Transform.rotate(angle: value * pi * 2 * (end - begin), child: child);
+            return Transform.rotate(
+                angle: value * pi * 2 * (end - begin), child: child);
           case AnimationType.scale:
-            return Transform.scale(scale: value * (end - begin) + begin, child: child);
+            return Transform.scale(
+                scale: value * (end - begin) + begin, child: child);
           case AnimationType.bounce:
-            return Transform.scale(scale: 1 + value.abs() * (end - begin), child: child);
+            return Transform.scale(
+                scale: 1 + value.abs() * (end - begin), child: child);
           case AnimationType.spin:
-            return Transform.rotate(angle: value * 360 * pi / 180.0, child: child);
+            return Transform.rotate(
+                angle: value * 360 * pi / 180.0, child: child);
           case AnimationType.size:
-            return Transform.scale(scale: value * (end - begin) + begin, child: child);
+            return Transform.scale(
+                scale: value * (end - begin) + begin, child: child);
           case AnimationType.blur:
             return BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: value * (end - begin), sigmaY: value * (end - begin)),
+              filter: ImageFilter.blur(
+                  sigmaX: value * (end - begin), sigmaY: value * (end - begin)),
               child: child,
             );
           case AnimationType.flip:
@@ -86,7 +92,8 @@ class Animate extends StatelessWidget {
             );
           case AnimationType.wave:
             return Transform(
-              transform: Matrix4.translationValues(0.0, 20.0 * sin(value * pi * 2), 0.0),
+              transform: Matrix4.translationValues(
+                  0.0, 20.0 * sin(value * pi * 2), 0.0),
               child: child,
             );
           case AnimationType.wobble:
@@ -98,17 +105,38 @@ class Animate extends StatelessWidget {
               child: child,
             );
           case AnimationType.slideInLeft:
-            return Transform.translate(offset: Offset(value * MediaQuery.of(context).size.width * (end - begin), 0), child: child);
+            return Transform.translate(
+                offset: Offset(
+                    value * MediaQuery.of(context).size.width * (end - begin),
+                    0),
+                child: child);
           case AnimationType.slideInRight:
-            return Transform.translate(offset: Offset((1 - value) * MediaQuery.of(context).size.width * (end - begin), 0), child: child);
+            return Transform.translate(
+                offset: Offset(
+                    (1 - value) *
+                        MediaQuery.of(context).size.width *
+                        (end - begin),
+                    0),
+                child: child);
           case AnimationType.slideInUp:
-            return Transform.translate(offset: Offset(0, value * MediaQuery.of(context).size.height * (end - begin)), child: child);
+            return Transform.translate(
+                offset: Offset(0,
+                    value * MediaQuery.of(context).size.height * (end - begin)),
+                child: child);
           case AnimationType.slideInDown:
-            return Transform.translate(offset: Offset((1 - value) * MediaQuery.of(context).size.height * (end - begin), 0), child: child);
+            return Transform.translate(
+                offset: Offset(
+                    (1 - value) *
+                        MediaQuery.of(context).size.height *
+                        (end - begin),
+                    0),
+                child: child);
           case AnimationType.zoom:
-            return Transform.scale(scale: lerpDouble(1, end, value)!, child: child);
+            return Transform.scale(
+                scale: lerpDouble(1, end, value)!, child: child);
           case AnimationType.color:
-            final beginColor = begin is Color ? begin as Color : Colors.transparent;
+            final beginColor =
+                begin is Color ? begin as Color : Colors.transparent;
             final endColor = end is Color ? end as Color : Colors.transparent;
             return ColorFiltered(
               colorFilter: ColorFilter.mode(

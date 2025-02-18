@@ -7,7 +7,10 @@ mixin Equality {
 
   @override
   bool operator ==(Object other) {
-    return identical(this, other) || runtimeType == other.runtimeType && other is Equality && const DeepCollectionEquality().equals(props, other.props);
+    return identical(this, other) ||
+        runtimeType == other.runtimeType &&
+            other is Equality &&
+            const DeepCollectionEquality().equals(props, other.props);
   }
 
   @override
@@ -99,7 +102,8 @@ class DeepCollectionEquality implements IEquality {
   }
 
   @override
-  bool isValidKey(Object? o) => o is Iterable || o is Map || _base.isValidKey(o);
+  bool isValidKey(Object? o) =>
+      o is Iterable || o is Map || _base.isValidKey(o);
 }
 
 /// Equality on lists.
@@ -108,7 +112,9 @@ class DeepCollectionEquality implements IEquality {
 /// at each index are equal.
 class ListEquality<E> implements IEquality<List<E>> {
   final IEquality<E> _elementEquality;
-  const ListEquality([IEquality<E> elementEquality = const DefaultEquality<Never>()]) : _elementEquality = elementEquality;
+  const ListEquality(
+      [IEquality<E> elementEquality = const DefaultEquality<Never>()])
+      : _elementEquality = elementEquality;
 
   @override
   bool equals(List<E>? list1, List<E>? list2) {
@@ -152,7 +158,9 @@ class ListEquality<E> implements IEquality<List<E>> {
 class MapEquality<K, V> implements IEquality<Map<K, V>> {
   final IEquality<K> _keyEquality;
   final IEquality<V> _valueEquality;
-  const MapEquality({IEquality<K> keys = const DefaultEquality<Never>(), IEquality<V> values = const DefaultEquality<Never>()})
+  const MapEquality(
+      {IEquality<K> keys = const DefaultEquality<Never>(),
+      IEquality<V> values = const DefaultEquality<Never>()})
       : _keyEquality = keys,
         _valueEquality = values;
 
@@ -203,10 +211,16 @@ class _MapEntry {
   _MapEntry(this.equality, this.key, this.value);
 
   @override
-  int get hashCode => (3 * equality._keyEquality.hash(key) + 7 * equality._valueEquality.hash(value)) & _hashMask;
+  int get hashCode =>
+      (3 * equality._keyEquality.hash(key) +
+          7 * equality._valueEquality.hash(value)) &
+      _hashMask;
 
   @override
-  bool operator ==(Object other) => other is _MapEntry && equality._keyEquality.equals(key, other.key) && equality._valueEquality.equals(value, other.value);
+  bool operator ==(Object other) =>
+      other is _MapEntry &&
+      equality._keyEquality.equals(key, other.key) &&
+      equality._valueEquality.equals(value, other.value);
 }
 
 /// Equality on iterables.
@@ -214,7 +228,9 @@ class _MapEntry {
 /// Two iterables are equal if they have the same elements in the same order.
 class IterableEquality<E> implements IEquality<Iterable<E>> {
   final IEquality<E?> _elementEquality;
-  const IterableEquality([IEquality<E> elementEquality = const DefaultEquality<Never>()]) : _elementEquality = elementEquality;
+  const IterableEquality(
+      [IEquality<E> elementEquality = const DefaultEquality<Never>()])
+      : _elementEquality = elementEquality;
 
   @override
   bool equals(Iterable<E>? elements1, Iterable<E>? elements2) {
@@ -263,7 +279,8 @@ class SetEquality<E> extends _UnorderedEquality<E, Set<E>> {
   bool isValidKey(Object? o) => o is Set<E>;
 }
 
-abstract class _UnorderedEquality<E, T extends Iterable<E>> implements IEquality<T> {
+abstract class _UnorderedEquality<E, T extends Iterable<E>>
+    implements IEquality<T> {
   final IEquality<E> _elementEquality;
 
   const _UnorderedEquality(this._elementEquality);
@@ -272,7 +289,10 @@ abstract class _UnorderedEquality<E, T extends Iterable<E>> implements IEquality
   bool equals(T? elements1, T? elements2) {
     if (identical(elements1, elements2)) return true;
     if (elements1 == null || elements2 == null) return false;
-    var counts = HashMap<E, int>(equals: _elementEquality.equals, hashCode: _elementEquality.hash, isValidKey: _elementEquality.isValidKey);
+    var counts = HashMap<E, int>(
+        equals: _elementEquality.equals,
+        hashCode: _elementEquality.hash,
+        isValidKey: _elementEquality.isValidKey);
     var length = 0;
     for (var e in elements1) {
       var count = counts[e] ?? 0;
@@ -309,7 +329,8 @@ abstract class _UnorderedEquality<E, T extends Iterable<E>> implements IEquality
 /// and the elements of one set can be paired with the elements
 /// of the other iterable, so that each pair are equal.
 class UnorderedIterableEquality<E> extends _UnorderedEquality<E, Iterable<E>> {
-  const UnorderedIterableEquality([super.elementEquality = const DefaultEquality<Never>()]);
+  const UnorderedIterableEquality(
+      [super.elementEquality = const DefaultEquality<Never>()]);
 
   @override
   bool isValidKey(Object? o) => o is Iterable<E>;

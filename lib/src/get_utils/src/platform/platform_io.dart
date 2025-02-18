@@ -76,5 +76,6 @@ class GeneralPlatform {
   /// bool isDesktop = GeneralPlatform.isDesktop;
   /// // Result: true or false depending on the platform
   /// ```
-  static bool get isDesktop => Platform.isMacOS || Platform.isWindows || Platform.isLinux;
+  static bool get isDesktop =>
+      Platform.isMacOS || Platform.isWindows || Platform.isLinux;
 }

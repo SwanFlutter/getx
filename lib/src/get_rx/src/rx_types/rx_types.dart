@@ -1,6 +1,4 @@
-// ignore_for_file: unnecessary_library_name
-
-library rx_types;
+library;
 
 import 'dart:async';
 import 'dart:collection';

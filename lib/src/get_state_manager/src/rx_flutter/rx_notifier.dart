@@ -74,7 +74,9 @@ mixin StateMixin<T> on ListNotifierMixin {
   }
 }
 
-class Value<T> extends ListNotifier with StateMixin<T> implements ValueListenable<T?> {
+class Value<T> extends ListNotifier
+    with StateMixin<T>
+    implements ValueListenable<T?> {
   Value(T val) {
     _value = val;
     _fillEmptyStatus();
@@ -126,7 +128,8 @@ abstract class GetNotifier<T> extends Value<T> with GetLifeCycleBase {
   @mustCallSuper
   void onInit() {
     super.onInit();
-    ambiguate(SchedulerBinding.instance)?.addPostFrameCallback((_) => onReady());
+    ambiguate(SchedulerBinding.instance)
+        ?.addPostFrameCallback((_) => onReady());
   }
 }
 
@@ -141,9 +144,12 @@ extension StateExt<T> on StateMixin<T> {
       if (status.isLoading) {
         return onLoading ?? const Center(child: CircularProgressIndicator());
       } else if (status.isError) {
-        return onError != null ? onError(status.errorMessage) : Center(child: Text('A error occurred: ${status.errorMessage}'));
+        return onError != null
+            ? onError(status.errorMessage)
+            : Center(child: Text('A error occurred: ${status.errorMessage}'));
       } else if (status.isEmpty) {
-        return onEmpty ?? const SizedBox.shrink(); // Also can be widget(null); but is risky
+        return onEmpty ??
+            const SizedBox.shrink(); // Also can be widget(null); but is risky
       }
       return widget(value);
     });

@@ -1,4 +1,6 @@
-import 'platform_stub.dart' if (dart.library.js_interop) 'platform_web.dart' if (dart.library.io) 'platform_io.dart';
+import 'platform_stub.dart'
+    if (dart.library.js_interop) 'platform_web.dart'
+    if (dart.library.io) 'platform_io.dart';
 
 /// A utility class to check the current platform.
 ///
@@ -85,5 +87,6 @@ class GetPlatform {
   /// bool isDesktop = GetPlatform.isDesktop;
   /// // Result: true or false depending on the platform
   /// ```
-  static bool get isDesktop => GetPlatform.isMacOS || GetPlatform.isWindows || GetPlatform.isLinux;
+  static bool get isDesktop =>
+      GetPlatform.isMacOS || GetPlatform.isWindows || GetPlatform.isLinux;
 }

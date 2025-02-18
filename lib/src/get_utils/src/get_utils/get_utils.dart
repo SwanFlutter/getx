@@ -226,7 +226,13 @@ class GetUtils {
   static bool isVideo(String filePath) {
     final ext = filePath.toLowerCase();
 
-    return ext.endsWith(".mp4") || ext.endsWith(".avi") || ext.endsWith(".wmv") || ext.endsWith(".rmvb") || ext.endsWith(".mpg") || ext.endsWith(".mpeg") || ext.endsWith(".3gp");
+    return ext.endsWith(".mp4") ||
+        ext.endsWith(".avi") ||
+        ext.endsWith(".wmv") ||
+        ext.endsWith(".rmvb") ||
+        ext.endsWith(".mpg") ||
+        ext.endsWith(".mpeg") ||
+        ext.endsWith(".3gp");
   }
 
   /// Checks if string is an image file.
@@ -240,7 +246,11 @@ class GetUtils {
   static bool isImage(String filePath) {
     final ext = filePath.toLowerCase();
 
-    return ext.endsWith(".jpg") || ext.endsWith(".jpeg") || ext.endsWith(".png") || ext.endsWith(".gif") || ext.endsWith(".bmp");
+    return ext.endsWith(".jpg") ||
+        ext.endsWith(".jpeg") ||
+        ext.endsWith(".png") ||
+        ext.endsWith(".gif") ||
+        ext.endsWith(".bmp");
   }
 
   /// Checks if string is an audio file.
@@ -254,7 +264,11 @@ class GetUtils {
   static bool isAudio(String filePath) {
     final ext = filePath.toLowerCase();
 
-    return ext.endsWith(".mp3") || ext.endsWith(".wav") || ext.endsWith(".wma") || ext.endsWith(".amr") || ext.endsWith(".ogg");
+    return ext.endsWith(".mp3") ||
+        ext.endsWith(".wav") ||
+        ext.endsWith(".wma") ||
+        ext.endsWith(".amr") ||
+        ext.endsWith(".ogg");
   }
 
   /// Checks if string is an powerpoint file.
@@ -374,7 +388,8 @@ class GetUtils {
   /// isUsername('john'); // false
   /// isUsername('_johndoe'); // false
   /// ```
-  static bool isUsername(String s) => hasMatch(s, r'^[a-zA-Z0-9][a-zA-Z0-9_.]+[a-zA-Z0-9]$');
+  static bool isUsername(String s) =>
+      hasMatch(s, r'^[a-zA-Z0-9][a-zA-Z0-9_.]+[a-zA-Z0-9]$');
 
   /// Checks if string is URL.
   ///
@@ -388,7 +403,8 @@ class GetUtils {
   /// isURL('https://www.example.com/path/to/page?param=value'); // true
   /// isURL('ftp://example.com'); // true
   /// ```
-  static bool isURL(String s) => hasMatch(s, r"^((((H|h)(T|t)|(F|f))(T|t)(P|p)((S|s)?))\://)?(www.|[a-zA-Z0-9].)[a-zA-Z0-9\-\.]+\.[a-zA-Z]{2,7}(\:[0-9]{1,5})*(/($|[a-zA-Z0-9\.\,\;\?\'\\\+&%\$#\=~_\-]+))*$");
+  static bool isURL(String s) => hasMatch(s,
+      r"^((((H|h)(T|t)|(F|f))(T|t)(P|p)((S|s)?))\://)?(www.|[a-zA-Z0-9].)[a-zA-Z0-9\-\.]+\.[a-zA-Z]{2,7}(\:[0-9]{1,5})*(/($|[a-zA-Z0-9\.\,\;\?\'\\\+&%\$#\=~_\-]+))*$");
 
   /// Checks if string is email.
   ///
@@ -399,7 +415,8 @@ class GetUtils {
   /// isEmail('test@example'); // false
   /// isEmail('@example.com'); // false
   /// ```
-  static bool isEmail(String s) => hasMatch(s, r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$');
+  static bool isEmail(String s) => hasMatch(s,
+      r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$');
 
   /// Checks if string is phone number.
   ///
@@ -425,7 +442,8 @@ class GetUtils {
   /// isDateTime('2023-10-27T10:30:00.000Z'); // true
   /// isDateTime('2023-10-27 10:30:00'); // false
   /// ```
-  static bool isDateTime(String s) => hasMatch(s, r'^\d{4}-\d{2}-\d{2}[ T]\d{2}:\d{2}:\d{2}.\d{3}Z?$');
+  static bool isDateTime(String s) =>
+      hasMatch(s, r'^\d{4}-\d{2}-\d{2}[ T]\d{2}:\d{2}:\d{2}.\d{3}Z?$');
 
   /// Checks if string is MD5 hash.
   ///
@@ -443,7 +461,8 @@ class GetUtils {
   /// isSHA1('a9993e364706816aba3e25717850c26c9cd0d89d'); // true
   /// isSHA1('abc'); // false
   /// ```
-  static bool isSHA1(String s) => hasMatch(s, r'(([A-Fa-f0-9]{2}\:){19}[A-Fa-f0-9]{2}|[A-Fa-f0-9]{40})');
+  static bool isSHA1(String s) =>
+      hasMatch(s, r'(([A-Fa-f0-9]{2}\:){19}[A-Fa-f0-9]{2}|[A-Fa-f0-9]{40})');
 
   /// Checks if string is SHA256 hash.
   ///
@@ -452,7 +471,8 @@ class GetUtils {
   /// isSHA256('e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855'); // true
   /// isSHA256('abc'); // false
   /// ```
-  static bool isSHA256(String s) => hasMatch(s, r'([A-Fa-f0-9]{2}\:){31}[A-Fa-f0-9]{2}|[A-Fa-f0-9]{64}');
+  static bool isSHA256(String s) =>
+      hasMatch(s, r'([A-Fa-f0-9]{2}\:){31}[A-Fa-f0-9]{2}|[A-Fa-f0-9]{64}');
 
   /// Checks if the string is an SSN (Social Security Number).
   ///
@@ -461,7 +481,8 @@ class GetUtils {
   /// ValidationUtils.isSSN('123-45-6789'); // true
   /// ValidationUtils.isSSN('000-12-3456'); // false
   /// ```
-  static bool isSSN(String s) => hasMatch(s, r'^(?!0{3}|6{3}|9[0-9]{2})[0-9]{3}-?(?!0{2})[0-9]{2}-?(?!0{4})[0-9]{4}$');
+  static bool isSSN(String s) => hasMatch(s,
+      r'^(?!0{3}|6{3}|9[0-9]{2})[0-9]{3}-?(?!0{2})[0-9]{2}-?(?!0{4})[0-9]{4}$');
 
   /// Checks if the string is binary (contains only 0s and 1s).
   ///
@@ -479,7 +500,8 @@ class GetUtils {
   /// ValidationUtils.isIPv4('192.168.1.1'); // true
   /// ValidationUtils.isIPv4('999.999.999.999'); // false
   /// ```
-  static bool isIPv4(String s) => hasMatch(s, r'^(?:(?:^|\.)(?:2(?:5[0-5]|[0-4]\d)|1?\d?\d)){4}$');
+  static bool isIPv4(String s) =>
+      hasMatch(s, r'^(?:(?:^|\.)(?:2(?:5[0-5]|[0-4]\d)|1?\d?\d)){4}$');
 
   /// Checks if the string is a valid IPv6 address.
   ///
@@ -498,7 +520,8 @@ class GetUtils {
   /// ValidationUtils.isHexadecimal('#FFF'); // true
   /// ValidationUtils.isHexadecimal('#GGG'); // false
   /// ```
-  static bool isHexadecimal(String s) => hasMatch(s, r'^#?([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$');
+  static bool isHexadecimal(String s) =>
+      hasMatch(s, r'^#?([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$');
 
   /// Checks if the string is a palindrome.
   ///
@@ -508,7 +531,10 @@ class GetUtils {
   /// ValidationUtils.isPalindrome('hello'); // false
   /// ```
   static bool isPalindrome(String string) {
-    final cleanString = string.toLowerCase().replaceAll(RegExp(r"\s+"), '').replaceAll(RegExp(r"[^0-9a-zA-Z]+"), "");
+    final cleanString = string
+        .toLowerCase()
+        .replaceAll(RegExp(r"\s+"), '')
+        .replaceAll(RegExp(r"[^0-9a-zA-Z]+"), "");
 
     for (var i = 0; i < cleanString.length; i++) {
       if (cleanString[i] != cleanString[cleanString.length - i - 1]) {
@@ -560,7 +586,8 @@ class GetUtils {
   /// bool isValid = GetUtils.isPassport("A1234567");
   /// // Result: true
   /// ```
-  static bool isPassport(String s) => hasMatch(s, r'^(?!^0+$)[a-zA-Z0-9]{6,9}$');
+  static bool isPassport(String s) =>
+      hasMatch(s, r'^(?!^0+$)[a-zA-Z0-9]{6,9}$');
 
   /// Checks if string is Currency.
   ///
@@ -569,8 +596,8 @@ class GetUtils {
   /// bool isValid = GetUtils.isCurrency("\$100");
   /// // Result: true
   /// ```
-  static bool isCurrency(String s) =>
-      hasMatch(s, r'^(S?\$|\₩|Rp|\¥|\€|\₹|\₽|fr|R\$|R)?[ ]?[-]?([0-9]{1,3}[,.]([0-9]{3}[,.])*[0-9]{3}|[0-9]+)([,.][0-9]{1,2})?( ?(USD?|AUD|NZD|CAD|CHF|GBP|CNY|EUR|JPY|IDR|MXN|NOK|KRW|TRY|INR|RUB|BRL|ZAR|SGD|MYR))?$');
+  static bool isCurrency(String s) => hasMatch(s,
+      r'^(S?\$|\₩|Rp|\¥|\€|\₹|\₽|fr|R\$|R)?[ ]?[-]?([0-9]{1,3}[,.]([0-9]{3}[,.])*[0-9]{3}|[0-9]+)([,.][0-9]{1,2})?( ?(USD?|AUD|NZD|CAD|CHF|GBP|CNY|EUR|JPY|IDR|MXN|NOK|KRW|TRY|INR|RUB|BRL|ZAR|SGD|MYR))?$');
 
   /// Checks if length of data is GREATER than maxLength.
   ///
@@ -668,7 +695,8 @@ class GetUtils {
       return false;
     }
 
-    return isLengthGreaterOrEqual(value, minLength) && isLengthLessOrEqual(value, maxLength);
+    return isLengthGreaterOrEqual(value, minLength) &&
+        isLengthLessOrEqual(value, maxLength);
   }
 
   /// Checks if a contains b (Treating or interpreting upper- and lowercase
@@ -880,7 +908,8 @@ class GetUtils {
       return null;
     }
 
-    final separatedWords = value.split(RegExp(r'[!@#<>?":`~;[\]\\|=+)(*&^%-\s_]+'));
+    final separatedWords =
+        value.split(RegExp(r'[!@#<>?":`~;[\]\\|=+)(*&^%-\s_]+'));
     var newString = '';
 
     for (final word in separatedWords) {
@@ -905,7 +934,9 @@ class GetUtils {
         continue;
       }
       sb.write(char);
-      var isEndOfWord = nextChar == null || (_upperAlphaRegex.hasMatch(nextChar) && !isAllCaps) || _symbolSet.contains(nextChar);
+      var isEndOfWord = nextChar == null ||
+          (_upperAlphaRegex.hasMatch(nextChar) && !isAllCaps) ||
+          _symbolSet.contains(nextChar);
       if (isEndOfWord) {
         words.add('$sb');
         sb.clear();
@@ -925,7 +956,9 @@ class GetUtils {
     if (isNullOrBlank(text)!) {
       return null;
     }
-    return _groupIntoWords(text!).map((word) => word.toLowerCase()).join(separator);
+    return _groupIntoWords(text!)
+        .map((word) => word.toLowerCase())
+        .join(separator);
   }
 
   /// param-case

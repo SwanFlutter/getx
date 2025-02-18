@@ -8,7 +8,8 @@ import 'package:flutter/material.dart';
 import '../../../../getx.dart';
 import '../../../get_state_manager/src/simple/list_notifier.dart';
 
-class GetDelegate extends RouterDelegate<GetNavConfig> with ListenableMixin, ListNotifierMixin {
+class GetDelegate extends RouterDelegate<GetNavConfig>
+    with ListenableMixin, ListNotifierMixin {
   final List<GetNavConfig> history = <GetNavConfig>[];
   final PopMode backButtonPopMode;
   final PreventDuplicateHandlingMode preventDuplicateHandlingMode;
@@ -25,7 +26,8 @@ class GetDelegate extends RouterDelegate<GetNavConfig> with ListenableMixin, Lis
     this.navigatorObservers,
     this.transitionDelegate,
     this.backButtonPopMode = PopMode.History,
-    this.preventDuplicateHandlingMode = PreventDuplicateHandlingMode.ReorderRoutes,
+    this.preventDuplicateHandlingMode =
+        PreventDuplicateHandlingMode.ReorderRoutes,
   }) : notFoundRoute = notFoundRoute ??
             GetPage(
               name: '/404',
@@ -62,7 +64,9 @@ class GetDelegate extends RouterDelegate<GetNavConfig> with ListenableMixin, Lis
   }) async {
     // remove history or page entries until you meet route
     var iterator = currentConfiguration;
-    while (_canPop(popMode) && iterator != null && iterator.locationString != fullRoute) {
+    while (_canPop(popMode) &&
+        iterator != null &&
+        iterator.locationString != fullRoute) {
       await _pop(popMode);
       // replace iterator
       iterator = currentConfiguration;
@@ -83,7 +87,8 @@ class GetDelegate extends RouterDelegate<GetNavConfig> with ListenableMixin, Lis
         GetObserver(),
         if (extraObservers != null) ...extraObservers,
       ],
-      transitionDelegate: transitionDelegate ?? const DefaultTransitionDelegate<dynamic>(),
+      transitionDelegate:
+          transitionDelegate ?? const DefaultTransitionDelegate<dynamic>(),
     );
   }
 
@@ -106,13 +111,16 @@ class GetDelegate extends RouterDelegate<GetNavConfig> with ListenableMixin, Lis
     final currentHistory = currentConfiguration;
     if (currentHistory == null) return <GetPage>[];
 
-    final res = currentHistory.currentTreeBranch.where((r) => r.participatesInRootNavigator != null);
+    final res = currentHistory.currentTreeBranch
+        .where((r) => r.participatesInRootNavigator != null);
     if (res.isEmpty) {
       //default behavoir, all routes participate in root navigator
       return history.map((e) => e.currentPage!).toList();
     } else {
       //user specified at least one participatesInRootNavigator
-      return res.where((element) => element.participatesInRootNavigator == true).toList();
+      return res
+          .where((element) => element.participatesInRootNavigator == true)
+          .toList();
     }
   }
 
@@ -282,7 +290,8 @@ class GetDelegate extends RouterDelegate<GetNavConfig> with ListenableMixin, Lis
     if (currentBranch != null && currentBranch.length > 1) {
       //remove last part only
       final remaining = currentBranch.take(currentBranch.length - 1);
-      final prevHistoryEntry = history.length > 1 ? history[history.length - 2] : null;
+      final prevHistoryEntry =
+          history.length > 1 ? history[history.length - 2] : null;
 
       //check if current route is the same as the previous route
       if (prevHistoryEntry != null) {
@@ -357,7 +366,8 @@ class GetDelegate extends RouterDelegate<GetNavConfig> with ListenableMixin, Lis
 
   Future<void> _pushHistory(GetNavConfig config) async {
     if (config.currentPage!.preventDuplicates) {
-      final originalEntryIndex = history.indexWhere((element) => element.locationString == config.locationString);
+      final originalEntryIndex = history.indexWhere(
+          (element) => element.locationString == config.locationString);
       if (originalEntryIndex >= 0) {
         switch (preventDuplicateHandlingMode) {
           case PreventDuplicateHandlingMode.PopUntilOriginalRoute:
@@ -426,7 +436,8 @@ class GetNavigator extends Navigator {
             // GetObserver(),
             if (observers != null) ...observers,
           ],
-          transitionDelegate: transitionDelegate ?? const DefaultTransitionDelegate<dynamic>(),
+          transitionDelegate:
+              transitionDelegate ?? const DefaultTransitionDelegate<dynamic>(),
         );
 }
 

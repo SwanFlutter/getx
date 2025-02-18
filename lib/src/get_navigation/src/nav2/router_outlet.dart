@@ -22,7 +22,8 @@ import '../../../../getx.dart';
 ///   },
 /// );
 /// ```
-class RouterOutlet<TDelegate extends RouterDelegate<T>, T extends Object> extends StatefulWidget {
+class RouterOutlet<TDelegate extends RouterDelegate<T>, T extends Object>
+    extends StatefulWidget {
   /// The router delegate that manages navigation state
   final TDelegate routerDelegate;
 
@@ -52,7 +53,8 @@ class RouterOutlet<TDelegate extends RouterDelegate<T>, T extends Object> extend
     ) pageBuilder,
   }) : this.builder(
           builder: (context, rDelegate, currentConfig) {
-            var picked = currentConfig == null ? null : pickPages(currentConfig);
+            var picked =
+                currentConfig == null ? null : pickPages(currentConfig);
             if (picked?.isEmpty ?? false) {
               picked = null;
             }
@@ -63,11 +65,13 @@ class RouterOutlet<TDelegate extends RouterDelegate<T>, T extends Object> extend
         );
 
   @override
-  RouterOutletState<TDelegate, T> createState() => RouterOutletState<TDelegate, T>();
+  RouterOutletState<TDelegate, T> createState() =>
+      RouterOutletState<TDelegate, T>();
 }
 
 /// State class for RouterOutlet that manages lifecycle and route changes.
-class RouterOutletState<TDelegate extends RouterDelegate<T>, T extends Object> extends State<RouterOutlet<TDelegate, T>> {
+class RouterOutletState<TDelegate extends RouterDelegate<T>, T extends Object>
+    extends State<RouterOutlet<TDelegate, T>> {
   /// Access to the router delegate
   TDelegate get delegate => widget.routerDelegate;
 
@@ -141,7 +145,10 @@ class GetRouterOutlet extends RouterOutlet<GetDelegate, GetNavConfig> {
             if (anchorRoute == null) {
               // Skip ancestor path segments based on initial route
               final length = Uri.parse(initialRoute).pathSegments.length;
-              return config.currentTreeBranch.skip(length).take(length).toList();
+              return config.currentTreeBranch
+                  .skip(length)
+                  .take(length)
+                  .toList();
             }
             ret = config.currentTreeBranch.pickAfterRoute(anchorRoute);
             if (filterPages != null) {
@@ -149,7 +156,9 @@ class GetRouterOutlet extends RouterOutlet<GetDelegate, GetNavConfig> {
             }
             return ret;
           },
-          emptyPage: (delegate) => Get.routeTree.matchRoute(initialRoute).route ?? delegate.notFoundRoute,
+          emptyPage: (delegate) =>
+              Get.routeTree.matchRoute(initialRoute).route ??
+              delegate.notFoundRoute,
           key: key,
           navigatorKey: navigatorKey,
           delegate: delegate,
@@ -157,10 +166,10 @@ class GetRouterOutlet extends RouterOutlet<GetDelegate, GetNavConfig> {
 
   /// Creates a GetRouterOutlet with custom page picking logic.
   GetRouterOutlet.pickPages({
-    Key? key,
+    super.key, // Now a super parameter
     Widget Function(GetDelegate delegate)? emptyWidget,
     GetPage Function(GetDelegate delegate)? emptyPage,
-    required Iterable<GetPage> Function(GetNavConfig currentNavStack) pickPages,
+    required super.pickPages, // Now a super parameter
     bool Function(Route<dynamic>, dynamic)? onPopPage,
     GlobalKey<NavigatorState>? navigatorKey,
     GetDelegate? delegate,
@@ -187,24 +196,16 @@ class GetRouterOutlet extends RouterOutlet<GetDelegate, GetNavConfig> {
             }
             return (emptyWidget?.call(rDelegate) ?? const SizedBox.shrink());
           },
-          pickPages: pickPages,
           delegate: delegate ?? Get.rootDelegate,
-          key: key,
         );
 
   /// Creates a GetRouterOutlet with a custom builder function.
   GetRouterOutlet.builder({
-    Key? key,
-    required Widget Function(
-      BuildContext context,
-      GetDelegate delegate,
-      GetNavConfig? currentRoute,
-    ) builder,
+    super.key, // Now a super parameter
+    required super.builder, // Now a super parameter
     GetDelegate? routerDelegate,
   }) : super.builder(
-          builder: builder,
           delegate: routerDelegate,
-          key: key,
         );
 }
 

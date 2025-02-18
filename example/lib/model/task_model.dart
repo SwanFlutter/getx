@@ -41,16 +41,20 @@ class TaskModel {
 
   String toJson() => json.encode(toMap());
 
-  factory TaskModel.fromJson(String source) => TaskModel.fromMap(json.decode(source) as Map<String, dynamic>);
+  factory TaskModel.fromJson(String source) =>
+      TaskModel.fromMap(json.decode(source) as Map<String, dynamic>);
 
   @override
-  String toString() => 'TaskModel(title: $title, description: $description, status: $status)';
+  String toString() =>
+      'TaskModel(title: $title, description: $description, status: $status)';
 
   @override
   bool operator ==(covariant TaskModel other) {
     if (identical(this, other)) return true;
 
-    return other.title == title && other.description == description && other.status == status;
+    return other.title == title &&
+        other.description == description &&
+        other.status == status;
   }
 
   @override

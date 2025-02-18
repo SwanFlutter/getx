@@ -1,18 +1,6 @@
 ![](https://raw.githubusercontent.com/jonataslaw/getx-community/master/get.png)
 
-[![pub package](https://img.shields.io/pub/v/get.svg?label=get&color=blue)](https://pub.dev/packages/get)
-[![popularity](https://img.shields.io/pub/popularity/get?logo=dart)](https://pub.dev/packages/get/score)
-[![likes](https://img.shields.io/pub/likes/get?logo=dart)](https://pub.dev/packages/get/score)
-[![pub points](https://img.shields.io/pub/points/sentry?logo=dart)](https://pub.dev/packages/get/score)
-![building](https://github.com/jonataslaw/get/workflows/build/badge.svg)
-[![style: effective dart](https://img.shields.io/badge/style-effective_dart-40c4ff.svg)](https://pub.dev/packages/effective_dart)
-[![Discord Shield](https://img.shields.io/discord/722900883784073290.svg?logo=discord)](https://discord.com/invite/9Hpt99N)
-[![Get on Slack](https://img.shields.io/badge/slack-join-orange.svg)](https://communityinviter.com/apps/getxworkspace/getx)
-[![Telegram](https://img.shields.io/badge/chat-on%20Telegram-blue.svg)](https://t.me/joinchat/PhdbJRmsZNpAqSLJL6bH7g)
-<a href="https://github.com/Solido/awesome-flutter">
-<img alt="Awesome Flutter" src="https://img.shields.io/badge/Awesome-Flutter-blue.svg?longCache=true&style=flat-square" />
-</a>
-<a href="https://www.buymeacoffee.com/jonataslaw" target="_blank"><img src="https://i.imgur.com/aV6DDA7.png" alt="Buy Me A Coffee" style="height: 41px !important;width: 174px !important; box-shadow: 0px 3px 2px 0px rgba(190, 190, 190, 0.5) !important;-webkit-box-shadow: 0px 3px 2px 0px rgba(190, 190, 190, 0.5) !important;" > </a>
+
 
 ![](https://raw.githubusercontent.com/jonataslaw/getx-community/master/getx.png)
 
@@ -23,19 +11,19 @@
 
   
 [![English](https://img.shields.io/badge/Language-English-blueviolet?style=for-the-badge)](README.md)
-[![Vietnamese](https://img.shields.io/badge/Language-Vietnamese-blueviolet?style=for-the-badge)](README-vi.md)
-[![Indonesian](https://img.shields.io/badge/Language-Indonesian-blueviolet?style=for-the-badge)](README.id-ID.md)
-[![Urdu](https://img.shields.io/badge/Language-Urdu-blueviolet?style=for-the-badge)](README.ur-PK.md)
-[![Chinese](https://img.shields.io/badge/Language-Chinese-blueviolet?style=for-the-badge)](README.zh-cn.md)
-[![Portuguese](https://img.shields.io/badge/Language-Portuguese-blueviolet?style=for-the-badge)](README.pt-br.md)
-[![Spanish](https://img.shields.io/badge/Language-Spanish-blueviolet?style=for-the-badge)](README-es.md)
-[![Russian](https://img.shields.io/badge/Language-Russian-blueviolet?style=for-the-badge)](README.ru.md)
-[![Polish](https://img.shields.io/badge/Language-Polish-blueviolet?style=for-the-badge)](README.pl.md)
-[![Korean](https://img.shields.io/badge/Language-Korean-blueviolet?style=for-the-badge)](README.ko-kr.md)
-[![French](https://img.shields.io/badge/Language-French-blueviolet?style=for-the-badge)](README-fr.md)
-[![Japanese](https://img.shields.io/badge/Language-Japanese-blueviolet?style=for-the-badge)](README.ja-JP.md)
-[![Hindi](https://img.shields.io/badge/Language-Hindi-blueviolet?style=for-the-badge)](README-hi.md)
-[![Bangla](https://img.shields.io/badge/Language-Bangla-blueviolet?style=for-the-badge)](README-bn.md)
+[![Vietnamese](https://img.shields.io/badge/Language-Vietnamese-blueviolet?style=for-the-badge)](https://github.com/jonataslaw/getx/blob/master/README-vi.md)
+[![Indonesian](https://img.shields.io/badge/Language-Indonesian-blueviolet?style=for-the-badge)](https://github.com/jonataslaw/getx/blob/master/README.id-ID.md)
+[![Urdu](https://img.shields.io/badge/Language-Urdu-blueviolet?style=for-the-badge)](https://github.com/jonataslaw/getx/blob/master/README.ur-PK.md)
+[![Chinese](https://img.shields.io/badge/Language-Chinese-blueviolet?style=for-the-badge)](https://github.com/jonataslaw/getx/blob/master/README.zh-cn.md)
+[![Portuguese](https://img.shields.io/badge/Language-Portuguese-blueviolet?style=for-the-badge)](https://github.com/jonataslaw/getx/blob/master/README.pt-br.md)
+[![Spanish](https://img.shields.io/badge/Language-Spanish-blueviolet?style=for-the-badge)](https://github.com/jonataslaw/getx/blob/master/README-es.md)
+[![Russian](https://img.shields.io/badge/Language-Russian-blueviolet?style=for-the-badge)](https://github.com/jonataslaw/getx/blob/master/README.ru.md)
+[![Polish](https://img.shields.io/badge/Language-Polish-blueviolet?style=for-the-badge)](https://github.com/jonataslaw/getx/blob/master/README.pl.md)
+[![Korean](https://img.shields.io/badge/Language-Korean-blueviolet?style=for-the-badge)](https://github.com/jonataslaw/getx/blob/master/README.ko-kr.md)
+[![French](https://img.shields.io/badge/Language-French-blueviolet?style=for-the-badge)](https://github.com/jonataslaw/getx/blob/master/README-fr.md)
+[![Japanese](https://img.shields.io/badge/Language-Japanese-blueviolet?style=for-the-badge)](https://github.com/jonataslaw/getx/blob/master/README.ja-JP.md)
+[![Hindi](https://img.shields.io/badge/Language-Hindi-blueviolet?style=for-the-badge)](https://github.com/jonataslaw/getx/blob/master/README-hi.md)
+[![Bangla](https://img.shields.io/badge/Language-Bangla-blueviolet?style=for-the-badge)](https://github.com/jonataslaw/getx/blob/master/README-bn.md)
   
   
 </div>
@@ -93,6 +81,9 @@
 - GetX is an extra-light and powerful solution for Flutter. It combines high-performance state management, intelligent dependency injection, and route management quickly and practically.
 
 To read the documentation for these sections, you can use the following links to navigate to the respective pages on GitHub:
+
+- New features package and read documentation
+
 
 - [GetX State Management](https://github.com/SwanFlutter/getx/blob/main/lib/src/get_state_manager/README.md)
 - [GetX Utilities](https://github.com/SwanFlutter/getx/blob/main/lib/src/get_utils/README.md)
@@ -1256,9 +1247,10 @@ This library will always be updated and implementing new features. Feel free to 
 
 GetX has a highly active and helpful community. If you have questions, or would like any assistance regarding the use of this framework, please join our community channels, your question will be answered more quickly, and it will be the most suitable place. This repository is exclusive for opening issues, and requesting resources, but feel free to be part of GetX Community.
 
-| **Slack**                                                                                                                   | **Discord**                                                                                                                 | **Telegram**                                                                                                          |
-| :-------------------------------------------------------------------------------------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------- |
-| [![Get on Slack](https://img.shields.io/badge/slack-join-orange.svg)](https://communityinviter.com/apps/getxworkspace/getx) | [![Discord Shield](https://img.shields.io/discord/722900883784073290.svg?logo=discord)](https://discord.com/invite/9Hpt99N) | [![Telegram](https://img.shields.io/badge/chat-on%20Telegram-blue.svg)](https://t.me/joinchat/PhdbJRmsZNpAqSLJL6bH7g) |
+| **Slack**                                                                 | **Telegram GetX Community Persian**                                 | **Telegram GetX Community**                                      |
+| :-----------------------------------------------------------------------: | :-------------------------------------------------------------------: | :---------------------------------------------------------------: |
+| [![Get on Slack](https://img.shields.io/badge/slack-join-orange.svg)]()     | [![Telegram](https://img.shields.io/badge/chat-on%20Telegram-blue.svg)](https://t.me/dartandflutterIr) | [![Telegram](https://img.shields.io/badge/chat-on%20Telegram-blue.svg)](https://t.me/communityGetX) |
+
 
 ## How to contribute
 
@@ -1272,22 +1264,59 @@ _Want to contribute to the project? We will be proud to highlight you as one of 
 
 Any contribution is welcome!
 
-## Articles and videos
+# My Custom GetX Version
 
-- [Flutter Getx EcoSystem package for arabic people](https://www.youtube.com/playlist?list=PLV1fXIAyjeuZ6M8m56zajMUwu4uE3-SL0) - Tutorial by [Pesa Coder](https://github.com/UsamaElgendy).
-- [Dynamic Themes in 3 lines using GetX™](https://medium.com/swlh/flutter-dynamic-themes-in-3-lines-c3b375f292e3) - Tutorial by [Rod Brown](https://github.com/RodBr).
-- [Complete GetX™ Navigation](https://www.youtube.com/watch?v=RaqPIoJSTtI) - Route management video by Amateur Coder.
-- [Complete GetX State Management](https://www.youtube.com/watch?v=CNpXbeI_slw) - State management video by Amateur Coder.
-- [GetX™ Other Features](https://youtu.be/ttQtlX_Q0eU) - Utils, storage, bindings and other features video by Amateur Coder.
-- [Firestore User with GetX | Todo App](https://www.youtube.com/watch?v=BiV0DcXgk58) - Video by Amateur Coder.
-- [Firebase Auth with GetX | Todo App](https://www.youtube.com/watch?v=-H-T_BSgfOE) - Video by Amateur Coder.
-- [The Flutter GetX™ Ecosystem ~ State Management](https://medium.com/flutter-community/the-flutter-getx-ecosystem-state-management-881c7235511d) - State management by [Aachman Garg](https://github.com/imaachman).
-- [The Flutter GetX™ Ecosystem ~ Dependency Injection](https://medium.com/flutter-community/the-flutter-getx-ecosystem-dependency-injection-8e763d0ec6b9) - Dependency Injection by [Aachman Garg](https://github.com/imaachman).
-- [GetX, the all-in-one Flutter package](https://www.youtube.com/watch?v=IYQgtu9TM74) - A brief tutorial covering State Management and Navigation by Thad Carnevalli.
-- [Build a To-do List App from scratch using Flutter and GetX](https://www.youtube.com/watch?v=EcnqFasHf18) - UI + State Management + Storage video by Thad Carnevalli.
-- [GetX Flutter Firebase Auth Example](https://medium.com/@jeffmcmorris/getx-flutter-firebase-auth-example-b383c1dd1de2) - Article by Jeff McMorris.
-- [Flutter State Management with GetX – Complete App](https://www.appwithflutter.com/flutter-state-management-with-getx/) - by App With Flutter.
-- [Flutter Routing with Animation using Get Package](https://www.appwithflutter.com/flutter-routing-using-get-package/) - by App With Flutter.
-- [A minimal example on dartpad](https://dartpad.dev/2b3d0d6f9d4e312c5fdbefc414c1727e?) - by [Roi Peker](https://github.com/roipeker)
-- [GetConnect: The best way to perform API operations in Flutter with Get.](https://absyz.com/getconnect-the-best-way-to-perform-api-operations-in-flutter-with-getx/) - by [MD Sarfaraj](https://github.com/socialmad)
-- [How To Create an App with GetX Architect in Flutter with Get CLI](https://www.youtube.com/watch?v=7mb4qBA7kTk&t=1380s) - by [MD Sarfaraj](https://github.com/socialmad)
+This project is a modified version of the [GetX](https://pub.dev/packages/get) package for Flutter.
+
+## 🛠️ About This Project
+This package is built upon GetX, a powerful state management and navigation solution for Flutter. It includes custom improvements and additional features tailored for specific use cases.
+
+## 📝 Original Package Information
+- **Package Name:** GetX  
+- **Author:** Jonny Borges ([GitHub](https://github.com/jonataslaw/getx))  
+- **Original Package Link:** [GetX on pub.dev](https://pub.dev/packages/get)  
+- **License:** MIT License  
+
+This project retains the original [MIT License](LICENSE) and includes proper attribution to the original author, Jonny Borges.
+
+## 📄 License
+This project is licensed under the MIT License. See the [LICENSE](./LICENSE) file for details.
+
+## 🧑‍⚖️ Legal Notice
+- This modified version of GetX is distributed with the original author's permission under the MIT License.  
+- The modifications, updates, and additional features are maintained by **[Your Name]**.  
+- All trademarks and copyrights belong to their respective owners.  
+
+---
+
+### 📢 Attribution (Mandatory Under MIT License):
+This project is based on [GetX](https://pub.dev/packages/get), created by **Jonny Borges** and distributed under the **MIT License**.
+
+```
+MIT License
+
+Copyright (c) 2019 Jonny Borges
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+```
+
+
+
+

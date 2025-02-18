@@ -52,7 +52,8 @@ class ObxState extends State<ObxWidget> {
   }
 
   @override
-  Widget build(BuildContext context) => RxInterface.notifyChildren(_observer, widget.build);
+  Widget build(BuildContext context) =>
+      RxInterface.notifyChildren(_observer, widget.build);
 }
 
 /// The simplest reactive widget in GetX.

@@ -15,7 +15,8 @@ const _defaultDelay = Duration.zero;
 extension AnimationExtension on Widget {
   /// Returns the current animation if this widget is already animated by [GetAnimatedBuilder].
   /// This is used internally to manage sequential animations.
-  GetAnimatedBuilder? get _currentAnimation => (this is GetAnimatedBuilder) ? this as GetAnimatedBuilder : null;
+  GetAnimatedBuilder? get _currentAnimation =>
+      (this is GetAnimatedBuilder) ? this as GetAnimatedBuilder : null;
 
   /// Adds a fade-in animation to the widget.
   ///
@@ -29,7 +30,8 @@ extension AnimationExtension on Widget {
     ValueSetter<AnimationController>? onComplete,
     bool isSequential = false,
   }) {
-    assert(isSequential || this is! GetAnimatedBuilder, 'Can not use fadeOut + fadeIn when isSequential is false');
+    assert(isSequential || this is! GetAnimatedBuilder,
+        'Can not use fadeOut + fadeIn when isSequential is false');
 
     return GetAnimatedBuilder<double>(
       duration: duration,
@@ -54,15 +56,18 @@ extension AnimationExtension on Widget {
     ValueSetter<AnimationController>? onComplete,
     bool isSequential = false,
   }) {
-    assert(isSequential || this is! GetAnimatedBuilder, 'Cannot use fadeOut() + fadeIn() when isSequential is false');
+    assert(isSequential || this is! GetAnimatedBuilder,
+        'Cannot use fadeOut() + fadeIn() when isSequential is false');
 
     return GetAnimatedBuilder<double>(
       duration: duration,
       delay: _getDelay(isSequential, delay),
-      tween: Tween<double>(begin: 0.0, end: 1.0), // Fade from opaque to transparent
+      tween: Tween<double>(
+          begin: 0.0, end: 1.0), // Fade from opaque to transparent
       idleValue: 1.0, // Add idleValue
       onComplete: onComplete,
-      builder: (context, value, child) => Opacity(opacity: 1 - value, child: child), // Invert value for fade-out
+      builder: (context, value, child) => Opacity(
+          opacity: 1 - value, child: child), // Invert value for fade-out
       child: this,
     );
   }
@@ -338,7 +343,8 @@ extension AnimationExtension on Widget {
       idleValue: begin, // Add idleValue
       onComplete: onComplete,
       builder: (context, value, child) => Transform(
-        transform: Matrix4.translationValues(0.0, 20.0 * sin(value * pi * 2), 0.0),
+        transform:
+            Matrix4.translationValues(0.0, 20.0 * sin(value * pi * 2), 0.0),
         child: child,
       ),
       child: this,
@@ -357,8 +363,11 @@ extension AnimationExtension on Widget {
   /// true, and that manually specified delays are respected when
   /// `isSequential` is false.
   Duration _getDelay(bool isSequential, Duration delay) {
-    assert(!(isSequential && delay != Duration.zero), "Error: When isSequential is true, delay must be non-zero");
+    assert(!(isSequential && delay != Duration.zero),
+        "Error: When isSequential is true, delay must be non-zero");
 
-    return isSequential ? (_currentAnimation?.totalDuration ?? Duration.zero) : delay;
+    return isSequential
+        ? (_currentAnimation?.totalDuration ?? Duration.zero)
+        : delay;
   }
 }

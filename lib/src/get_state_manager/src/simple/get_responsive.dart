@@ -64,7 +64,11 @@ class GetResponsiveView<T> extends GetView<T> with GetResponsiveMixin {
   @override
   final ResponsiveScreen screen;
 
-  GetResponsiveView({this.alwaysUseBuilder = false, ResponsiveScreenSettings settings = const ResponsiveScreenSettings(), super.key}) : screen = ResponsiveScreen(settings);
+  GetResponsiveView(
+      {this.alwaysUseBuilder = false,
+      ResponsiveScreenSettings settings = const ResponsiveScreenSettings(),
+      super.key})
+      : screen = ResponsiveScreen(settings);
 
   @override
   Widget build(BuildContext context) {
@@ -73,7 +77,8 @@ class GetResponsiveView<T> extends GetView<T> with GetResponsiveMixin {
 }
 
 /// A responsive widget that adapts to different screen sizes.
-class GetResponsiveWidget<T extends GetLifeCycleBase?> extends StatelessWidget with GetResponsiveMixin {
+class GetResponsiveWidget<T extends GetLifeCycleBase?> extends StatelessWidget
+    with GetResponsiveMixin {
   @override
   final bool alwaysUseBuilder;
 
