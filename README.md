@@ -133,7 +133,7 @@ dependencies:
 Import get in files that it will be used:
 
 ```dart
-import 'package:get/get.dart';
+import 'package:getx/getx.dart';
 ```
 
 # Counter App with GetX
@@ -1284,7 +1284,7 @@ This project is licensed under the MIT License. See the [LICENSE](./LICENSE) fil
 
 ## 🧑‍⚖️ Legal Notice
 - This modified version of GetX is distributed with the original author's permission under the MIT License.  
-- The modifications, updates, and additional features are maintained by **[Your Name]**.  
+- The modifications, updates, and additional features are maintained by **swanflutter**.  
 - All trademarks and copyrights belong to their respective owners.  
 
 ---
